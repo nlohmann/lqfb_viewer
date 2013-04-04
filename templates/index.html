@@ -6,6 +6,7 @@
 
   <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+  <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <body>
 
@@ -13,9 +14,9 @@
     <div class="navbar-inner">
       <a class="brand" href="/">LQFB</a>
       <ul class="nav">
-        <li><a href="/themen">Themen</a></li>
-        <li><a href="/gliederungen">Gliederungen</a></li>
-        <li><a href="/regelwerke">Regelwerke</a></li>
+        <li><a href="/themen"><i class="icon-list-alt"></i> Themen</a></li>
+        <li><a href="/gliederungen"><i class="icon-sitemap"></i> Gliederungen</a></li>
+        <li><a href="/regelwerke"><i class="icon-book"></i> Regelwerke</a></li>
       </ul>
     </div>
   </div>
@@ -23,6 +24,7 @@
   <div class="container-fluid">
 
     <div class="hero-unit">
+      <i class="icon-plus-sign pull-right" style="margin-top: -0.2em; font-size: 200px; color: #ddd;"></i>
       <h1>LiquidFeedback</h1>
       <h2>{{ helper.unit[1] }}</h2>
       <p>
@@ -30,6 +32,22 @@
         <a href="{{ helper.settings.api_url }}">API {{ data.api_version }}</a>
       </p>
     </div>
+    
+    
+    <section class="clearfix">
+      <div class="row" style="text-align: center; color: #333;">
+        <div class="span4">
+          <h2><i class="icon-list-alt"></i> <a href="/themen" style="color: #333">Themen</a></h2>
+        </div>
+        <div class="span4">
+          <h2><i class="icon-sitemap"></i> <a href="/gliederungen" style="color: #333">Gliederungen</a></h2>
+        </div>
+        <div class="span4">
+          <h2><i class="icon-book"></i> <a href="/regelwerke" style="color: #333">Regelwerke</a></h2></h2>
+        </div>
+      </div>
+    </section>
+    
     
   </div>
 </body>

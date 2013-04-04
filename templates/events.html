@@ -167,10 +167,16 @@
     </script>
     
     <style>
-      ol#timeline li.finished_with_winner  { background-color: #cec; }
-      ol#timeline li.finished_without_winner  { background-color: #ecc; }
-      ol#timeline li.canceled_revoked_before_accepted  { background-color: #eee; }
-      ol#timeline li.voting  { background-color: #ec8; }
+      ol#timeline li.finished_with_winner  { background-color: #dff0d8; }
+      ol#timeline li.finished_with_winner i { color: #468847; }
+      ol#timeline li.finished_without_winner { background-color: #f2dede; }
+      ol#timeline li.finished_without_winner i { color: #b94a48; }
+      ol#timeline li.canceled_revoked_before_accepted { background-color: #eee; }
+      ol#timeline li.canceled_revoked_before_accepted i { color: #888; }
+      ol#timeline li.voting { background-color: #fcf8e3; }
+      ol#timeline li.voting i { color: #c09853; }
+
+      ol#timeline li i { color: #888; }
     </style>
 
     <ol id="timeline">

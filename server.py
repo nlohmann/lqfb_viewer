@@ -71,7 +71,10 @@ def cache_load(url):
 
 # preload ceartain information for convenience
 def prepare():
-    settings_file = os.path.dirname(__file__) + '/settings.json'
+    if os.path.dirname(__file__) == "":
+        settings_file = 'settings.json'
+    else:
+        settings_file = os.path.dirname(__file__) + '/settings.json'
     print('loading settings from ' + settings_file + '...')
     settings = json.load(open(settings_file))
     helper['settings'] = settings

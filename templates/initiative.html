@@ -85,7 +85,7 @@
       {{ data.current_draft.result[0].content|safe }}
     </div>
 
-    <p><strong>Stand: </strong>{{ data.current_draft.result[0].created|nicedate }}</p>
+    <p><strong>Stand: </strong>{{ data.current_draft.result[0].created|nicedate(timeago=False) }}</p>
 
   </div>
 

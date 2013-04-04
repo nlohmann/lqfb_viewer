@@ -69,15 +69,15 @@
       {% if data.issue.result[0].state == "canceled_revoked_before_accepted" or data.issue.result[0].state == "canceled_issue_not_accepted" %}
       <div class="bar bar-info" style="width: 25%;">
         <strong>neu</strong><br>
-        {{ data.issue.result[0].created|nicedate("%x") }} - {{ data.issue.result[0].closed|nicedate("%x") }}
+        {{ data.issue.result[0].created|nicedate("%x", timeago=False) }} - {{ data.issue.result[0].closed|nicedate("%x", timeago=False) }}
       </div>
       {% elif data.issue.result[0].created %}
       <div class="bar bar-primary" style="width: 25%;">
         <strong>neu</strong><br>
         {% if data.issue.result[0].accepted %}
-        {{ data.issue.result[0].created|nicedate("%x") }} - {{ data.issue.result[0].accepted|nicedate("%x") }}
+        {{ data.issue.result[0].created|nicedate("%x", timeago=False) }} - {{ data.issue.result[0].accepted|nicedate("%x", timeago=False) }}
         {% else %}
-        seit {{ data.issue.result[0].created|nicedate("%x") }}
+        seit {{ data.issue.result[0].created|nicedate("%x", timeago=False) }}
         {% endif %}
       </div>
       {% endif %}
@@ -85,15 +85,15 @@
       {% if data.issue.result[0].state == "canceled_after_revocation_during_discussion" %}
       <div class="bar bar-info" style="width: 25%;">
         <strong>Diskussion</strong><br>
-        {{ data.issue.result[0].accepted|nicedate("%x") }} - {{ data.issue.result[0].closed|nicedate("%x") }}
+        {{ data.issue.result[0].accepted|nicedate("%x", timeago=False) }} - {{ data.issue.result[0].closed|nicedate("%x", timeago=False) }}
       </div>
       {% elif data.issue.result[0].accepted %}
       <div class="bar bar-primary" style="width: 25%;">
         <strong>Diskussion</strong><br>
         {% if data.issue.result[0].half_frozen %}
-        {{ data.issue.result[0].accepted|nicedate("%x") }} - {{ data.issue.result[0].half_frozen|nicedate("%x") }}
+        {{ data.issue.result[0].accepted|nicedate("%x", timeago=False) }} - {{ data.issue.result[0].half_frozen|nicedate("%x", timeago=False) }}
         {% else %}
-        seit {{ data.issue.result[0].accepted|nicedate("%x") }}
+        seit {{ data.issue.result[0].accepted|nicedate("%x", timeago=False) }}
         {% endif %}
       </div>
       {% endif %}
@@ -102,9 +102,9 @@
       <div class="bar bar-info" style="width: 25%;">
         <strong>eingefroren</strong><br>
         {% if data.issue.result[0].fully_frozen %}
-        {{ data.issue.result[0].half_frozen|nicedate("%x") }} - {{ data.issue.result[0].fully_frozen|nicedate("%x") }}
+        {{ data.issue.result[0].half_frozen|nicedate("%x", timeago=False) }} - {{ data.issue.result[0].fully_frozen|nicedate("%x", timeago=False) }}
         {% else %}
-        seit {{ data.issue.result[0].half_frozen|nicedate("%x") }}
+        seit {{ data.issue.result[0].half_frozen|nicedate("%x", timeago=False) }}
         {% endif %}
       </div>
       {% endif %}
@@ -121,9 +121,9 @@
       {% endif %}
         <strong>Abstimmung</strong><br>
         {% if data.issue.result[0].closed %}
-        {{ data.issue.result[0].fully_frozen|nicedate("%x") }} - {{ data.issue.result[0].closed|nicedate("%x") }}
+        {{ data.issue.result[0].fully_frozen|nicedate("%x", timeago=False) }} - {{ data.issue.result[0].closed|nicedate("%x", timeago=False) }}
         {% else %}
-        seit {{ data.issue.result[0].fully_frozen|nicedate("%x") }}
+        seit {{ data.issue.result[0].fully_frozen|nicedate("%x", timeago=False) }}
         {% endif %}
       </div>
       {% endif %}

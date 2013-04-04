@@ -226,7 +226,7 @@
       {% for p in data.event.result | sort(reverse=True,attribute='occurrence') %}
       <li class="{{p.state}} {{p.event}}{% if data.issue.result[p.issue_id-1].closed %} closed_issue{% else %} open_issue{% endif %}">
         <div class="time">
-          {{ p.occurrence|nicedate }}
+            {% autoescape false %}{{ p.occurrence|nicedate }}{% endautoescape %}
         </div>
         <span class="corner"></span>
         {% if p.event == "issue_state_changed" %}

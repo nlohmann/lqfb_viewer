@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
 #############################################################################
@@ -161,18 +162,22 @@ def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
             (diff.seconds / 60, "Minute", "Minuten"),
             (diff.seconds, "Sekunde", "Sekunden"),
         )
-
+        #import locale
+        #locale.setlocale(locale.LC_ALL, 'deutsch')
+        dateFormatted = datetime.strftime(date, "%d.%m.%Y %H:%M:%S")
         for period, singular, plural in periods:
 
             if period:
                 if diff.days == 1:
-                    return "gestern"
+                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, "gestern")
+                elif 1 < diff.days < 7:
+                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%A"))
                 elif diff.days > 6:
-                    return datetime.strftime(date, "%d.%m.")
+                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d.%m."))
                 elif diff.days > 365:
-                    return datetime.strftime(date, "%d.%m.%Y")
+                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d.%m.%Y"))
                 else:
-                    return "Vor %d %s" % (period, singular if period == 1 else plural)
+                    return '<span data-toggle="tooltip" title="%s">vor %d %s</span>' % (dateFormatted, period, singular if period == 1 else plural)
 
         return default
 

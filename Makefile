@@ -25,7 +25,7 @@ clean:
 	rm -fr *.pyc
 
 veryclean: clean
-	rm -fr static
+	rm -fr static/bootstrap static/jquery static/font-awesome static/jquery.tablesorter
 
 serve:
 	python server.py

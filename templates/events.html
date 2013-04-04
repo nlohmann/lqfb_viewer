@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>LQFB › Ereignisse</title>
+
+  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+  <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+  <style>
+  time,.time{
+    font-size: 10px; color:gray; border-bottom: 1px solid #E7EBF2; min-width:350px; height:20px; padding-bottom: 5px;
+  }
+  #timeline{
+    width:800px; list-style-type: none; background: url('/static/timeline/timeline.png') top center repeat-y; margin: 0 auto; padding:20px; margin-bottom:10px;
+  }
+
+  #timeline li{
+    width:375px; -moz-border-radius:2px; border-radius:2px; webkit-border-radius:2px; border:1px solid #c3ccdf; padding:5px;background-color:#FFF;
+  }
+
+  #timeline li:nth-of-type(odd){
+    clear: both;float:right; 
+  }
+
+  #timeline li:nth-of-type(odd), #timeline li:nth-of-type(even){
+    margin:-10px 0 20px 0;
+  }
+  #timeline li:nth-of-type(even) .corner{
+    position:absolute; display:block; margin-left:380px;width:20px;	height:15px;background:url('/static/timeline/right.png');
+  }
+  #timeline li:nth-of-type(odd) .corner{
+    position:absolute;display:block;margin-left:-25px;width:20px;height:15px;background:url('/static/timeline/left.png');
+  }  
+  </style>
+</head>
+<body>
+
+  <div class="navbar navbar-inverse">
+    <div class="navbar-inner">
+      <a class="brand" href="/">LQFB</a>
+      <ul class="nav">
+        <li><a href="/themen"><i class="icon-list-alt"></i> Themen</a></li>
+        <li><a href="/gliederungen"><i class="icon-sitemap"></i> Gliederungen</a></li>
+        <li><a href="/regelwerke"><i class="icon-book"></i> Regelwerke</a></li>
+        <li class="active"><a href="/ereignisse"><i class="icon-info-sign"></i> Ereignisse</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <ul class="breadcrumb">
+    <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
+    <li class="active">Ereignisse</li>
+  </ul>
+
+  <div class="container-fluid">
+
+    <div class="page-header">
+      <h1><i class="icon-info-sign"></i> Ereignisse</h1>
+    </div>
+
+    <style>
+      ol#timeline li.finished_with_winner  { background-color: #cec; }
+      ol#timeline li.finished_without_winner  { background-color: #ecc; }
+      ol#timeline li.canceled_revoked_before_accepted  { background-color: #eee; }
+      ol#timeline li.voting  { background-color: #ec8; }
+    </style>
+
+    <ol id="timeline">
+      {% for p in data.result | sort(reverse=True,attribute='occurrence') %}
+      <li class="{{p.state}}">
+        <div class="time">{{ p.occurrence|nicedate }}</div>
+        <span class="corner"></span>
+        {% if p.event == "issue_state_changed" %}
+        {% if p.state == "discussion" %}
+        <p>
+          <i class="icon-comments icon-2x"></i> <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> ist jetzt in der <strong>Diskussionsphase</strong>.
+        </p>
+        {% elif p.state == "verification" %}
+        <p>
+          <i class="icon-lock icon-2x"></i> <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> ist jetzt <strong>eingefroren</strong>.
+        </p>
+        {% elif p.state == "voting" %}
+        <p>
+          <i class="icon-list-ol icon-2x"></i> <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> wird jetzt <strong>abgestimmt</strong>.
+        </p>
+        {% elif p.state == "finished_with_winner" %}
+        <p>
+          <i class="icon-ok icon-2x"></i> Die Abstimmung von <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> wurde <strong>mit einem Gewinner</strong> beendet.
+        </p>
+        {% elif p.state == "finished_without_winner" %}
+        <p>
+          <i class="icon-remove icon-2x"></i> Die Abstimmung von <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> wurde <strong>ohne einen Gewinner</strong> beendet.
+        </p>
+        {% elif p.state == "canceled_revoked_before_accepted" %}
+        <p>
+          <i class="icon-reply icon-2x"></i> <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> wurde in der Neu-Phase <strong>abgebrochen</strong>.
+        </p>
+        {% else %}
+        <p>
+          Der Zustand von Thema {{p.issue_id}} hat sich zu <strong>{{ p.state }}</strong> geändert.
+        </p>
+        {% endif %}
+        {% elif p.event == "initiative_created_in_new_issue" %}
+        <p>
+          <i class="icon-list-alt icon-2x"></i> <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> wurde von Mitglied {{p.member_id}} durch Hinzufügen von <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> <strong>neu angelegt</strong>.
+        </p>
+        {% elif p.event == "initiative_created_in_existing_issue" %}
+        <p>
+          <i class="icon-file-alt icon-2x"></i> Mitglied {{p.member_id}} hat <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> zu <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> <strong>hinzugefügt</strong>.
+        </p>
+        {% elif p.event == "suggestion_created" %}
+        <p>
+          <i class="icon-lightbulb icon-2x"></i> Mitglied {{p.member_id}} hat eine <strong>Anregung</strong> zu <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> geschrieben.
+        </p>
+        {% elif p.event == "initiative_revoked" %}
+        <p>
+          <i class="icon-reply icon-2x"></i> Mitglied {{p.member_id}} hat <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> <strong>zurückgezogen</strong>.
+        </p>
+        {% elif p.event == "new_draft_created" %}
+        <p>
+          <i class="icon-paste icon-2x"></i> Mitglied {{p.member_id}} hat einen <strong>neuen Entwurf</strong> von <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> geschrieben.
+        </p>
+        {% else %}
+        {{ p.event }}
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ol>
+
+  </div>
+</body>
+</html>

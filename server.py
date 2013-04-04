@@ -159,6 +159,11 @@ def show_units():
     data = cache_load('/unit')
     return render_template('units.html', data=data)
 
+@app.route('/ereignisse')
+def show_events():
+    data = get_all('/event')
+    return render_template('events.html', data=data, helper=helper)
+
 @app.route('/themen')
 def show_issues():
     data = get_all('/issue')

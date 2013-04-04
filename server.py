@@ -32,6 +32,7 @@ import os
 from flask import Flask
 from flask import render_template
 from werkzeug.contrib.cache import SimpleCache
+from datetime import datetime, time
 
 # for German dates, time zones and ISO8601 translation
 import locale
@@ -136,8 +137,44 @@ def get_all(url):
 
 # filter to format dazes given in ISO8601
 @app.template_filter('nicedate')
-def nicedate_filter(s, format='%A, %x, %X Uhr'):
-    return iso8601.parse_date(s).astimezone(pytz.timezone('Europe/Berlin')).strftime(format)
+def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
+    if not timeago:
+        return iso8601.parse_date(s).astimezone(pytz.timezone('Europe/Berlin')).strftime(format)
+    else:
+        default = "eben gerade"
+        now = datetime.utcnow()
+        try:
+            date = datetime.strptime(s, "%Y-%m-%dT%H:%M:%S.%fZ")
+        except ValueError, e:
+            #return date in nice format if the conversion did not work
+            return iso8601.parse_date(s).astimezone(pytz.timezone('Europe/Berlin')).strftime(format)
+        #create datetime for difference of today and given date
+        diff = now - date
+
+        #verschiedene zeitperioden - woche, monat, jahre eingebaut, falls benoetigt
+        periods = (
+            (diff.days / 365, "Jahr", "Jahre"),
+            (diff.days / 30, "Monat", "Monate"),
+            (diff.days / 7, "Woche", "Wochen"),
+            (diff.days, "Tag", "Tagen"),
+            (diff.seconds / 3600, "Stunde", "Stunden"),
+            (diff.seconds / 60, "Minute", "Minuten"),
+            (diff.seconds, "Sekunde", "Sekunden"),
+        )
+
+        for period, singular, plural in periods:
+
+            if period:
+                if diff.days == 1:
+                    return "gestern"
+                elif diff.days > 6:
+                    return datetime.strftime(date, "%d.%m.")
+                elif diff.days > 365:
+                    return datetime.strftime(date, "%d.%m.%Y")
+                else:
+                    return "Vor %d %s" % (period, singular if period == 1 else plural)
+
+        return default
 
 
 ##############

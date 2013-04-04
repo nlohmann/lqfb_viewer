@@ -6,6 +6,9 @@
 
   <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+  <script type="text/javascript" src="/static/jquery/jquery.min.js"></script>
+
   <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
   <style>
@@ -16,21 +19,21 @@
     width:800px; list-style-type: none; background: url('/static/timeline/timeline.png') top center repeat-y; margin: 0 auto; padding:20px; margin-bottom:10px;
   }
 
-  #timeline li{
+  #timeline > li{
     width:375px; -moz-border-radius:2px; border-radius:2px; webkit-border-radius:2px; border:1px solid #c3ccdf; padding:5px;background-color:#FFF;
   }
 
-  #timeline li:nth-of-type(odd){
+  #timeline > li:nth-of-type(odd){
     clear: both;float:right; 
   }
 
-  #timeline li:nth-of-type(odd), #timeline li:nth-of-type(even){
+  #timeline > li:nth-of-type(odd), #timeline > li:nth-of-type(even){
     margin:-10px 0 20px 0;
   }
-  #timeline li:nth-of-type(even) .corner{
+  #timeline > li:nth-of-type(even) .corner{
     position:absolute; display:block; margin-left:380px;width:20px;	height:15px;background:url('/static/timeline/right.png');
   }
-  #timeline li:nth-of-type(odd) .corner{
+  #timeline > li:nth-of-type(odd) .corner{
     position:absolute;display:block;margin-left:-25px;width:20px;height:15px;background:url('/static/timeline/left.png');
   }  
   </style>
@@ -60,6 +63,109 @@
       <h1><i class="icon-info-sign"></i> Ereignisse</h1>
     </div>
 
+    <form class="form-horizontal">
+      <style>
+      .control-group { margin-bottom: 0em !important; }
+      .control-label { font-weight: bold; }
+      </style>
+
+    <fieldset>
+      
+    <div class="control-group">
+      <label class="control-label">Phasen</label>
+      <div class="controls">
+        <label class="checkbox inline">
+          <input type="checkbox" checked="checked" id="discussion">
+          Diskussionsphase
+        </label>
+        <label class="checkbox inline">
+          <input type="checkbox" checked="checked" id="verification">
+          eingefroren
+        </label>
+        <label class="checkbox inline">
+          <input type="checkbox" checked="checked" id="voting">
+          Abstimmung
+        </label>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">Initiativen</label>
+      <div class="controls">
+        <label class="checkbox inline">
+          <input type="checkbox" checked="checked" id="suggestion_created">
+          neue Anregung
+        </label>
+        <label class="checkbox inline">
+          <input type="checkbox" checked="checked" id="new_draft_created">
+          neuer Entwürfe
+        </label>
+        <label class="checkbox inline">
+          <input type="checkbox" checked="checked" id="initiative_created_in_existing_issue">
+          neue Initiativen
+        </label>
+        <label class="checkbox inline">
+          <input type="checkbox" checked="checked" id="initiative_revoked">
+          Initiativen zurückgezogen
+        </label>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">Themen</label>
+      <div class="controls">
+        <label class="checkbox inline">
+          <input type="checkbox" checked="checked" id="finished_with_winner">
+          abgestimmt mit Gewinner
+        </label>
+        <label class="checkbox inline">
+          <input type="checkbox" checked="checked" id="finished_without_winner">
+          abgestimmt ohne Gewinner
+        </label>
+        <label class="checkbox inline">
+          <input type="checkbox" checked="checked" id="canceled_revoked_before_accepted">
+          abgebrochen
+        </label>
+      </div>
+    </div>
+
+    </fieldset>
+    </form>
+
+    <script>
+    $('#suggestion_created').click(function() {
+      $('.suggestion_created').toggle(function() { });
+    });
+    $('#new_draft_created').click(function() {
+      $('.new_draft_created').toggle(function() { });
+    });
+    $('#initiative_created_in_existing_issue').click(function() {
+      $('.initiative_created_in_existing_issue').toggle(function() { });
+      $('.initiative_created_in_new_issue').toggle(function() { });
+    });
+    $('#discussion').click(function() {
+      $('.discussion.issue_state_changed').toggle(function() { });
+    });
+    $('#voting').click(function() {
+      $('.voting.issue_state_changed').toggle(function() { });
+    });
+    $('#initiative_revoked').click(function() {
+      $('.initiative_revoked').toggle(function() { });
+    });
+    $('#verification').click(function() {
+      $('.verification.issue_state_changed').toggle(function() { });
+    });
+    $('#canceled_revoked_before_accepted').click(function() {
+      $('.canceled_revoked_before_accepted').toggle(function() { });
+    });
+    $('#finished_without_winner').click(function() {
+      $('.finished_without_winner').toggle(function() { });
+    });
+    $('#finished_with_winner').click(function() {
+      $('.finished_with_winner').toggle(function() { });
+    });
+    </script>
+    
     <style>
       ol#timeline li.finished_with_winner  { background-color: #cec; }
       ol#timeline li.finished_without_winner  { background-color: #ecc; }
@@ -68,8 +174,8 @@
     </style>
 
     <ol id="timeline">
-      {% for p in data.result | sort(reverse=True,attribute='occurrence') %}
-      <li class="{{p.state}}">
+      {% for p in data.event.result | sort(reverse=True,attribute='occurrence') %}
+      <li class="{{p.state}} {{p.event}}">
         <div class="time">{{ p.occurrence|nicedate }}</div>
         <span class="corner"></span>
         {% if p.event == "issue_state_changed" %}
@@ -84,6 +190,13 @@
         {% elif p.state == "voting" %}
         <p>
           <i class="icon-list-ol icon-2x"></i> <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> wird jetzt <strong>abgestimmt</strong>.
+          <ul>
+          {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
+          {% if p2.admitted %}
+          <li><a href="/initiative/{{p2.id}}">Initiative {{p2.id}}</a>: {{p2.name}}</li>
+          {% endif %}
+          {% endfor %}
+        </ul>
         </p>
         {% elif p.state == "finished_with_winner" %}
         <p>
@@ -104,23 +217,23 @@
         {% endif %}
         {% elif p.event == "initiative_created_in_new_issue" %}
         <p>
-          <i class="icon-list-alt icon-2x"></i> <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> wurde von Mitglied {{p.member_id}} durch Hinzufügen von <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> <strong>neu angelegt</strong>.
+          <i class="icon-list-alt icon-2x"></i> <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> wurde von Mitglied {{p.member_id}} durch Hinzufügen von <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> ({{data.initiative.result[p.initiative_id-1].name}}) <strong>neu angelegt</strong>.
         </p>
         {% elif p.event == "initiative_created_in_existing_issue" %}
         <p>
-          <i class="icon-file-alt icon-2x"></i> Mitglied {{p.member_id}} hat <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> zu <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> <strong>hinzugefügt</strong>.
+          <i class="icon-file-alt icon-2x"></i> Mitglied {{p.member_id}} hat <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> ({{data.initiative.result[p.initiative_id-1].name}}) zu <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> <strong>hinzugefügt</strong>.
         </p>
         {% elif p.event == "suggestion_created" %}
         <p>
-          <i class="icon-lightbulb icon-2x"></i> Mitglied {{p.member_id}} hat eine <strong>Anregung</strong> zu <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> geschrieben.
+          <i class="icon-lightbulb icon-2x"></i> Mitglied {{p.member_id}} hat eine <strong>Anregung</strong> zu <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> ({{data.initiative.result[p.initiative_id-1].name}}) geschrieben{% if data.suggestion.result[p.suggestion_id-1] %}: {{data.suggestion.result[p.suggestion_id-1].name}}{% endif %}.
         </p>
         {% elif p.event == "initiative_revoked" %}
         <p>
-          <i class="icon-reply icon-2x"></i> Mitglied {{p.member_id}} hat <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> <strong>zurückgezogen</strong>.
+          <i class="icon-reply icon-2x"></i> Mitglied {{p.member_id}} hat <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> ({{data.initiative.result[p.initiative_id-1].name}}) <strong>zurückgezogen</strong>.
         </p>
         {% elif p.event == "new_draft_created" %}
         <p>
-          <i class="icon-paste icon-2x"></i> Mitglied {{p.member_id}} hat einen <strong>neuen Entwurf</strong> von <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> geschrieben.
+          <i class="icon-paste icon-2x"></i> Mitglied {{p.member_id}} hat einen <strong>neuen Entwurf</strong> von <a href="/initiative/{{p.initiative_id}}">Initiative {{p.initiative_id}}</a> ({{data.initiative.result[p.initiative_id-1].name}}) geschrieben.
         </p>
         {% else %}
         {{ p.event }}

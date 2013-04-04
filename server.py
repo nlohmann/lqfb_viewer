@@ -112,8 +112,13 @@ def get_all(url):
     limit = helper['result_row_limit_max']
     result = dict()
 
+    if url.find('?') != -1:
+        seperator = '&'
+    else:
+        seperator = '?'
+
     while True:
-        obj = cache_load(url + '?limit=' + str(limit) + '&offset=' + str(offset))
+        obj = cache_load(url + seperator + 'limit=' + str(limit) + '&offset=' + str(offset))
         offset = offset + limit
         
         if len(result) == 0:
@@ -161,7 +166,10 @@ def show_units():
 
 @app.route('/ereignisse')
 def show_events():
-    data = get_all('/event')
+    data = dict()
+    data['event'] = get_all('/event')
+    data['initiative'] = get_all('/initiative')
+    data['suggestion'] = get_all('/suggestion?rendered_content=html')
     return render_template('events.html', data=data, helper=helper)
 
 @app.route('/themen')

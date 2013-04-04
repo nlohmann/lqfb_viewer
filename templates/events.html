@@ -200,7 +200,14 @@
         </p>
         {% elif p.state == "finished_with_winner" %}
         <p>
-          <i class="icon-ok icon-2x"></i> Die Abstimmung von <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> wurde <strong>mit einem Gewinner</strong> beendet.
+          <i class="icon-ok icon-2x"></i> Die Abstimmung von <a href="/themen/{{p.issue_id}}">Thema {{p.issue_id}}</a> wurde <strong>mit einem Gewinner</strong> 
+          {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
+          {% if p2.winner %}
+          (<a href="/initiative/{{p2.id}}">Initiative {{p2.id}}</a>: {{p2.name}})
+          {% endif %}
+          {% endfor %}
+          
+          beendet.
         </p>
         {% elif p.state == "finished_without_winner" %}
         <p>

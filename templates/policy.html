@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Regelwerk {{data.result[0].name}}</title>
+
+  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+  <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="navbar navbar-inverse">
+    <div class="navbar-inner">
+      <a class="brand" href="/">LQFB</a>
+      <ul class="nav">
+        <li><a href="/themen">Themen</a></li>
+        <li><a href="/gliederungen">Gliederungen</a></li>
+        <li class="active"><a href="/regelwerke">Regelwerke</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <ul class="breadcrumb">
+    <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
+    <li><a href="/regelwerke">Regelwerke</a> <span class="divider">/</span></li>
+    <li class="active">{{data.result[0].name}}</li>
+  </ul>
+
+  <div class="container-fluid">
+
+    <div class="page-header">
+      <h1><small>Regelwerk</small><br>{{data.result[0].name}}</h1>
+    </div>
+
+    <h2><i class="icon-info-sign"></i> Beschreibung</h2>
+    <p>{{data.result[0].description}}</p>
+
+    <h2><i class="icon-time"></i> Fristen</h2>
+
+    <ul>
+      <li>Phase Neu: maximal
+        {% if data.result[0].admission_time.days %}
+        {{ data.result[0].admission_time.days }} Tage
+        {% elif data.result[0].admission_time.years %}
+        {{ data.result[0].admission_time.years }} Jahre
+        {% else %}
+        {{ data.result[0].admission_time.hours }} Stunden
+        {% endif %}
+      </li>
+
+      <li>Phase Diskussion:
+        {% if data.result[0].discussion_time.days %}
+        {{ data.result[0].discussion_time.days }} Tage
+        {% elif data.result[0].discussion_time.years %}
+        {{ data.result[0].discussion_time.years }} Jahre
+        {% else %}
+        {{ data.result[0].discussion_time.hours }} Stunden
+        {% endif %}
+      </li>
+
+      <li>Phase Eingefroren:
+        {% if data.result[0].verification_time.days %}
+        {{ data.result[0].verification_time.days }} Tage
+        {% elif data.result[0].verification_time.years %}
+        {{ data.result[0].verification_time.years }} Jahre
+        {% else %}
+        {{ data.result[0].verification_time.hours }} Stunden
+        {% endif %}
+      </li>
+
+      <li>Abstimmphase:
+        {% if data.result[0].voting_time.days %}
+        {{ data.result[0].voting_time.days }} Tage
+        {% elif data.result[0].voting_time.years %}
+        {{ data.result[0].voting_time.years }} Jahre
+        {% else %}
+        {{ data.result[0].voting_time.hours }} Stunden
+        {% endif %}
+      </li>
+    </ul>
+
+    <h2><i class="icon-bar-chart"></i> Quoren</h2>
+
+    <ul>
+      <li>Thema: ≥ {{ data.result[0].issue_quorum_num }}/{{ data.result[0].issue_quorum_den }}</li>
+      <li>Initiative: ≥ {{ data.result[0].initiative_quorum_num }}/{{ data.result[0].initiative_quorum_den }}</li>
+    </ul>
+
+    <h2><i class="icon-tasks"></i> Mehrheiten</h2>
+    <ul>
+      <li>direkte Mehrheit:
+        {% if data.result[0].direct_majority_strict %}
+        >
+        {% else %}
+        ≥
+        {% endif %}
+        {{ data.result[0].direct_majority_num }}/{{ data.result[0].direct_majority_den }}
+      </li>
+      <li>indirekte Mehrheit: 
+        {% if data.result[0].indirect_majority_strict %}
+        >
+        {% else %}
+        ≥
+        {% endif %}
+        {{ data.result[0].indirect_majority_num }}/{{ data.result[0].indirect_majority_den }}
+      </li>
+      <li>
+        Mindestzahl an Zustimmungen für die Zulassung:
+        {% if data.result[0].direct_majority_positive > 0 %}
+        {{ data.result[0].direct_majority_positive }}
+        {% else %}
+        <em>Option nicht genutzt</em>
+        {% endif %}
+      </li>
+      <li>
+        Mindestzahl an nicht ablehnenden Stimmen für die Zulassung:
+        {% if data.result[0].direct_majority_non_negative > 0 %}
+        {{ data.result[0].direct_majority_non_negative }}
+        {% else %}
+        <em>Option nicht genutzt</em>
+        {% endif %}
+      </li>
+    </ul>
+
+    <h2><i class="icon-cogs"></i> Weitere Optionen</h2>
+    <ul>
+      <li>{% if not data.result[0].no_reverse_beat_path %}kein {% endif %}rückwärts gerichteter Schlagpfad erlaubt</li>
+      <li>{% if not data.result[0].no_multistage_majority %}keine {% endif %}mehrstufige Mehrheiten erlaubt</li>
+    </ul>
+
+    <a href="{{ helper.LQFB_URL }}/policy/show/{{ data.result[0].id }}.html">Link zur offiziellen Seite</a>
+
+  </div>
+
+</body>
+</html>

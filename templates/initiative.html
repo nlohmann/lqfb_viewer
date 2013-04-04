@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Initiative {{data.initiative.result[0].id}}: {{data.initiative.result[0].name}}</title>
+
+  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+  <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="navbar navbar-inverse">
+    <div class="navbar-inner">
+      <a class="brand" href="/">LQFB</a>
+      <ul class="nav">
+        <li class="active"><a href="/themen">Themen</a></li>
+        <li><a href="/gliederungen">Gliederungen</a></li>
+        <li><a href="/regelwerke">Regelwerke</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <ul class="breadcrumb">
+    <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
+    <li><a href="/initiativen">Initiativen</a> <span class="divider">/</span></li>
+    <li class="active">Initiative {{data.initiative.result[0].id}}: {{data.initiative.result[0].name}}</li>
+  </ul>
+
+  <div class="container-fluid">
+
+    <div class="page-header">
+      <h1>
+        <small>Initiative {{data.initiative.result[0].id}}</small>
+        <br>{{data.initiative.result[0].name}}
+      </h1>
+    </div>
+
+    {% if data.initiative.result[0].schulze_rank %}
+    <h2>Abstimmung</h2>
+    <ul>
+      <li>
+        Abstimmungs-Rang: {{ data.initiative.result[0].rank }}
+      </li>
+      <li>
+        Schulze-Rang: {{ data.initiative.result[0].schulze_rank }} (Schulze-Rang des Status Quo: {{ data.issue.result[0].status_quo_schulze_rank }})
+      </li>
+      <li>
+        Zustimmungen: {{ data.initiative.result[0].positive_votes }}
+      </li>
+      <li>
+        Ablehnungen: {{ data.initiative.result[0].negative_votes }}
+      </li>
+    </ul>
+
+    <h3>Vergleiche</h3>
+      
+    <ul>
+      {% for p in data.battle.result if p.winning_initiative_id == data.initiative.result[0].id %}
+      <li>schlägt {{ p.losing_initiative_id }} ({{p.count}})</li>
+      {% endfor %}
+      {% for p in data.battle.result if p.losing_initiative_id == data.initiative.result[0].id %}
+      <li>geschlagen von {{ p.winning_initiative_id }} ({{p.count}})</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <h2>Informationen</h2>
+    <ul>
+      <li>
+        {{ data.initiative.result[0].supporter_count }} Unterstützer
+      </li>
+      <li>
+        <a href="{{ data.initiative.result[0].discussion_url }}">Diskussion mit den Antragstellern</a>
+      </li>
+    </ul>
+
+    <h2>Text</h2>
+    <div class="well" id="initiative">
+      <style>
+      #initiative h1 { font-size: 2em; }
+      #initiative h2 { font-size: 1.5em; }
+      </style>
+      {{ data.current_draft.result[0].content|safe }}
+    </div>
+
+    <p><strong>Stand: </strong>{{ data.current_draft.result[0].created|nicedate }}</p>
+
+  </div>
+
+</body>
+</html>

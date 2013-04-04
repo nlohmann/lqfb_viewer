@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Themen</title>
+
+  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+  <script type="text/javascript" src="/static/jquery/jquery.min.js"></script>
+
+  <link href="/static/jquery.tablesorter/css/theme.bootstrap.css" rel="stylesheet">
+  <script type="text/javascript" src="/static/jquery.tablesorter/js/jquery.tablesorter.min.js"></script>
+  <script type="text/javascript" src="/static/jquery.tablesorter/js/jquery.tablesorter.widgets.min.js"></script>
+
+  <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+  <script>
+  $(function() {
+
+    $.extend($.tablesorter.themes.bootstrap, {
+      // these classes are added to the table. To see other table classes available,
+      // look here: http://twitter.github.com/bootstrap/base-css.html#tables
+      table      : 'table table-bordered',
+      header     : 'bootstrap-header', // give the header a gradient background
+      footerRow  : '',
+      footerCells: '',
+      icons      : '', // add "icon-white" to make them white; this icon class is added to the <i> in the header
+      sortNone   : 'bootstrap-icon-unsorted',
+      sortAsc    : 'icon-chevron-up',
+      sortDesc   : 'icon-chevron-down',
+      active     : '', // applied when column is sorted
+      hover      : '', // use custom css here - bootstrap class may not override it
+      filterRow  : '', // filter row class
+      even       : '', // odd row zebra striping
+      odd        : ''  // even row zebra striping
+    });
+
+    // call the tablesorter plugin and apply the uitheme widget
+    $("table").tablesorter({
+      // this will apply the bootstrap theme if "uitheme" widget is included
+      // the widgetOptions.uitheme is no longer required to be set
+      theme : "bootstrap",
+
+      widthFixed: true,
+
+      headerTemplate : '{content} {icon}', // new in v2.7. Needed to add the bootstrap icon!
+
+      // widget code contained in the jquery.tablesorter.widgets.js file
+      // use the zebra stripe widget if you plan on hiding any rows (filter widget)
+      widgets : [ "uitheme", "filter", "zebra" ],
+
+      widgetOptions : {
+        // using the default zebra striping class name, so it actually isn't included in the theme variable above
+        // this is ONLY needed for bootstrap theming if you are using the filter widget, because rows are hidden
+        zebra : ["even", "odd"],
+
+        // reset filters button
+        filter_reset : ".reset"
+
+        // set the uitheme widget to use the bootstrap theme class names
+        // this is no longer required, if theme is set
+        // ,uitheme : "bootstrap"
+
+      }
+    })
+    .tablesorterPager({
+
+      // target the pager markup - see the HTML block below
+      container: $(".pager"),
+
+      // target the pager page select dropdown - choose a page
+      cssGoto  : ".pagenum",
+
+      // remove rows from the table to speed up the sort of large tables.
+      // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
+      removeRows: false,
+
+      // output string - default is '{page}/{totalPages}';
+      // possible variables: {page}, {totalPages}, {filteredPages}, {startRow}, {endRow}, {filteredRows} and {totalRows}
+      output: '{startRow} - {endRow} / {filteredRows} ({totalRows})'
+
+    });
+
+  });
+  $(function(){
+    $("#issues").tablesorter();
+  });
+  </script>
+
+</head>
+<body>
+
+  <div class="navbar navbar-inverse">
+    <div class="navbar-inner">
+      <a class="brand" href="/">LQFB</a>
+      <ul class="nav">
+        <li class="active"><a href="/themen">Themen</a></li>
+        <li><a href="/gliederungen">Gliederungen</a></li>
+        <li><a href="/regelwerke">Regelwerke</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <ul class="breadcrumb">
+    <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
+    <li class="active">Themen</li>
+  </ul>
+
+  <div class="container-fluid">
+
+    <div class="page-header">
+      <h1>Themen</h1>
+    </div>
+
+    <table class="table table-condensed tablesorter" id="issues">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Gliederung</th>
+          <th>Themenbereich</th>
+          <th>Regelwerk</th>
+          <th>Zustand</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in data.result %}
+        <tr>
+          <td><a href="/themen/{{p.id}}">{{p.id}}</a></td>
+          <td>{{ helper.unit[helper.unit2area[p.area_id]] }}</td>
+          <td>{{ helper.area[p.area_id] }}</td>
+          <td><a href="/regelwerke/{{ p.policy_id }}">{{ helper.policy[p.policy_id] }}</a></td>
+          <td>
+            {% if p.state == "admission" %}
+            <i class="icon-certificate"></i> neu
+            {% elif p.state == "discussion" %}
+            <i class="icon-comments"></i> in Diskussion
+            {% elif p.state == "verification" %}
+            <i class="icon-lock"></i> eingefroren
+            {% elif p.state == "voting" %}
+            <i class="icon-list-ol text-info"></i> in Abstimmung
+            {% elif p.state == "canceled_revoked_before_accepted" %}
+            <i class="icon-reply muted"></i> zurückgezogen
+            {% elif p.state == "canceled_issue_not_accepted" %}
+            <i class="icon-thumbs-down muted"></i> nicht zugelassen
+            {% elif p.state == "canceled_after_revocation_during_discussion" %}
+            <i class="icon-reply muted"></i> zurückgezogen
+            {% elif p.state == "canceled_after_revocation_during_verification" %}
+            <i class="icon-reply muted"></i> zurückgezogen
+            {% elif p.state == "calculation" %}
+            in Auszählung
+            {% elif p.state == "canceled_no_initiative_admitted" %}
+            <i class="icon-thumbs-down muted"></i> nicht zugelassen
+            {% elif p.state == "finished_without_winner" %}
+            <i class="icon-remove text-error"></i> abgeschlossen ohne Gewinner
+            {% elif p.state == "finished_with_winner" %}
+            <i class="icon-ok text-success"></i> abgeschlossen mit Gewinner
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+
+</body>
+</html>

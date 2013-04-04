@@ -201,7 +201,7 @@
       {% else %}
       {% if p.revoked %}
       <span class="label">zurückgezogen</span>
-      {% else %}
+      {% elif data.issue.result[0].state == "voting" %}
       <span class="label">Quroum nicht erreicht</span>
       {% endif %}
       {% endif %}

@@ -48,13 +48,13 @@ locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 
 # the Flask app
 app = Flask(__name__)
+app.debug = True
 
 # global dictionary for convenience data
 helper = dict()
 
 # cache
 cache = SimpleCache()
-
 
 #############
 # FUNCTIONS #
@@ -145,7 +145,7 @@ def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
         default = "eben gerade"
         now = datetime.utcnow()
         try:
-            date = datetime.strptime(s, "%Y-%m-%dT%H:%M:%S.%fZ")
+            date = datetime.strptime(s.encode("iso-8859-16"), "%Y-%m-%dT%H:%M:%S.%fZ")
         except ValueError, e:
             #return date in nice format if the conversion did not work
             return iso8601.parse_date(s).astimezone(pytz.timezone('Europe/Berlin')).strftime(format)
@@ -173,7 +173,8 @@ def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
                 elif 1 < diff.days < 7:
                     return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%A"))
                 elif diff.days > 6:
-                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d.%m."))
+                    date = date
+                    return u'<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d.%B").decode('utf-8'))
                 elif diff.days > 365:
                     return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d.%m.%Y"))
                 else:

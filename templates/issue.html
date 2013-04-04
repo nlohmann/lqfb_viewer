@@ -214,19 +214,19 @@
     <h2>Historie</h2>
     <ul>
       {% if data.issue.result[0].created %}
-      <li>neu: {{ data.issue.result[0].created|nicedate }}</li>
+      <li>neu: {{ data.issue.result[0].created|nicedate(timeago=False) }}</li>
       {% endif %}
       {% if data.issue.result[0].accepted %}
-      <li>in Diskussion: {{ data.issue.result[0].accepted|nicedate }}</li>
+      <li>in Diskussion: {{ data.issue.result[0].accepted|nicedate(timeago=False) }}</li>
       {% endif %}
       {% if data.issue.result[0].half_frozen %}
-      <li>eingefroren: {{ data.issue.result[0].half_frozen|nicedate }}</li>
+      <li>eingefroren: {{ data.issue.result[0].half_frozen|nicedate(timeago=False) }}</li>
       {% endif %}
       {% if data.issue.result[0].fully_frozen %}
-      <li>Beginn der Abstimmung: {{ data.issue.result[0].fully_frozen|nicedate }}</li>
+      <li>Beginn der Abstimmung: {{ data.issue.result[0].fully_frozen|nicedate(timeago=False) }}</li>
       {% endif %}
       {% if data.issue.result[0].closed %}
-      <li>geschlossen: {{ data.issue.result[0].closed|nicedate }}</li>
+      <li>geschlossen: {{ data.issue.result[0].closed|nicedate(timeago=False) }}</li>
       {% endif %}
     </ul>
 

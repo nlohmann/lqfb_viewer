@@ -33,7 +33,7 @@ import os
 from flask import Flask
 from flask import render_template
 from werkzeug.contrib.cache import SimpleCache
-from datetime import datetime, time
+import datetime
 
 # for German dates, time zones and ISO8601 translation
 import locale
@@ -143,13 +143,8 @@ def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
         return iso8601.parse_date(s).astimezone(pytz.timezone('Europe/Berlin')).strftime(format)
     else:
         default = "eben gerade"
-        now = datetime.utcnow()
-        try:
-            date = datetime.strptime(s.encode("iso-8859-16"), "%Y-%m-%dT%H:%M:%S.%fZ")
-        except ValueError, e:
-            #return date in nice format if the conversion did not work
-            return iso8601.parse_date(s).astimezone(pytz.timezone('Europe/Berlin')).strftime(format)
-        #create datetime for difference of today and given date
+        now = datetime.datetime.utcnow()
+        date = datetime.datetime.strptime(s.encode("iso-8859-16"), "%Y-%m-%dT%H:%M:%S.%fZ")
         diff = now - date
 
         #verschiedene zeitperioden - woche, monat, jahre eingebaut, falls benoetigt
@@ -158,25 +153,26 @@ def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
             (diff.days / 30, "Monat", "Monate"),
             (diff.days / 7, "Woche", "Wochen"),
             (diff.days, "Tag", "Tagen"),
-            (diff.seconds / 3600, "Stunde", "Stunden"),
+            #TODO: Fix that m*therf***ing hack down here !!!
+            (diff.seconds / 3600 + 2, "Stunde", "Stunden"),
             (diff.seconds / 60, "Minute", "Minuten"),
             (diff.seconds, "Sekunde", "Sekunden"),
         )
         #import locale
         #locale.setlocale(locale.LC_ALL, 'deutsch')
-        dateFormatted = datetime.strftime(date, "%d.%m.%Y %H:%M:%S")
+        dateFormatted = datetime.datetime.strftime(date, "%d.%m.%Y %H:%M:%S")
         for period, singular, plural in periods:
 
             if period:
                 if diff.days == 1:
                     return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, "gestern")
                 elif 1 < diff.days < 7:
-                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%A"))
+                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.datetime.strftime(date, "%A"))
                 elif diff.days > 6:
                     date = date
-                    return u'<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d. %B").decode('utf-8'))
+                    return u'<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.datetime.strftime(date, "%d. %B").decode('utf-8'))
                 elif diff.days > 365:
-                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d.%m.%Y"))
+                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.datetime.strftime(date, "%d.%m.%Y"))
                 else:
                     return '<span data-toggle="tooltip" title="%s">vor %d %s</span>' % (dateFormatted, period, singular if period == 1 else plural)
 

@@ -12,30 +12,59 @@
   <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
   <style>
-  time,.time{
-    font-size: 10px; color:gray; border-bottom: 1px solid #E7EBF2; min-width:350px; height:20px; padding-bottom: 5px;
+  .time {
+    font-size: 10px;
+    color:gray;
+    border-bottom: 1px solid #E7EBF2;
+    min-width:350px;
+    height:20px;
+    padding-bottom: 5px;
   }
-  #timeline{
-    width:800px; list-style-type: none; background: url('/static/timeline/timeline.png') top center repeat-y; margin: 0 auto; padding:20px; margin-bottom:10px;
+  #timeline {
+    width:800px;
+    list-style-type: none;
+    background: url('/static/timeline/timeline.png') top center repeat-y;
+    margin: 0 auto;
+    padding:20px;
+    margin-bottom:10px;
   }
 
-  #timeline > li{
-    width:375px; -moz-border-radius:2px; border-radius:2px; webkit-border-radius:2px; border:1px solid #c3ccdf; padding:5px;background-color:#FFF;
+  #timeline > li {
+    width:375px;
+    -moz-border-radius:2px;
+    border-radius:2px;
+    webkit-border-radius:2px;
+    border:1px solid #c3ccdf;
+    padding:5px;
+    background-color:#FFF;
   }
 
   #timeline > li:nth-of-type(odd){
-    clear: both;float:right; 
+    clear: both;
+    float:right; 
   }
 
-  #timeline > li:nth-of-type(odd), #timeline > li:nth-of-type(even){
+  #timeline > li:nth-of-type(odd),
+  #timeline > li:nth-of-type(even) {
     margin:-10px 0 20px 0;
   }
-  #timeline > li:nth-of-type(even) .corner{
-    position:absolute; display:block; margin-left:380px;width:20px;	height:15px;background:url('/static/timeline/right.png');
+
+  #timeline > li:nth-of-type(even) .corner {
+    position: absolute;
+    display:block;
+    margin-left:380px;
+    width:20px;
+    height:15px;
+    background:url('/static/timeline/right.png');
   }
-  #timeline > li:nth-of-type(odd) .corner{
-    position:absolute;display:block;margin-left:-25px;width:20px;height:15px;background:url('/static/timeline/left.png');
-  }  
+  #timeline > li:nth-of-type(odd) .corner {
+    position:absolute;
+    display:block;
+    margin-left:-25px;
+    width:20px;
+    height:15px;
+    background:url('/static/timeline/left.png');
+  }
   </style>
 </head>
 <body>
@@ -126,6 +155,14 @@
           <input type="checkbox" checked="checked" id="canceled_revoked_before_accepted">
           abgebrochen
         </label>
+        <label class="checkbox inline">
+          <input type="checkbox" checked="checked" id="open_issue">
+          offen
+        </label>
+        <label class="checkbox inline">
+          <input type="checkbox" checked="checked" id="closed_issue">
+          beendet
+        </label>
       </div>
     </div>
 
@@ -164,6 +201,12 @@
     $('#finished_with_winner').click(function() {
       $('.finished_with_winner').toggle(function() { });
     });
+    $('#closed_issue').click(function() {
+      $('.closed_issue').toggle(function() { });
+    });
+    $('#open_issue').click(function() {
+      $('.open_issue').toggle(function() { });
+    });
     </script>
     
     <style>
@@ -181,8 +224,10 @@
 
     <ol id="timeline">
       {% for p in data.event.result | sort(reverse=True,attribute='occurrence') %}
-      <li class="{{p.state}} {{p.event}}">
-        <div class="time">{{ p.occurrence|nicedate }}</div>
+      <li class="{{p.state}} {{p.event}}{% if data.issue.result[p.issue_id-1].closed %} closed_issue{% else %} open_issue{% endif %}">
+        <div class="time">
+          {{ p.occurrence|nicedate }}
+        </div>
         <span class="corner"></span>
         {% if p.event == "issue_state_changed" %}
         {% if p.state == "discussion" %}

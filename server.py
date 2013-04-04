@@ -169,6 +169,7 @@ def show_events():
     data = dict()
     data['event'] = get_all('/event')
     data['initiative'] = get_all('/initiative')
+    data['issue'] = get_all('/issue')
     data['suggestion'] = get_all('/suggestion?rendered_content=html')
     return render_template('events.html', data=data, helper=helper)
 

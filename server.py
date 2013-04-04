@@ -26,6 +26,8 @@
 
 import json
 import urllib2
+import sys
+import os
 
 # everything for Flask
 from flask import Flask
@@ -70,8 +72,9 @@ def cache_load(url):
 
 # preload ceartain information for convenience
 def prepare():
-    print('loading settings...')
-    settings = json.load(open('settings.json'))
+    settings_file = os.path.abspath(os.path.dirname(sys.argv[0])) + '/settings.json'
+    print('loading settings from ' + settings_file + '...')
+    settings = json.load(open(settings_file))
     helper['settings'] = settings
 
     # policies

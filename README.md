@@ -21,7 +21,7 @@ eingerichtet.
 
 ### Konfiguration
 
-Standardmäßig ist die Instanz der [SMV Mecklenburg-Vorpommern](http://smv.piratenpartei-mv.de) als Datenquelle angegeben. Andere Quellen können durch setzen der Variablen `API_URL` und `LQFB_URL` festgelegt werden.
+Standardmäßig ist die Instanz der [SMV Mecklenburg-Vorpommern](http://smv.piratenpartei-mv.de) als Datenquelle angegeben. Andere Quellen können durch setzen der Felder `api_url` und `lqfb_url` in der Datei `settings.json` festgelegt werden.
 
 ### Server starten
 

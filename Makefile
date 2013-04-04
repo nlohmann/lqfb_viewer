@@ -22,6 +22,7 @@ statics:
 clean:
 	rm -fr components
 	rm -fr node_modules
+	rm -fr *.pyc
 
 veryclean: clean
 	rm -fr static

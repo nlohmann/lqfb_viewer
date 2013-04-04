@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="utf-8">
-  <title>Thema {{data.issue.result[0].id}}</title>
+  <title>LQFB › Thema {{data.issue.result[0].id}}</title>
 
   <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
@@ -32,7 +32,7 @@
     <div class="page-header">
       <h1>
         {% if data.issue.result[0].state == "voting" %}
-        <a href="{{helper['LQFB_URL']}}/vote/list.html?issue_id={{data.issue.result[0].id}}" class="btn btn-warning btn-large pull-right" type="button" style="margin-top: 1.5em;">abstimmen</a>
+        <a href="{{helper.settings.lqfb_url}}/vote/list.html?issue_id={{data.issue.result[0].id}}" class="btn btn-warning btn-large pull-right" type="button" style="margin-top: 1.5em;">abstimmen</a>
         {% endif %}
         {% if data.issue.result[0].state == "admission" %}
         <i class="icon-certificate icon-2x pull-left"></i>

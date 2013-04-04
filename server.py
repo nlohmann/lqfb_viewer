@@ -174,7 +174,7 @@ def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
                     return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%A"))
                 elif diff.days > 6:
                     date = date
-                    return u'<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d.%B").decode('utf-8'))
+                    return u'<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d. %B").decode('utf-8'))
                 elif diff.days > 365:
                     return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d.%m.%Y"))
                 else:

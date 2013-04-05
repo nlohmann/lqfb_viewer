@@ -76,7 +76,7 @@ def fix_path():
     if os.path.dirname(__file__) == "":
         return ""
     else:
-        return s.path.dirname(__file__) + "/"
+        return os.path.dirname(__file__) + "/"
 
 # preload ceartain information for convenience
 def prepare():

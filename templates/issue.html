@@ -35,31 +35,7 @@
         {% if data.issue.result[0].state == "voting" %}
         <a href="{{helper.settings.lqfb_url}}/vote/list.html?issue_id={{data.issue.result[0].id}}" target="lqfb_window" class="btn btn-warning btn-large pull-right" type="button" style="margin-top: 1.5em;">abstimmen</a>
         {% endif %}
-        {% if data.issue.result[0].state == "admission" %}
-        <i class="icon-certificate icon-2x pull-left"></i>
-        {% elif data.issue.result[0].state == "discussion" %}
-        <i class="icon-comments icon-2x pull-left"></i>
-        {% elif data.issue.result[0].state == "verification" %}
-        <i class="icon-lock icon-2x pull-left"></i>
-        {% elif data.issue.result[0].state == "voting" %}
-        <i class="icon-list-ol text-info icon-2x pull-left"></i>
-        {% elif data.issue.result[0].state == "canceled_revoked_before_accepted" %}
-        <i class="icon-reply muted icon-2x pull-left"></i>
-        {% elif data.issue.result[0].state == "canceled_issue_not_accepted" %}
-        <i class="icon-thumbs-down muted icon-2x pull-left"></i>
-        {% elif data.issue.result[0].state == "canceled_after_revocation_during_discussion" %}
-        <i class="icon-reply muted icon-2x pull-left"></i>
-        {% elif data.issue.result[0].state == "canceled_after_revocation_during_verification" %}
-        <i class="icon-reply muted icon-2x pull-left"></i>
-        {% elif data.issue.result[0].state == "calculation" %}
-        in Auszählung
-        {% elif data.issue.result[0].state == "canceled_no_initiative_admitted" %}
-        <i class="icon-thumbs-down muted icon-2x pull-left"></i>
-        {% elif data.issue.result[0].state == "finished_without_winner" %}
-        <i class="icon-remove text-error icon-2x pull-left"></i>
-        {% elif data.issue.result[0].state == "finished_with_winner" %}
-        <i class="icon-ok text-success icon-2x pull-left"></i>
-        {% endif %}
+        <i class="{{ helper.enums.issue[data.issue.result[0].state].icon }}{% if helper.enums.issue[data.issue.result[0].state].color %} {{ helper.enums.issue[data.issue.result[0].state].color }}{% endif %} icon-2x pull-left"></i>
         <small>{{ helper.policy[data.issue.result[0].policy_id] }}</small><br><i class="icon-list-alt"></i> Thema {{data.issue.result[0].id}}
       </h1>
     </div>

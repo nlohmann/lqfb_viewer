@@ -132,31 +132,7 @@
           <td>{{ helper.area[p.area_id] }}</td>
           <td><a href="/regelwerke/{{ p.policy_id }}">{{ helper.policy[p.policy_id] }}</a></td>
           <td>
-            {% if p.state == "admission" %}
-            <i class="icon-certificate"></i> neu
-            {% elif p.state == "discussion" %}
-            <i class="icon-comments"></i> in Diskussion
-            {% elif p.state == "verification" %}
-            <i class="icon-lock"></i> eingefroren
-            {% elif p.state == "voting" %}
-            <i class="icon-list-ol text-info"></i> in Abstimmung
-            {% elif p.state == "canceled_revoked_before_accepted" %}
-            <i class="icon-reply muted"></i> zurückgezogen
-            {% elif p.state == "canceled_issue_not_accepted" %}
-            <i class="icon-thumbs-down muted"></i> nicht zugelassen
-            {% elif p.state == "canceled_after_revocation_during_discussion" %}
-            <i class="icon-reply muted"></i> zurückgezogen
-            {% elif p.state == "canceled_after_revocation_during_verification" %}
-            <i class="icon-reply muted"></i> zurückgezogen
-            {% elif p.state == "calculation" %}
-            in Auszählung
-            {% elif p.state == "canceled_no_initiative_admitted" %}
-            <i class="icon-thumbs-down muted"></i> nicht zugelassen
-            {% elif p.state == "finished_without_winner" %}
-            <i class="icon-remove text-error"></i> abgeschlossen ohne Gewinner
-            {% elif p.state == "finished_with_winner" %}
-            <i class="icon-ok text-success"></i> abgeschlossen mit Gewinner
-            {% endif %}
+            <i class="{{ helper.enums.issue[p.state].icon }}{% if helper.enums.issue[p.state].color %} {{ helper.enums.issue[p.state].color }}{% endif %}"></i> {{ helper.enums.issue[p.state].name }}
           </td>
         </tr>
         {% endfor %}

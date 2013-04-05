@@ -71,16 +71,24 @@ def cache_load(url):
         cache.set(url, rv, timeout=5 * 60)
     return rv
 
+# create a path prefix
+def fix_path():
+    if os.path.dirname(__file__) == "":
+        return ""
+    else:
+        return s.path.dirname(__file__) + "/"
 
 # preload ceartain information for convenience
 def prepare():
-    if os.path.dirname(__file__) == "":
-        settings_file = 'settings.json'
-    else:
-        settings_file = os.path.dirname(__file__) + '/settings.json'
-    print('loading settings from ' + settings_file + '...')
-    settings = json.load(open(settings_file))
-    helper['settings'] = settings
+    # load settings
+    settings_file = fix_path() + 'settings.json'
+    print('+ loading settings from ' + settings_file + '...')
+    helper['settings'] = json.load(open(settings_file))
+
+    # load enums
+    enums_file = fix_path() + 'enums.json'
+    print('+ loading enums from ' + enums_file + '...')
+    helper['enums'] = json.load(open(enums_file))
 
     # number of http requests
     helper['requests'] = 0

@@ -1,0 +1,90 @@
+{
+  "issue": {
+    "admission": {
+      "name": "neu",
+      "icon": "icon-certificate",
+      "color": ""
+    },
+    "discussion": {
+      "name": "in Diskussion",
+      "icon": "icon-comments",
+      "color": ""
+    },
+    "verification": {
+      "name": "eingefroren",
+      "icon": "icon-lock",
+      "color": ""
+    },
+    "voting": {
+      "name": "in Abstimmung",
+      "icon": "icon-list-ol",
+      "color": "text-info"
+    },
+    "canceled_revoked_before_accepted": {
+      "name": "zurückgezogen",
+      "icon": "icon-reply",
+      "color": "muted"
+    },
+    "canceled_issue_not_accepted": {
+      "name": "nicht zugelassen",
+      "icon": "icon-thumbs-down",
+      "color": "muted"
+    },
+    "canceled_after_revocation_during_discussion": {
+      "name": "zurückgezogen",
+      "icon": "icon-reply",
+      "color": "muted"
+    },
+    "canceled_after_revocation_during_verification": {
+      "name": "zurückgezogen",
+      "icon": "icon-reply",
+      "color": "muted"
+    },
+    "calculation": {
+      "name": "in Auszählung",
+      "icon": "icon-spinner",
+      "color": ""
+    },
+    "canceled_no_initiative_admitted": {
+      "name": "nicht zugelassen",
+      "icon": "icon-thumbs-down",
+      "color": "muted"
+    },
+    "finished_without_winner": {
+      "name": "abgeschlossen ohne Gewinner",
+      "icon": "icon-remove",
+      "color": "text-error"
+    },
+    "finished_with_winner": {
+      "name": "abgeschlossen mit Gewinner",
+      "icon": "icon-ok",
+      "color": "text-success"
+    }
+  },
+  "event": {
+    "issue_state_changed": {
+      "name": "",
+      "icon": ""
+    },
+    "initiative_created_in_new_issue": {
+      "name": "neues Thema",
+      "icon": "icon-list-alt"
+    },
+    "initiative_created_in_existing_issue": {
+      "name": "neue Initiative",
+      "icon": "icon-file-alt"
+    },
+    "initiative_revoked": {
+      "name": "Initiative zurückgezogen",
+      "icon": "icon-reply"
+    },
+    "new_draft_created": {
+      "name": "neuer Entwurf",
+      "icon": "icon-paste"
+    },
+    "suggestion_created": {
+      "name": "neue Anregung",
+      "icon": "icon-lightbulb"
+    }
+  }
+}

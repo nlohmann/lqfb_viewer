@@ -66,6 +66,7 @@ def cache_load(url):
     rv = cache.get(url)
     if rv is None:
         print '+ fetching ' + url
+        helper['requests'] += 1
         rv = json.load(urllib2.urlopen(url))
         cache.set(url, rv, timeout=5 * 60)
     return rv
@@ -80,6 +81,9 @@ def prepare():
     print('loading settings from ' + settings_file + '...')
     settings = json.load(open(settings_file))
     helper['settings'] = settings
+
+    # number of http requests
+    helper['requests'] = 0
 
     # policies
     helper['policy'] = dict()

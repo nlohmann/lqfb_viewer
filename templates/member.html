@@ -23,7 +23,7 @@
 
     {% if data.member_image.result.1 %}
     <img class="img-rounded pull-right" src="data:{{data.member_image.result.1.content_type}};base64,{{data.member_image.result.1.data}}"/>
-    {% elif data.member_image.result.1 %}
+    {% elif data.member_image.result.0 %}
     <img class="img-rounded pull-right" src="data:{{data.member_image.result.0.content_type}};base64,{{data.member_image.result.0.data}}"/>
     {% endif %}
 

@@ -1,93 +1,78 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="utf-8">
-  <title>LQFB › Ereignisse</title>
+{% extends "_base.html" %}
 
-  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+{% block title %}LQFB › Ereignisse{% endblock %}
 
-  <script type="text/javascript" src="/static/jquery/jquery.min.js"></script>
+{% block head %}
+{{ super() }}
 
-  <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+<script type="text/javascript" src="/static/jquery/jquery.min.js"></script>
 
-  <style>
-  .time {
-    font-size: 10px;
-    color:gray;
-    border-bottom: 1px solid #E7EBF2;
-    min-width:350px;
-    height:20px;
-    padding-bottom: 5px;
-  }
-  #timeline {
-    width:800px;
-    list-style-type: none;
-    background: url('/static/timeline/timeline.png') top center repeat-y;
-    margin: 0 auto;
-    padding:20px;
-    margin-bottom:10px;
-  }
+<style>
+.time {
+  font-size: 10px;
+  color:gray;
+  border-bottom: 1px solid #E7EBF2;
+  min-width:350px;
+  height:20px;
+  padding-bottom: 5px;
+}
+#timeline {
+  width:800px;
+  list-style-type: none;
+  background: url('/static/timeline/timeline.png') top center repeat-y;
+  margin: 0 auto;
+  padding:20px;
+  margin-bottom:10px;
+}
 
-  #timeline > li {
-    width:375px;
-    -moz-border-radius:2px;
-    border-radius:2px;
-    webkit-border-radius:2px;
-    border:1px solid #c3ccdf;
-    padding:5px;
-    background-color:#FFF;
-  }
+#timeline > li {
+  width:375px;
+  -moz-border-radius:2px;
+  border-radius:2px;
+  webkit-border-radius:2px;
+  border:1px solid #c3ccdf;
+  padding:5px;
+  background-color:#FFF;
+}
 
-  #timeline > li:nth-of-type(odd){
-    clear: both;
-    float:right; 
-  }
+#timeline > li:nth-of-type(odd){
+  clear: both;
+  float:right; 
+}
 
-  #timeline > li:nth-of-type(odd),
-  #timeline > li:nth-of-type(even) {
-    margin:-10px 0 20px 0;
-  }
+#timeline > li:nth-of-type(odd),
+#timeline > li:nth-of-type(even) {
+  margin:-10px 0 20px 0;
+}
 
-  #timeline > li:nth-of-type(even) .corner {
-    position: absolute;
-    display:block;
-    margin-left:380px;
-    width:20px;
-    height:15px;
-    background:url('/static/timeline/right.png');
-  }
-  #timeline > li:nth-of-type(odd) .corner {
-    position:absolute;
-    display:block;
-    margin-left:-25px;
-    width:20px;
-    height:15px;
-    background:url('/static/timeline/left.png');
-  }
-  </style>
-</head>
-<body>
+#timeline > li:nth-of-type(even) .corner {
+  position: absolute;
+  display:block;
+  margin-left:380px;
+  width:20px;
+  height:15px;
+  background:url('/static/timeline/right.png');
+}
+#timeline > li:nth-of-type(odd) .corner {
+  position:absolute;
+  display:block;
+  margin-left:-25px;
+  width:20px;
+  height:15px;
+  background:url('/static/timeline/left.png');
+}
+</style>
+{% endblock %}
 
-  <div class="navbar navbar-inverse">
-    <div class="navbar-inner">
-      <a class="brand" href="/">LQFB</a>
-      <ul class="nav">
-        <li><a href="/themen"><i class="icon-list-alt"></i> Themen</a></li>
-        <li><a href="/gliederungen"><i class="icon-sitemap"></i> Gliederungen</a></li>
-        <li><a href="/regelwerke"><i class="icon-book"></i> Regelwerke</a></li>
-        <li class="active"><a href="/ereignisse"><i class="icon-info-sign"></i> Ereignisse</a></li>
-      </ul>
-    </div>
-  </div>
-
+{% block navigation %}
+{{ super() }}
   <ul class="breadcrumb">
     <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
     <li class="active">Ereignisse</li>
   </ul>
+{% endblock %}
 
-  <div class="container-fluid">
-
+{% block content %}
     <div class="page-header">
       <h1><i class="icon-info-sign"></i> Ereignisse</h1>
     </div>
@@ -299,7 +284,4 @@
       </li>
       {% endfor %}
     </ol>
-
-  </div>
-</body>
-</html>
+{% endblock %}

@@ -1,29 +1,8 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="utf-8">
-  <title>LQFB</title>
+{% extends "_base.html" %}
 
-  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-  <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-</head>
-<body>
+{% block title %}LQFB{% endblock %}
 
-  <div class="navbar navbar-inverse">
-    <div class="navbar-inner">
-      <a class="brand" href="/">LQFB</a>
-      <ul class="nav">
-        <li><a href="/themen"><i class="icon-list-alt"></i> Themen</a></li>
-        <li><a href="/gliederungen"><i class="icon-sitemap"></i> Gliederungen</a></li>
-        <li><a href="/regelwerke"><i class="icon-book"></i> Regelwerke</a></li>
-        <li><a href="/ereignisse"><i class="icon-info-sign"></i> Ereignisse</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="container-fluid">
-
+{% block content %}
     <div class="hero-unit">
       <i class="icon-plus-sign pull-right" style="margin-top: -0.2em; font-size: 200px; color: #ddd;"></i>
       <h1>LiquidFeedback</h1>
@@ -33,7 +12,6 @@
         <a href="{{ helper.settings.api_url }}">API {{ data.api_version }}</a>
       </p>
     </div>
-    
     
     <section class="clearfix">
       <div class="row" style="text-align: center; color: #333;">
@@ -58,13 +36,14 @@
           <h2><i class="icon-info-sign" style="color: #333"></i> <a href="/ereignisse" style="color: #333">Ereignisse</a></h2></h2>
         </div>
       </div>
+      <div class="row" style="text-align: center; color: #333;">
+        <div class="span4">
+          <h2><i class="icon-cog"></i> <a href="/einstellungen" style="color: #333">Einstellungen</a></h2>
+        </div>
+        <div class="span4" style="color: #bbb;">
+          <h2><i class="icon-user"></i> <a href="/mitglieder" style="color: #bbb;">Mitglieder</a></h2>
+        </div>
+      </div>
     </section>
     
-  </div>
-
-<a href="https://github.com/nlohmann/lqfb_viewer"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
-
-<div class="muted" style="position: absolute; bottom: 5px; right: 5px">{{helper.requests}}</div>
-
-</body>
-</html>
+{% endblock %}

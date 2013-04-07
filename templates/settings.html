@@ -1,0 +1,46 @@
+{% extends "_base.html" %}
+
+{% block title %}LQFB › Einstellungen{% endblock %}
+
+{% block navigation %}
+{{ super() }}
+  <ul class="breadcrumb">
+    <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
+    <li class="active">Einstellungen</li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+      <h1><i class="icon-cog"></i> Einstellungen</h1>
+    </div>
+
+    <form class="form-horizontal" action="einstellungen" method="post">
+      <fieldset>
+
+        <!-- Form Name -->
+        <legend>Einstellungen</legend>
+
+        <!-- Text input-->
+        <div class="control-group">
+          <label class="control-label">API-Schlüssel</label>
+          <div class="controls">
+            <input id="api_key" value="{{ session.api_key }}" name="api_key" type="text" class="input-xlarge">
+            <p class="help-block">Du kannst den API-Schlüssel in den <a href="{{ helper.settings.lqfb_url }}/member/developer_settings.html">Entwicklereinstellungen</a> erzeugen.</p>
+          </div>
+        </div>
+
+        <!-- Button -->
+        <div class="control-group">
+          <label class="control-label"></label>
+          <div class="controls">
+            <button name="submit_key" class="btn btn-primary">Schlüssel speichern</button>
+            <button name="delete_key" class="btn btn-danger">Schlüssel löschen</button>
+          </div>
+        </div>
+
+      </fieldset>
+    </form>
+
+  </div>
+{% endblock %}

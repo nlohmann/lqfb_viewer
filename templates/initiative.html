@@ -1,35 +1,17 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="utf-8">
-  <title>LQFB › Initiative {{data.initiative.result[0].id}}: {{data.initiative.result[0].name}}</title>
+{% extends "_base.html" %}
 
-  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-  <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-</head>
-<body>
+{% block title %}LQFB › Initiative {{data.initiative.result[0].id}}: {{data.initiative.result[0].name}}{% endblock %}
 
-  <div class="navbar navbar-inverse">
-    <div class="navbar-inner">
-      <a class="brand" href="/">LQFB</a>
-      <ul class="nav">
-        <li class="active"><a href="/themen"><i class="icon-list-alt"></i> Themen</a></li>
-        <li><a href="/gliederungen"><i class="icon-sitemap"></i> Gliederungen</a></li>
-        <li><a href="/regelwerke"><i class="icon-book"></i> Regelwerke</a></li>
-        <li><a href="/ereignisse"><i class="icon-info-sign"></i> Ereignisse</a></li>
-      </ul>
-    </div>
-  </div>
-
+{% block navigation %}
+{{ super() }}
   <ul class="breadcrumb">
     <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
     <li><a href="/initiativen">Initiativen</a> <span class="divider">/</span></li>
     <li class="active">Initiative {{data.initiative.result[0].id}}: {{data.initiative.result[0].name}}</li>
   </ul>
+{% endblock %}
 
-  <div class="container-fluid">
-
+{% block content %}
     <div class="page-header">
       <h1>
         <small>Initiative {{data.initiative.result[0].id}}</small>
@@ -86,8 +68,4 @@
     </div>
 
     <p><strong>Stand: </strong>{{ data.current_draft.result[0].created|nicedate(timeago=False) }}</p>
-
-  </div>
-
-</body>
-</html>
+{% endblock %}

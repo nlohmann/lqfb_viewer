@@ -1,115 +1,96 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="utf-8">
-  <title>LQFB › Themen</title>
+{% extends "_base.html" %}
 
-  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+{% block title %}LQFB › Themen{% endblock %}
 
-  <script type="text/javascript" src="/static/jquery/jquery.min.js"></script>
+{% block head %}
+{{ super() }}
+<link href="/static/jquery.tablesorter/css/theme.bootstrap.css" rel="stylesheet">
+<script type="text/javascript" src="/static/jquery.tablesorter/js/jquery.tablesorter.min.js"></script>
+<script type="text/javascript" src="/static/jquery.tablesorter/js/jquery.tablesorter.widgets.min.js"></script>
 
-  <link href="/static/jquery.tablesorter/css/theme.bootstrap.css" rel="stylesheet">
-  <script type="text/javascript" src="/static/jquery.tablesorter/js/jquery.tablesorter.min.js"></script>
-  <script type="text/javascript" src="/static/jquery.tablesorter/js/jquery.tablesorter.widgets.min.js"></script>
+<script>
+$(function() {
 
-  <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  $.extend($.tablesorter.themes.bootstrap, {
+    // these classes are added to the table. To see other table classes available,
+    // look here: http://twitter.github.com/bootstrap/base-css.html#tables
+    table      : 'table table-bordered',
+    header     : 'bootstrap-header', // give the header a gradient background
+    footerRow  : '',
+    footerCells: '',
+    icons      : '', // add "icon-white" to make them white; this icon class is added to the <i> in the header
+    sortNone   : 'bootstrap-icon-unsorted',
+    sortAsc    : 'icon-chevron-up',
+    sortDesc   : 'icon-chevron-down',
+    active     : '', // applied when column is sorted
+    hover      : '', // use custom css here - bootstrap class may not override it
+    filterRow  : '', // filter row class
+    even       : '', // odd row zebra striping
+    odd        : ''  // even row zebra striping
+  });
 
-  <script>
-  $(function() {
+  // call the tablesorter plugin and apply the uitheme widget
+  $("table").tablesorter({
+    // this will apply the bootstrap theme if "uitheme" widget is included
+    // the widgetOptions.uitheme is no longer required to be set
+    theme : "bootstrap",
 
-    $.extend($.tablesorter.themes.bootstrap, {
-      // these classes are added to the table. To see other table classes available,
-      // look here: http://twitter.github.com/bootstrap/base-css.html#tables
-      table      : 'table table-bordered',
-      header     : 'bootstrap-header', // give the header a gradient background
-      footerRow  : '',
-      footerCells: '',
-      icons      : '', // add "icon-white" to make them white; this icon class is added to the <i> in the header
-      sortNone   : 'bootstrap-icon-unsorted',
-      sortAsc    : 'icon-chevron-up',
-      sortDesc   : 'icon-chevron-down',
-      active     : '', // applied when column is sorted
-      hover      : '', // use custom css here - bootstrap class may not override it
-      filterRow  : '', // filter row class
-      even       : '', // odd row zebra striping
-      odd        : ''  // even row zebra striping
-    });
+    widthFixed: true,
 
-    // call the tablesorter plugin and apply the uitheme widget
-    $("table").tablesorter({
-      // this will apply the bootstrap theme if "uitheme" widget is included
-      // the widgetOptions.uitheme is no longer required to be set
-      theme : "bootstrap",
+    headerTemplate : '{content} {icon}', // new in v2.7. Needed to add the bootstrap icon!
 
-      widthFixed: true,
+    // widget code contained in the jquery.tablesorter.widgets.js file
+    // use the zebra stripe widget if you plan on hiding any rows (filter widget)
+    widgets : [ "uitheme", "filter", "zebra" ],
 
-      headerTemplate : '{content} {icon}', // new in v2.7. Needed to add the bootstrap icon!
+    widgetOptions : {
+      // using the default zebra striping class name, so it actually isn't included in the theme variable above
+      // this is ONLY needed for bootstrap theming if you are using the filter widget, because rows are hidden
+      zebra : ["even", "odd"],
 
-      // widget code contained in the jquery.tablesorter.widgets.js file
-      // use the zebra stripe widget if you plan on hiding any rows (filter widget)
-      widgets : [ "uitheme", "filter", "zebra" ],
+      // reset filters button
+      filter_reset : ".reset"
 
-      widgetOptions : {
-        // using the default zebra striping class name, so it actually isn't included in the theme variable above
-        // this is ONLY needed for bootstrap theming if you are using the filter widget, because rows are hidden
-        zebra : ["even", "odd"],
+      // set the uitheme widget to use the bootstrap theme class names
+      // this is no longer required, if theme is set
+      // ,uitheme : "bootstrap"
 
-        // reset filters button
-        filter_reset : ".reset"
+    }
+  })
+  .tablesorterPager({
 
-        // set the uitheme widget to use the bootstrap theme class names
-        // this is no longer required, if theme is set
-        // ,uitheme : "bootstrap"
+    // target the pager markup - see the HTML block below
+    container: $(".pager"),
 
-      }
-    })
-    .tablesorterPager({
+    // target the pager page select dropdown - choose a page
+    cssGoto  : ".pagenum",
 
-      // target the pager markup - see the HTML block below
-      container: $(".pager"),
+    // remove rows from the table to speed up the sort of large tables.
+    // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
+    removeRows: false,
 
-      // target the pager page select dropdown - choose a page
-      cssGoto  : ".pagenum",
-
-      // remove rows from the table to speed up the sort of large tables.
-      // setting this to false, only hides the non-visible rows; needed if you plan to add/remove rows with the pager enabled.
-      removeRows: false,
-
-      // output string - default is '{page}/{totalPages}';
-      // possible variables: {page}, {totalPages}, {filteredPages}, {startRow}, {endRow}, {filteredRows} and {totalRows}
-      output: '{startRow} - {endRow} / {filteredRows} ({totalRows})'
-
-    });
+    // output string - default is '{page}/{totalPages}';
+    // possible variables: {page}, {totalPages}, {filteredPages}, {startRow}, {endRow}, {filteredRows} and {totalRows}
+    output: '{startRow} - {endRow} / {filteredRows} ({totalRows})'
 
   });
-  $(function(){
-    $("#issues").tablesorter();
-  });
-  </script>
 
-</head>
-<body>
+});
+$(function(){
+  $("#issues").tablesorter();
+});
+</script>
+{% endblock %}
 
-  <div class="navbar navbar-inverse">
-    <div class="navbar-inner">
-      <a class="brand" href="/">LQFB</a>
-      <ul class="nav">
-        <li class="active"><a href="/themen"><i class="icon-list-alt"></i> Themen</a></li>
-        <li><a href="/gliederungen"><i class="icon-sitemap"></i> Gliederungen</a></li>
-        <li><a href="/regelwerke"><i class="icon-book"></i> Regelwerke</a></li>
-        <li><a href="/ereignisse"><i class="icon-info-sign"></i> Ereignisse</a></li>
-      </ul>
-    </div>
-  </div>
-
+{% block navigation %}
+{{ super() }}
   <ul class="breadcrumb">
     <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
     <li class="active">Themen</li>
   </ul>
+{% endblock %}
 
-  <div class="container-fluid">
-
+{% block content %}
     <div class="page-header">
       <h1><i class="icon-list-alt"></i> Themen</h1>
     </div>
@@ -140,6 +121,4 @@
     </table>
 
   </div>
-
-</body>
-</html>
+{% endblock %}

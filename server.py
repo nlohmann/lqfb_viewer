@@ -26,12 +26,15 @@
 #############################################################################
 
 import json
-import urllib2
+import requests
 import os
 
 # everything for Flask
 from flask import Flask
 from flask import render_template
+from flask import request
+from flask import session
+from flask import flash
 from werkzeug.contrib.cache import SimpleCache
 import datetime
 
@@ -49,6 +52,7 @@ locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 # the Flask app
 app = Flask(__name__)
 app.debug = True
+app.secret_key = 'secret'
 
 # global dictionary for convenience data
 helper = dict()
@@ -61,15 +65,68 @@ cache = SimpleCache()
 #############
 
 # cached loading of JSON objects: we use the URL as key
-def cache_load(url):
+def cache_load(url, session=None):
+    url_copy = url
+    
+    if session != None:
+        if 'session_key' in session:
+            if url.find('?') != -1:
+                seperator = '&'
+            else:
+                seperator = '?'
+            url = url + seperator + "session_key=" + session['session_key']
+
     url = helper['settings']['api_url'] + url
     rv = cache.get(url)
     if rv is None:
         print '+ fetching ' + url
         helper['requests'] += 1
-        rv = json.load(urllib2.urlopen(url))
+        res = requests.get(url).text
+
+        if res == '"Invalid session key"':
+            if session != None:
+                if 'session_key' in session:
+                    session.pop('session_key')
+                flash("Deine Session ist abgelaufen.", "error")
+                return cache_load(url_copy)
+
+        rv = json.loads(res)
+        
+        if rv['status'] == 'forbidden':
+            flash("Zugriff verweigert.", "error")
+
         cache.set(url, rv, timeout=5 * 60)
     return rv
+
+
+# collect all results by repeated calls with offsets
+def get_all(url):
+    offset = 0
+    limit = helper['result_row_limit_max']
+    result = dict()
+
+    if url.find('?') != -1:
+        seperator = '&'
+    else:
+        seperator = '?'
+
+    while True:
+        obj = cache_load(url + seperator + 'limit=' + str(limit) + '&offset=' + str(offset))
+        offset = offset + limit
+        
+        if len(result) == 0:
+            result = obj
+        else:
+            result['result'] = result['result'] + obj['result']
+        
+        if len(obj['result']) < limit:
+            return result
+
+
+
+###############
+# INITIALIZER #
+###############
 
 # create a path prefix
 def fix_path():
@@ -79,6 +136,7 @@ def fix_path():
         return os.path.dirname(__file__) + "/"
 
 # preload ceartain information for convenience
+@app.before_first_request
 def prepare():
     # load settings
     settings_file = fix_path() + 'settings.json'
@@ -118,30 +176,6 @@ def prepare():
     # info (only maximal row limit is interesting)
     data = cache_load('/info')
     helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
-
-
-# collect all results by repeated calls with offsets
-def get_all(url):
-    offset = 0
-    limit = helper['result_row_limit_max']
-    result = dict()
-
-    if url.find('?') != -1:
-        seperator = '&'
-    else:
-        seperator = '?'
-
-    while True:
-        obj = cache_load(url + seperator + 'limit=' + str(limit) + '&offset=' + str(offset))
-        offset = offset + limit
-        
-        if len(result) == 0:
-            result = obj
-        else:
-            result['result'] = result['result'] + obj['result']
-        
-        if len(obj['result']) < limit:
-            return result
 
 
 ###########
@@ -197,13 +231,16 @@ def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
 
 @app.route('/')
 def show_index():
-    data = cache_load('/info')
+    data = cache_load('/info', session)
+    if not 'current_access_level' in session:
+        flash('Dein Zugangslevel ist ' + data['current_access_level'] + '.', "info")
+    session['current_access_level'] = data['current_access_level']
     return render_template('index.html', data=data, helper=helper)
 
 @app.route('/regelwerke')
 def show_policies():
-    data = cache_load('/policy')
-    return render_template('policies.html', data=data)
+    data = cache_load('/policy', session)
+    return render_template('policies.html', data=data, helper=helper)
 
 @app.route('/regelwerke/<int:id>')
 def show_policy(id):
@@ -212,8 +249,8 @@ def show_policy(id):
 
 @app.route('/gliederungen')
 def show_units():
-    data = cache_load('/unit')
-    return render_template('units.html', data=data)
+    data = cache_load('/unit', session)
+    return render_template('units.html', data=data, helper=helper)
 
 @app.route('/ereignisse')
 def show_events():
@@ -247,12 +284,66 @@ def show_initiative(id):
 
     return render_template('initiative.html', data=data, helper=helper)
 
+@app.route('/mitglieder')
+def show_members():
+    data = cache_load('/member', session)
+    return render_template('members.html', data=data, helper=helper)
+
+@app.route('/mitglieder/<int:id>')
+def show_member(id):
+    data = dict()
+    data['member'] = cache_load('/member?member_id=' + str(id) + '&render_statement=html', session)
+    data['member_image'] = cache_load('/member_image?member_id=' + str(id) + '&render_statement=html', session)
+    return render_template('member.html', data=data, helper=helper)
+
+@app.route('/einstellungen', methods=['GET', 'POST'])
+def show_settings():
+    # store the key
+    if request.method == 'POST' and 'submit_key' in request.form:
+        session['api_key'] = request.form['api_key']
+
+        # check the key
+        url = helper['settings']['api_url'] + '/session'
+        r = requests.post(url, data={'key': session['api_key']})
+        rq = json.loads(r.text)
+
+        if rq['status'] == 'ok':
+            flash(u"Dein API-Schlüssel wurde akzeptiert.", "success")
+            session['session_key'] = rq['session_key']
+        elif rq['status'] == 'forbidden':
+            flash(u"Dein API-Schlüssel wirde nicht akzeptiert.", "error")
+            if 'session_key' in session:
+                session.pop('session_key')
+        else:
+            flash(u"Es gab ein Problem mit deinem API-Schlüssel: " + rq['error'], "error")
+            if 'session_key' in session:
+                session.pop('session_key')
+
+        # get access level
+        data = cache_load('/info', session)
+        session['current_access_level'] = data['current_access_level']
+        flash('Dein neuer Zugangslevel ist ' + data['current_access_level'] + '.', "info")
+
+    # delete the key
+    if request.method == 'POST' and 'delete_key' in request.form:
+        flash(u"Der API-Schlüssel wurde gelöscht.", "success")
+        if 'session_key' in session:
+            session.pop('session_key')
+
+        if 'api_key' in session:
+            session.pop('api_key')
+
+        # get access level
+        data = cache_load('/info', session)
+        session['current_access_level'] = data['current_access_level']
+        flash('Dein neuer Zugangslevel ist ' + data['current_access_level'] + '.', "info")
+
+    return render_template('settings.html', helper=helper, session=session)
+
 
 ####################
 # START THE SERVER #
 ####################
-
-prepare()
 
 # let's go
 if __name__ == '__main__':

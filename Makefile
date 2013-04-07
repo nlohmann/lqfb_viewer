@@ -7,7 +7,7 @@ all:
 install: packages statics
 
 packages:
-	pip install Flask iso8601 pytz requests
+	pip install Flask iso8601 pytz
 
 statics:
 	npm install bower

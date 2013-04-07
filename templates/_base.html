@@ -37,7 +37,7 @@
     {% if messages %}
       {% for category, message in messages %}
       <div class="alert alert-{{category}}">
-        {{message}}
+        {{message|safe}}
       </div>
       {% endfor %}
     {% endif %}
@@ -50,7 +50,9 @@
 
 </div>
 
-<div class="muted" style="position: absolute; bottom: 5px; right: 5px">{{helper.requests}} requests, level: {{ session.current_access_level }}</div>
+<div class="muted" style="position: absolute; bottom: 5px; right: 5px">{{helper.requests}} Anfragen,
+  <i class="{{ helper.enums.access[session.current_access_level].icon}}"></i> {{ helper.enums.access[session.current_access_level].name }}
+</div>
 
 </body>
 </html>

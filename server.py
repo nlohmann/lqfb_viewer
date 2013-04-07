@@ -26,8 +26,9 @@
 #############################################################################
 
 import json
-import requests
 import os
+import urllib
+import urllib2
 
 # everything for Flask
 from flask import Flask
@@ -79,9 +80,8 @@ def cache_load(url, session=None):
     url = helper['settings']['api_url'] + url
     rv = cache.get(url)
     if rv is None:
-        print '+ fetching ' + url
         helper['requests'] += 1
-        res = requests.get(url).text
+        res = urllib2.urlopen(url).read()
 
         if res == '"Invalid session key"':
             if session != None:
@@ -177,6 +177,7 @@ def prepare():
     data = cache_load('/info')
     helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
 
+    print "+ up and running..."
 
 ###########
 # FILTERS #
@@ -233,7 +234,8 @@ def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
 def show_index():
     data = cache_load('/info', session)
     if not 'current_access_level' in session:
-        flash('Dein Zugangslevel ist ' + data['current_access_level'] + '.', "info")
+        flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', "info")
+        
     session['current_access_level'] = data['current_access_level']
     return render_template('index.html', data=data, helper=helper)
 
@@ -304,14 +306,14 @@ def show_settings():
 
         # check the key
         url = helper['settings']['api_url'] + '/session'
-        r = requests.post(url, data={'key': session['api_key']})
-        rq = json.loads(r.text)
+        data = {'key': session['api_key']}
+        rq = json.load(urllib2.urlopen(url, urllib.urlencode(data)))
 
         if rq['status'] == 'ok':
             flash(u"Dein API-Schlüssel wurde akzeptiert.", "success")
             session['session_key'] = rq['session_key']
         elif rq['status'] == 'forbidden':
-            flash(u"Dein API-Schlüssel wirde nicht akzeptiert.", "error")
+            flash(u"Dein API-Schlüssel wurde nicht akzeptiert.", "error")
             if 'session_key' in session:
                 session.pop('session_key')
         else:
@@ -322,7 +324,8 @@ def show_settings():
         # get access level
         data = cache_load('/info', session)
         session['current_access_level'] = data['current_access_level']
-        flash('Dein neuer Zugangslevel ist ' + data['current_access_level'] + '.', "info")
+        flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', "info")
+        
 
     # delete the key
     if request.method == 'POST' and 'delete_key' in request.form:
@@ -336,7 +339,7 @@ def show_settings():
         # get access level
         data = cache_load('/info', session)
         session['current_access_level'] = data['current_access_level']
-        flash('Dein neuer Zugangslevel ist ' + data['current_access_level'] + '.', "info")
+        flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', "info")
 
     return render_template('settings.html', helper=helper, session=session)
 

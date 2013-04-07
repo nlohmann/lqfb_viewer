@@ -107,6 +107,10 @@
     "none": {
       "name": "Kein Zugriff",
       "icon": "icon-remove-sign"
+    },
+    "Undefined": {
+      "name": "Unbekannt",
+      "icon": "icon-question-sign"
     }
   }
 }

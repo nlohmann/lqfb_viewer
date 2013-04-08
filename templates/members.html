@@ -16,7 +16,7 @@
     </div>
 
     <ol>
-      {% for p in data.result %}
+      {% for p in data.member.result %}
       {% if p.name %}
       <li><a href="/mitglieder/{{p.id}}"><strong>{{p.name}}</strong></a></li>
       {% else %}

@@ -59,7 +59,7 @@ app.secret_key = 'secret'
 helper = dict()
 
 # cache
-cache = SimpleCache()
+cache = SimpleCache(threshold=2000)
 
 #############
 # FUNCTIONS #
@@ -80,6 +80,7 @@ def cache_load(url, session=None):
     url = helper['settings']['api_url'] + url
     rv = cache.get(url)
     if rv is None:
+        print '+ requesting ' + url_copy
         helper['requests'] += 1
         res = urllib2.urlopen(url).read()
 
@@ -91,7 +92,7 @@ def cache_load(url, session=None):
                 return cache_load(url_copy)
 
         rv = json.loads(res)
-        
+
         if rv['status'] == 'forbidden':
             flash("Zugriff verweigert.", "error")
 
@@ -177,6 +178,12 @@ def prepare():
     data = cache_load('/info')
     helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
 
+    # initiatives
+    helper['initiative'] = dict()
+    data = get_all('/initiative')
+    for p in data['result']:
+        helper['initiative'][p['id']] = p['name']
+
     print "+ up and running..."
 
 ###########
@@ -225,6 +232,60 @@ def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
 
         return default
 
+@app.template_filter('member')
+def member_filter(member_id, name=False):
+    # never reveal names to unauthorized users
+    if not 'current_access_level' in session or session['current_access_level'] != 'member':
+        name=False
+    
+    result = '<i class="icon-user"></i>&nbsp;<a href="/mitglieder/' + str(member_id) + '">'
+    if name:
+        data = cache_load('/member?member_id=' + str(member_id), session)
+        if data['result'][0]['name'] != "":
+            result += data['result'][0]['name']
+        else:
+            result += 'Mitglied&nbsp;' + str(member_id)
+    else:
+        result += 'Mitglied&nbsp;' + str(member_id)
+    result += '</a>'
+    return result
+
+
+@app.template_filter('issue')
+def issue_filter(issue_id):
+    return '<i class="icon-list-alt"></i>&nbsp;<a href="/themen/' + str(issue_id) + '">Thema&nbsp;' + str(issue_id) + '</a>'
+
+@app.template_filter('area')
+def area_filter(area_id, title=False):
+    result = '<i class="icon-columns"></i>&nbsp;'
+    
+    if title:
+        result += helper['area'][area_id]
+    else:
+        result += 'Themnbereich&nbsp;' + str(area_id)
+    return result
+
+@app.template_filter('unit')
+def unit_filter(unit_id, title=False):
+    result = '<i class="icon-sitemap"></i>&nbsp;'
+    
+    if title:
+        result += helper['unit'][unit_id]
+    else:
+        result += 'Themnbereich&nbsp;' + str(unit_id)
+    return result
+
+@app.template_filter('initiative')
+def initiative_filter(initiative_id, title=False):
+    result = '<i class="icon-file-alt"></i>&nbsp;<a href="/initiative/' + str(initiative_id) + '">'
+
+    if title:
+        result += helper['initiative'][initiative_id]
+    else:
+        result += 'Initiative&nbsp;' + str(initiative_id)
+    result += '</a>'
+    return result
+
 
 ##############
 # END POINTS #
@@ -241,7 +302,7 @@ def show_index():
 
 @app.route('/regelwerke')
 def show_policies():
-    data = cache_load('/policy', session)
+    data = cache_load('/policy')
     return render_template('policies.html', data=data, helper=helper)
 
 @app.route('/regelwerke/<int:id>')
@@ -251,7 +312,7 @@ def show_policy(id):
 
 @app.route('/gliederungen')
 def show_units():
-    data = cache_load('/unit', session)
+    data = cache_load('/unit')
     return render_template('units.html', data=data, helper=helper)
 
 @app.route('/ereignisse')
@@ -288,14 +349,24 @@ def show_initiative(id):
 
 @app.route('/mitglieder')
 def show_members():
-    data = cache_load('/member', session)
+    data = dict()
+    data['member'] = cache_load('/member', session)
+    #data['member_image'] = cache_load('/member_image', session)
     return render_template('members.html', data=data, helper=helper)
 
 @app.route('/mitglieder/<int:id>')
 def show_member(id):
     data = dict()
+    data['privilege'] = cache_load('/privilege?member_id=' + str(id) + '&render_statement=html', session)
+    data['membership'] = cache_load('/membership?member_id=' + str(id) + '&render_statement=html', session)
+    data['initiator'] = cache_load('/initiator?member_id=' + str(id) + '&render_statement=html', session)
+    data['delegation'] = cache_load('/delegation?member_id=' + str(id) + '&render_statement=html', session)
+    data['delegating_voter'] = cache_load('/delegating_voter?member_id=' + str(id), session)
+    data['voter'] = cache_load('/voter?member_id=' + str(id) + '&formatting_engine=html', session)
+    data['vote'] = cache_load('/vote?member_id=' + str(id), session)
+    data['event'] = cache_load('/event')
     data['member'] = cache_load('/member?member_id=' + str(id) + '&render_statement=html', session)
-    data['member_image'] = cache_load('/member_image?member_id=' + str(id) + '&render_statement=html', session)
+    data['member_image'] = cache_load('/member_image?member_id=' + str(id), session)
     return render_template('member.html', data=data, helper=helper)
 
 @app.route('/einstellungen', methods=['GET', 'POST'])

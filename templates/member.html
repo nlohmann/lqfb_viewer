@@ -27,22 +27,176 @@
     <img class="img-rounded pull-right" src="data:{{data.member_image.result.0.content_type}};base64,{{data.member_image.result.0.data}}"/>
     {% endif %}
 
+    <h2>Daten</h2>
+
     <ul>
-      <li>{{data.member.result.0.internal_posts}}</li>
-      <li>{{data.member.result.0.organizational_unit}}</li>
-      <li>{{data.member.result.0.realname}}</li>
-      <li>{{data.member.result.0.birthday}}</li>
-      <li>{{data.member.result.0.address}}</li>
-      <li>{{data.member.result.0.email}}</li>
-      <li>{{data.member.result.0.xmpp_address}}</li>
-      <li>{{data.member.result.0.website}}</li>
-      <li>{{data.member.result.0.phone}}</li>
-      <li>{{data.member.result.0.mobile_phone}}</li>
-      <li>{{data.member.result.0.profession}}</li>
-      <li>{{data.member.result.0.external_memberships}}</li>
-      <li>{{data.member.result.0.external_posts}}</li>
+      {% if data.member.result.0.realname %}
+      <li>Realname: {{data.member.result.0.realname}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.internal_posts %}
+      <li>Interne Ämter: {{data.member.result.0.internal_posts}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.organizational_unit %}
+      <li>Organisationseinheit: {{data.member.result.0.organizational_unit}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.birthday %}
+      <li>Geburtstag: {{data.member.result.0.birthday|nicedate("%x",False)}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.address %}
+      <li>Adresse: {{data.member.result.0.address}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.email %}
+      <li>E-Mail: {{data.member.result.0.email}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.xmpp_address %}
+      <li>XMPP: {{data.member.result.0.xmpp_address}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.website %}
+      <li>Website: {{data.member.result.0.website}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.phone %}
+      <li>Telefon: {{data.member.result.0.phone}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.mobile_phone %}
+      <li>Mobil: {{data.member.result.0.mobile_phone}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.profession %}
+      <li>Beruf: {{data.member.result.0.profession}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.external_memberships %}
+      <li>Externe Mitgliedschaften: {{data.member.result.0.external_memberships}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.external_posts %}
+      <li>Externe Ämter: {{data.member.result.0.external_posts}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.last_activity %}
+      <li>letzte Aktivität: {{data.member.result.0.last_activity|nicedate("%A, %x",False)}}</li>
+      {% endif %}
+
+      {% if data.member.result.0.created %}
+      <li>Account erstellt: {{data.member.result.0.created|nicedate("%A, %x",False)}}</li>
+      {% endif %}
     </ul>
 
+    {% if data.member.result.0.statement %}
     <p class="well">{{data.member.result.0.statement|safe}}</p>
+    {% endif %}
+
+    <h2>Gliederungen und Themenbereiche</h2>
+    <h3>Gliederungen</h3>
+    <ul>
+    {% for p in data.privilege.result if p.voting_right %}
+    <li>{{ p.unit_id|unit(True)|safe }}</li>
+    {% else %}
+    <li>kein Stimmrecht</li>
+    {% endfor %}
+    </ul>
+
+    <h3>Themenbereiche</h3>
+    <ul>
+    {% for p in data.membership.result %}
+    <li>{{ p.area_id|area(True)|safe }}</li>
+    {% else %}
+    <li>keine Mitgliedschaft</li>
+    {% endfor %}
+    </ul>
+
+    <h2>Delegationen</h2>
+    <h3>Eingehende Delegationen</h3>
+    <ul>
+    {% for p in data.delegation.result if p.trustee_id == data.member.result[0].id %}
+    <li>
+      {{ p.truster_id|member(True)|safe }}
+      {% if p.scope == "unit" %}
+      ({{ p.unit_id|unit(True)|safe }})
+      {% elif p.scope == "area" %}
+      ({{ p.area_id|area(True)|safe }})
+      {% else %}
+      ({{ p.issue_id|issue|safe }})
+      {% endif %}
+    </li>
+    {% else %}
+    <li>keine eingehenden Delegationen</li>
+    {% endfor %}
+    </ul>
+
+    <h3>Ausgehende Delegationen</h3>
+    <ul>
+    {% for p in data.delegation.result if p.truster_id == data.member.result[0].id %}
+    <li>{{ p.trustee_id|member(True)|safe }}
+      {% if p.scope == "unit" %}
+      ({{ p.unit_id|unit(True)|safe }})
+      {% elif p.scope == "area" %}
+      ({{ p.area_id|area(True)|safe }})
+      {% else %}
+      ({{ p.issue_id|issue|safe }})
+      {% endif %}
+    </li>
+    {% else %}
+    <li>keine ausgehenden Delegationen</li>
+    {% endfor %}
+    </ul>
+
+    <h2>Aktivität</h2>
+    <h3>Initiator</h3>
+    <ul>
+    {% for p in data.initiator.result %}
+    <li>{{ p.initiative_id|initiative(True)|safe }}</li>
+    {% else %}
+    <li>keine Initiativen initiiert</li>
+    {% endfor %}
+    </ul>
+    
+    <h3>Sonstiges</h3>
+    <ul>
+    {% for p in data.event.result if p.member_id == data.member.result[0].id %}
+    <li>{{ p.event }}</li>
+    {% else %}
+    <li>keine Aktivität</li>
+    {% endfor %}
+    </ul>
+
+    <h2>Abstimmungen</h2>
+
+    <h3>direkte Teilnahme</h3>
+    <ul>
+    {% for p in data.vote.result %}
+    <li>{{ p.issue_id|issue|safe }}: {{ p.initiative_id|initiative(True)|safe }}: {{ p.grade }}</li>
+    {% else %}
+    <li>keine Abstimmung</li>
+    {% endfor %}
+    </ul>
+
+    <h3>Teilnahme durch Delegation</h3>
+    <ul>
+    {% for p in data.delegating_voter.result %}
+    <li>{{ p.issue_id|issue|safe }}: Stimmgewicht {{ p.weight }} an {% for p2 in p.delegate_member_ids %}{{ p2|member(True)|safe }}{% endfor %}</li>
+    {% else %}
+    <li>keine Abstimmung</li>
+    {% endfor %}
+    </ul>
+
+    <h3>Abstimmkommentare</h3>
+    <ul>
+    {% for p in data.voter.result if p.comment %}
+    <li>{{ p.issue_id|issue|safe }}: {{ p.comment|safe }}</li>
+    {% else %}
+    <li>keine Abstimmung</li>
+    {% endfor %}
+    </ul>
+
 
 {% endblock %}

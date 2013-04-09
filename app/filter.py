@@ -36,7 +36,7 @@ def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
         )
         #import locale
         #locale.setlocale(locale.LC_ALL, 'deutsch')
-        dateFormatted = datetime.datetime.strftime(date, "%d.%m.%Y %H:%M:%S")
+        dateFormatted = datetime.strftime(date, "%d.%m.%Y %H:%M:%S")
         for period, singular, plural in periods:
 
             if period:

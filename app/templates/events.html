@@ -225,15 +225,26 @@
         </p>
         {% elif p.state == "verification" %}
         <p>
-          <i class="icon-lock icon-2x"></i> {{p.issue_id|issue|safe}} ist jetzt <strong>eingefroren</strong>.
+          <i class="icon-lock icon-2x"></i> {{p.issue_id|issue|safe}} ist jetzt <strong>eingefroren</strong>
+          <ul>
+          {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
+          {% if p2.supporter_count >= p.issue_id|quorum %}
+          <li>{{p2.id|initiative(True)|safe}}</li>
+          {% else %}
+          <li style="text-decoration: line-through;">{{p2.id|initiative(True)|safe}}</li>
+          {% endif %}
+          {% endfor %}
+          </ul>
         </p>
         {% elif p.state == "voting" %}
         <p>
           <i class="icon-list-ol icon-2x"></i> {{p.issue_id|issue|safe}} wird jetzt <strong>abgestimmt</strong>.
           <ul class="unstyled">
           {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
-          {% if p2.admitted %}
+          {% if p2.admitted == True %}
           <li>{{p2.id|initiative(True)|safe}}</li>
+          {% elif p2.supporter_count >= p.issue_id|quorum %}
+          <li style="text-decoration: line-through;">{{p2.id|initiative(True)|safe}}</li>
           {% endif %}
           {% endfor %}
         </ul>

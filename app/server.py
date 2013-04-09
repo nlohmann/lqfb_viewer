@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python
 
 #############################################################################
 # LiquidFeedback Viewer - Bootstrap version
@@ -31,35 +30,22 @@ import urllib
 import urllib2
 
 # everything for Flask
-from flask import Flask
 from flask import render_template
 from flask import request
 from flask import session
 from flask import flash
-from werkzeug.contrib.cache import SimpleCache
-import datetime
+
+from app import app
+from app import cache
+from app import helper
 
 # for German dates, time zones and ISO8601 translation
+import datetime
 import locale
 import pytz
 import iso8601
 locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 
-
-###########
-# GLOBALS #
-###########
-
-# the Flask app
-app = Flask(__name__)
-app.debug = True
-app.secret_key = 'secret'
-
-# global dictionary for convenience data
-helper = dict()
-
-# cache
-cache = SimpleCache(threshold=2000)
 
 #############
 # FUNCTIONS #
@@ -413,12 +399,3 @@ def show_settings():
         flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', "info")
 
     return render_template('settings.html', helper=helper, session=session)
-
-
-####################
-# START THE SERVER #
-####################
-
-# let's go
-if __name__ == '__main__':
-    app.run()

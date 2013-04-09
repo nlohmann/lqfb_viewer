@@ -22,7 +22,11 @@
         <div class="control-group">
           <label class="control-label">Zugangsberechtigung</label>
           <div class="controls">
+            {% if session.current_access_level %}
             <span class="input-large uneditable-input"><i class="{{ helper.enums.access[session.current_access_level].icon}}"></i> {{ helper.enums.access[session.current_access_level].name }}</span>
+            {% else %}
+            <span class="input-large uneditable-input"><i class="{{ helper.enums.access['anonymous'].icon}}"></i> {{ helper.enums.access['anonymous'].name }}</span>
+            {% endif %}
             <p class="help-block">Gewisse Informationen im LiquidFeedback (z.B. die Liste aller <a href="/mitglieder">Mitglieder</a>) können nur angezeigt werden, wenn du die notwendige Zugangsberechtigung hast. Eine Authentifizierung ist momentan nur über einen sogenannten API-Schlüssel möglich.</p>
           </div>
         </div>

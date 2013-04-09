@@ -28,104 +28,37 @@ import json
 import os
 import urllib
 import urllib2
-import math
 
 # everything for Flask
-from flask import render_template
-from flask import request
-from flask import session
-from flask import flash
+from flask import render_template, request, session, flash
+from app import app, helper
 
-from app import app
-from app import cache
-from app import helper
+from utils import cache_load, get_all
+import filter
 
 # for German dates, time zones and ISO8601 translation
-import datetime
 import locale
-import pytz
-import iso8601
 locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
-
-
-#############
-# FUNCTIONS #
-#############
-
-# cached loading of JSON objects: we use the URL as key
-def cache_load(url, session=None):
-    url_copy = url
-    
-    if session != None:
-        if 'session_key' in session:
-            if url.find('?') != -1:
-                seperator = '&'
-            else:
-                seperator = '?'
-            url = url + seperator + "session_key=" + session['session_key']
-
-    url = helper['settings']['api_url'] + url
-    rv = cache.get(url)
-    if rv is None:
-        print '+ requesting ' + url_copy
-        helper['requests'] += 1
-        res = urllib2.urlopen(url).read()
-
-        if res == '"Invalid session key"':
-            if session != None:
-                if 'session_key' in session:
-                    session.pop('session_key')
-                flash("Deine Session ist abgelaufen.", "error")
-                return cache_load(url_copy)
-
-        rv = json.loads(res)
-
-        if rv['status'] == 'forbidden':
-            flash("Zugriff verweigert.", "error")
-
-        cache.set(url, rv, timeout=5 * 60)
-    return rv
-
-
-# collect all results by repeated calls with offsets
-def get_all(url):
-    offset = 0
-    limit = helper['result_row_limit_max']
-    result = dict()
-
-    if url.find('?') != -1:
-        seperator = '&'
-    else:
-        seperator = '?'
-
-    while True:
-        obj = cache_load(url + seperator + 'limit=' + str(limit) + '&offset=' + str(offset))
-        offset = offset + limit
-        
-        if len(result) == 0:
-            result = obj
-        else:
-            result['result'] = result['result'] + obj['result']
-        
-        if len(obj['result']) < limit:
-            return result
-
-
 
 ###############
 # INITIALIZER #
 ###############
 
-# create a path prefix
 def fix_path():
+    """
+    create a path prefix
+    """
     if os.path.dirname(__file__) == "":
         return ""
     else:
         return os.path.dirname(__file__) + "/"
 
-# preload ceartain information for convenience
 @app.before_first_request
 def prepare():
+    """
+    preload ceartain information for convenience
+    """
+
     # load settings
     settings_file = fix_path() + 'settings.json'
     print('+ loading settings from ' + settings_file + '...')
@@ -172,115 +105,6 @@ def prepare():
         helper['initiative'][p['id']] = p['name']
 
     print "+ up and running..."
-
-###########
-# FILTERS #
-###########
-
-# filter to format dazes given in ISO8601
-@app.template_filter('nicedate')
-def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
-    if not timeago:
-        return iso8601.parse_date(s).astimezone(pytz.timezone('Europe/Berlin')).strftime(format)
-    else:
-        default = "eben gerade"
-        now = datetime.datetime.utcnow()
-        date = datetime.datetime.strptime(s.encode("iso-8859-16"), "%Y-%m-%dT%H:%M:%S.%fZ")
-        diff = now - date
-
-        #verschiedene zeitperioden - woche, monat, jahre eingebaut, falls benoetigt
-        periods = (
-            (diff.days / 365, "Jahr", "Jahre"),
-            (diff.days / 30, "Monat", "Monate"),
-            (diff.days / 7, "Woche", "Wochen"),
-            (diff.days, "Tag", "Tagen"),
-            #TODO: Fix that m*therf***ing hack down here !!!
-            (diff.seconds / 3600 + 2, "Stunde", "Stunden"),
-            (diff.seconds / 60, "Minute", "Minuten"),
-            (diff.seconds, "Sekunde", "Sekunden"),
-        )
-        #import locale
-        #locale.setlocale(locale.LC_ALL, 'deutsch')
-        dateFormatted = datetime.datetime.strftime(date, "%d.%m.%Y %H:%M:%S")
-        for period, singular, plural in periods:
-
-            if period:
-                if diff.days == 1:
-                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, "gestern")
-                elif 1 < diff.days < 7:
-                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.datetime.strftime(date, "%A"))
-                elif diff.days > 6:
-                    date = date
-                    return u'<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.datetime.strftime(date, "%d. %B").decode('utf-8'))
-                elif diff.days > 365:
-                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.datetime.strftime(date, "%d.%m.%Y"))
-                else:
-                    return '<span data-toggle="tooltip" title="%s">vor %d %s</span>' % (dateFormatted, period, singular if period == 1 else plural)
-
-        return default
-
-@app.template_filter('member')
-def member_filter(member_id, name=False):
-    # never reveal names to unauthorized users
-    if not 'current_access_level' in session or session['current_access_level'] != 'member':
-        name=False
-    
-    result = '<i class="icon-user"></i>&nbsp;<a href="/mitglieder/' + str(member_id) + '">'
-    if name:
-        data = cache_load('/member?member_id=' + str(member_id), session)
-        if data['result'][0]['name'] != "":
-            result += data['result'][0]['name']
-        else:
-            result += 'Mitglied&nbsp;' + str(member_id)
-    else:
-        result += 'Mitglied&nbsp;' + str(member_id)
-    result += '</a>'
-    return result
-
-
-@app.template_filter('issue')
-def issue_filter(issue_id):
-    return '<i class="icon-list-alt"></i>&nbsp;<a href="/themen/' + str(issue_id) + '">Thema&nbsp;' + str(issue_id) + '</a>'
-
-@app.template_filter('area')
-def area_filter(area_id, title=False):
-    result = '<i class="icon-columns"></i>&nbsp;'
-    
-    if title:
-        result += helper['area'][area_id]
-    else:
-        result += 'Themnbereich&nbsp;' + str(area_id)
-    return result
-
-@app.template_filter('unit')
-def unit_filter(unit_id, title=False):
-    result = '<i class="icon-sitemap"></i>&nbsp;'
-    
-    if title:
-        result += helper['unit'][unit_id]
-    else:
-        result += 'Themnbereich&nbsp;' + str(unit_id)
-    return result
-
-@app.template_filter('initiative')
-def initiative_filter(initiative_id, title=False):
-    result = '<i class="icon-file-alt"></i>&nbsp;<a href="/initiative/' + str(initiative_id) + '">'
-
-    if title:
-        result += helper['initiative'][initiative_id]
-    else:
-        result += 'Initiative&nbsp;' + str(initiative_id)
-    result += '</a>'
-    return result
-
-# a filter to return the quorum of a given issue
-@app.template_filter('quorum')
-def quorum_filter(issue_id):
-    data = dict()
-    data['issue'] = cache_load('/issue?issue_id=' + str(issue_id))
-    data['policy'] = cache_load('/policy?policy_id=' + str(data['issue']['result'][0]['policy_id']))
-    return int(math.ceil((float(data['policy']['result'][0]['initiative_quorum_num']) / float(data['policy']['result'][0]['initiative_quorum_den'])) * data['issue']['result'][0]['population']))
-
 
 ##############
 # END POINTS #

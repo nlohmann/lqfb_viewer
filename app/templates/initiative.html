@@ -32,7 +32,7 @@
     {# the supporter bar #}
     <div class="progress">
       {# color first bar depending on quorum #}
-      {% if balken1 > data.initiative.result[0].issue_id|quorum %}
+      {% if balken1 >= data.initiative.result[0].issue_id|quorum %}
         {% if data.issue.result[0].closed %}
           {% set additional_style = " bar-danger" %}
         {% else %}

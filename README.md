@@ -9,7 +9,6 @@ Der Viewer läuft mit dem Python Framework [Flask](http://flask.pocoo.org). Für
 Um den Viewer zu starten, werden folgende Werkzeuge benötigt:
 
 - [Python](http://www.python.org)
-- [pip](http://www.pip-installer.org/en/latest/)
 - [npm](https://npmjs.org)
 - [make](http://www.gnu.org/software/make)
 

@@ -28,6 +28,7 @@ import json
 import os
 import urllib
 import urllib2
+import math
 
 # everything for Flask
 from flask import render_template
@@ -271,6 +272,14 @@ def initiative_filter(initiative_id, title=False):
         result += 'Initiative&nbsp;' + str(initiative_id)
     result += '</a>'
     return result
+
+# a filter to return the quorum of a given issue
+@app.template_filter('quorum')
+def quorum_filter(issue_id):
+    data = dict()
+    data['issue'] = cache_load('/issue?issue_id=' + str(issue_id))
+    data['policy'] = cache_load('/policy?policy_id=' + str(data['issue']['result'][0]['policy_id']))
+    return int(math.ceil((float(data['policy']['result'][0]['initiative_quorum_num']) / float(data['policy']['result'][0]['initiative_quorum_den'])) * data['issue']['result'][0]['population']))
 
 
 ##############

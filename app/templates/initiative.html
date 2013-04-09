@@ -19,6 +19,27 @@
       </h1>
     </div>
 
+    {# collecting data for the supporter bar #}
+    {% if data.initiative.result[0].supporter_count > data.initiative.result[0].issue_id|quorum %}
+    {% set balken1 = data.initiative.result[0].issue_id|quorum %}
+    {% set balken2 = data.initiative.result[0].supporter_count - data.initiative.result[0].issue_id|quorum %}
+    {% else %}
+    {% set balken1 = data.initiative.result[0].supporter_count %}
+    {% set balken2 = 0 %}
+    {% endif %}
+
+    {# the supporter bar #}
+    <div class="progress">
+      <div class="bar" style="width: {{ ((balken1 / data.issue.result[0].population) * 100)|round(0)|int }}%">{{balken1}}</div>
+      {% if balken2 == 0 %}
+      <div class="bar bar-transparent" style="width: {{ (((data.initiative.result[0].issue_id|quorum - balken1) / data.issue.result[0].population) * 100)|round(0)|int }}%%"></div>
+      <div class="bar bar-border-right"></div>
+      {% else %}
+      <div class="bar bar-border-right"></div>
+      <div class="bar bar-success" style="width: {{ ((balken2 / data.issue.result[0].population) * 100)|round(0)|int }}%">{{balken2}}</div>
+      {% endif %}
+    </div>
+
     {% if data.initiative.result[0].schulze_rank %}
     <h2>Abstimmung</h2>
     <ul>
@@ -52,6 +73,12 @@
     <ul>
       <li>
         {{ data.initiative.result[0].supporter_count }} Unterstützer
+      </li>
+      <li>
+        {{ data.initiative.result[0].issue_id|quorum }} Initiativquorum
+      </li>
+      <li>
+        {{ data.issue.result[0].population }} Grundgesamtheit
       </li>
       <li>
         <a href="{{ data.initiative.result[0].discussion_url }}">Diskussion mit den Antragstellern</a>

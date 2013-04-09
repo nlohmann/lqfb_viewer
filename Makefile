@@ -13,9 +13,6 @@ install:
 	flask/bin/pip install flask iso8601 pytz
 	
 	# bower packages
-	bower_install
-
-bower_install:
 	npm install bower
 	node_modules/bower/bin/bower install bootstrap font-awesome jquery.tablesorter
 	cd components/bootstrap ; npm install ; make build bootstrap

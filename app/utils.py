@@ -2,6 +2,7 @@
 from app import helper, cache
 from flask import flash
 import urllib2,json
+
 #############
 # FUNCTIONS #
 #############
@@ -43,7 +44,7 @@ def cache_load(url, session=None):
     return rv
 
 
-def get_all(url):
+def get_all(url, session=None):
     """
     collect all results by repeated calls with offsets
     """
@@ -57,7 +58,7 @@ def get_all(url):
         seperator = '?'
 
     while True:
-        obj = cache_load(url + seperator + 'limit=' + str(limit) + '&offset=' + str(offset))
+        obj = cache_load(url + seperator + 'limit=' + str(limit) + '&offset=' + str(offset), session)
         offset = offset + limit
 
         if len(result) == 0:
@@ -67,4 +68,3 @@ def get_all(url):
 
         if len(obj['result']) < limit:
             return result
-

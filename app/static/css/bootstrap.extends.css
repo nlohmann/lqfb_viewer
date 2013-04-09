@@ -1,0 +1,16 @@
+/**
+ * ermöglicht transparente Teile eines Progressbars
+ */
+.bar-transparent{
+    background: none !important;
+    box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    color: #7f7f7f !important;
+}
+
+/**
+ * am rechten Rand eines Bars einen dunklen Trennrand.
+ */
+.bar-border-right{
+    border-right: 2px solid black !important;
+}

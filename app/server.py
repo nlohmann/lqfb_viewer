@@ -337,28 +337,29 @@ def show_initiative(id):
 def show_members():
     data = dict()
     data['member'] = cache_load('/member', session)
-    #data['member_image'] = cache_load('/member_image', session)
     return render_template('members.html', data=data, helper=helper)
 
 @app.route('/mitglieder/<int:id>')
 def show_member(id):
     data = dict()
-    data['privilege'] = cache_load('/privilege?member_id=' + str(id) + '&render_statement=html', session)
-    data['membership'] = cache_load('/membership?member_id=' + str(id) + '&render_statement=html', session)
-    data['initiator'] = cache_load('/initiator?member_id=' + str(id) + '&render_statement=html', session)
-    data['delegation'] = cache_load('/delegation?member_id=' + str(id) + '&render_statement=html', session)
+    data['privilege'] = cache_load('/privilege?member_id=' + str(id), session)
+    data['membership'] = cache_load('/membership?member_id=' + str(id), session)
+    data['initiator'] = cache_load('/initiator?member_id=' + str(id), session)
+    data['delegation'] = cache_load('/delegation?member_id=' + str(id), session)
     data['delegating_voter'] = cache_load('/delegating_voter?member_id=' + str(id), session)
     data['voter'] = cache_load('/voter?member_id=' + str(id) + '&formatting_engine=html', session)
     data['vote'] = cache_load('/vote?member_id=' + str(id), session)
     data['event'] = cache_load('/event')
     data['member'] = cache_load('/member?member_id=' + str(id) + '&render_statement=html', session)
     data['member_image'] = cache_load('/member_image?member_id=' + str(id), session)
+    data['member_history'] = cache_load('/member_history?member_id=' + str(id), session)
     return render_template('member.html', data=data, helper=helper)
 
 @app.route('/einstellungen', methods=['GET', 'POST'])
 def show_settings():
     # store the key
     if request.method == 'POST' and 'submit_key' in request.form:
+        session.permanent = True
         session['api_key'] = request.form['api_key']
 
         # check the key
@@ -382,7 +383,7 @@ def show_settings():
         data = cache_load('/info', session)
         session['current_access_level'] = data['current_access_level']
         flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', "info")
-        
+
 
     # delete the key
     if request.method == 'POST' and 'delete_key' in request.form:

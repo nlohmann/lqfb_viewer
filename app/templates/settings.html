@@ -22,7 +22,7 @@
         <div class="control-group">
           <label class="control-label">Zugangsberechtigung</label>
           <div class="controls">
-            <span class="input-xlarge uneditable-input"><i class="{{ helper.enums.access[session.current_access_level].icon}}"></i> {{ helper.enums.access[session.current_access_level].name }}</span>
+            <span class="input-large uneditable-input"><i class="{{ helper.enums.access[session.current_access_level].icon}}"></i> {{ helper.enums.access[session.current_access_level].name }}</span>
             <p class="help-block">Gewisse Informationen im LiquidFeedback (z.B. die Liste aller <a href="/mitglieder">Mitglieder</a>) können nur angezeigt werden, wenn du die notwendige Zugangsberechtigung hast. Eine Authentifizierung ist momentan nur über einen sogenannten API-Schlüssel möglich.</p>
           </div>
         </div>
@@ -30,10 +30,10 @@
         <div class="control-group">
           <label class="control-label">API-Schlüssel</label>
           <div class="controls">
-            <input id="api_key" value="{{ session.api_key }}" name="api_key" type="text" class="input-xlarge">
+            <input class="input-large" id="api_key" value="{{ session.api_key }}" name="api_key" type="text" class="input-xlarge">
             <p class="help-block">Einen API-Schlüssel kannst du in den <a href="{{ helper.settings.lqfb_url }}/member/developer_settings.html" target="lqfb">Entwicklereinstellungen</a> erzeugen und hier ablegen. Ein API-Schlüssel besteht in der Regel aus 20 Zeichen.</p>
             <br>
-            <p class="help-block">Bitte beachte: Der API-Schlüssel wird auf unserem Server verschlüsselt abgelegt und ist nur für deinen Browser, nicht aber für andere Nutzer, abrufbar. Du kannst den Schlüssel jederzeit  löschen.</p>
+            <p class="help-block">Bitte beachte: Der API-Schlüssel wird <strong>nicht</strong> auf unserem Server gespeichert, sondern in einem Cookie für einen Monat verschlüsselt in deinem Browser abgelegt. Er ist <strong>nicht</strong> für andere Nutzer abrufbar. Du kannst den API-Schlüssel jederzeit mit deinem Cookie löschen.</p>
           </div>
         </div>
 

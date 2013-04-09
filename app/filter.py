@@ -118,3 +118,10 @@ def quorum_filter(issue_id):
     data['issue'] = cache_load('/issue?issue_id=' + str(issue_id))
     data['policy'] = cache_load('/policy?policy_id=' + str(data['issue']['result'][0]['policy_id']))
     return int(ceil((float(data['policy']['result'][0]['initiative_quorum_num']) / float(data['policy']['result'][0]['initiative_quorum_den'])) * data['issue']['result'][0]['population']))
+
+@app.template_filter('is_url')
+def is_url(url):
+    """
+    GANZ einfacher Test, ob es sich um eine URL handelt. Kann man mal mit nem RegEx aufbessern
+    """
+    return str(url).find('http')>-1 or str(url).find('https')>-1

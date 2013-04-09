@@ -19,6 +19,7 @@
       </h1>
     </div>
 
+
     {# collecting data for the supporter bar #}
     {% if data.initiative.result[0].supporter_count > data.initiative.result[0].issue_id|quorum %}
     {% set balken1 = data.initiative.result[0].issue_id|quorum %}
@@ -30,7 +31,17 @@
 
     {# the supporter bar #}
     <div class="progress">
-      <div class="bar" style="width: {{ ((balken1 / data.issue.result[0].population) * 100)|round(0)|int }}%">{{balken1}}</div>
+      {# color first bar depending on quorum #}
+      {% if balken1 > data.initiative.result[0].issue_id|quorum %}
+        {% if data.issue.result[0].closed %}
+          {% set additional_style = " bar-danger" %}
+        {% else %}
+          {% set additional_style = " bar-warning" %}
+        {% endif %}
+      {% else %}
+        {% set additional_style = "" %}
+      {% endif %}
+      <div class="bar{{ additional_style }}" style="width: {{ ((balken1 / data.issue.result[0].population) * 100)|round(0)|int }}%">{{balken1}}</div>
       {% if balken2 == 0 %}
       <div class="bar bar-transparent" style="width: {{ (((data.initiative.result[0].issue_id|quorum - balken1) / data.issue.result[0].population) * 100)|round(0)|int }}%%"></div>
       <div class="bar bar-border-right"></div>

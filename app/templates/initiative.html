@@ -32,7 +32,7 @@
     {# the supporter bar #}
     <div class="progress">
       {# color first bar depending on quorum #}
-      {% if balken1 >= data.initiative.result[0].issue_id|quorum %}
+      {% if balken1 < data.initiative.result[0].issue_id|quorum %}
         {% if data.issue.result[0].closed %}
           {% set additional_style = " bar-danger" %}
         {% else %}
@@ -91,8 +91,12 @@
       <li>
         {{ data.issue.result[0].population }} Grundgesamtheit
       </li>
-      <li>
-        <a href="{{ data.initiative.result[0].discussion_url }}">Diskussion mit den Antragstellern</a>
+      <li>Diskussion mit den Antragstellern: 
+        {% if data.initiative.result[0].discussion_url|is_url %}
+        <a href="{{ data.initiative.result[0].discussion_url }}">{{ data.initiative.result[0].discussion_url }}</a>
+        {% else %}
+        {{ data.initiative.result[0].discussion_url }}
+        {% endif %}
       </li>
     </ul>
 

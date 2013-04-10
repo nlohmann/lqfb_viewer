@@ -88,6 +88,16 @@ def area_filter(area_id, title=False):
         result += 'Themnbereich&nbsp;' + str(area_id)
     return result
 
+@app.template_filter('policy')
+def policy_filter(policy_id, title=False):
+    result = '<i class="icon-book"></i>&nbsp;'
+
+    if title:
+        result += helper['policy'][policy_id]
+    else:
+        result += 'Regelwerk&nbsp;' + str(policy_id)
+    return result
+
 @app.template_filter('unit')
 def unit_filter(unit_id, title=False):
     result = '<i class="icon-sitemap"></i>&nbsp;'
@@ -95,7 +105,7 @@ def unit_filter(unit_id, title=False):
     if title:
         result += helper['unit'][unit_id]
     else:
-        result += 'Themnbereich&nbsp;' + str(unit_id)
+        result += 'Gliederung&nbsp;' + str(unit_id)
     return result
 
 @app.template_filter('initiative')

@@ -1,0 +1,31 @@
+{% extends "_base.html" %}
+
+{% block title %}LQFB › Themenbereiche{% endblock %}
+
+{% block navigation %}
+{{ super() }}
+  <ul class="breadcrumb">
+    <li><a href="/"><i class="icon-columns"></i></a> <span class="divider">/</span></li>
+    <li class="active">Themenbereiche</li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+      <h1><i class="icon-columns"></i> Themenbereiche</h1>
+    </div>
+
+    <ul>
+      {% for p in data.result|groupby('unit_id') %}
+      <li style="padding-bottom: 0.5em;"><a href="/gliederung/{{g.grouper}}">{{ p.grouper|unit(True)|safe }}</a>
+        <ul>
+        {% for p2 in p.list %}
+          <li><a href="/themenbereiche/{{p2.id}}"><strong>{{ p2.id|area(True)|safe }}</strong></a></li>
+        {% endfor %}
+        </ul>
+      </li>
+      {% endfor %}
+    </ul>
+
+  </div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "_base.html" %}
+
+{% block title %}LQFB › Themenbereiche › {{ data.area.result.0.name }}{% endblock %}
+
+{% block navigation %}
+{{ super() }}
+  <ul class="breadcrumb">
+    <li><a href="/"><i class="icon-columns"></i></a> <span class="divider">/</span></li>
+    <li><a href="/themenbereiche">Themenbereiche</a> <span class="divider">/</span></li>
+    <li class="active">{{ data.area.result.0.name }}</li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+      <h1><small>Themenbereich</small><br><i class="icon-columns"></i> {{ data.area.result.0.name }}</h1>
+    </div>
+
+    <h2>Informationen</h2>
+    <ul>
+      <li>Beschreibung: {{data.area.result.0.description}}</li>
+      <li>Bereich: <a href="/bereich/{{data.area.result.0.unit_id}}">{{data.area.result.0.unit_id|unit(True)|safe}}</a></li>
+      <li>
+        Mitglieder: {{data.area.result.0.direct_member_count}}
+        (+{{ data.area.result.0.member_weight - data.area.result.0.direct_member_count }} Delegationen)
+      </li>
+    </ul>
+
+    <h2>Erlaubte Regelwerke</h2>
+    <ul>
+      {% for p in data.allowed_policy.result %}
+      <li>
+        <a href="/regelwerke/{{p.policy_id}}">{{ p.policy_id|policy(True)|safe }}</a>
+        {% if p.default_policy %}
+        (Standardregelwerk)
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+
+  </div>
+{% endblock %}

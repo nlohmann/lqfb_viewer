@@ -172,6 +172,18 @@ def show_members():
     data['member'] = cache_load('/member', session)
     return render_template('members.html', data=data, helper=helper)
 
+@app.route('/themenbereiche')
+def show_areas():
+    data = cache_load('/area')
+    return render_template('areas.html', data=data, helper=helper)
+
+@app.route('/themenbereiche/<int:id>')
+def show_area(id):
+    data = dict()
+    data['area'] = cache_load('/area?area_id=' + str(id))
+    data['allowed_policy'] = cache_load('/allowed_policy?area_id=' + str(id))
+    return render_template('area.html', data=data, helper=helper)
+
 @app.route('/mitglieder/<int:id>')
 def show_member(id):
     data = dict()

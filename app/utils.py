@@ -1,76 +1,70 @@
 # -*- coding: utf-8 -*-
 from app import helper, cache
 from flask import flash
-import urllib, urllib2, json
+import urllib2,json
 
 #############
 # FUNCTIONS #
 #############
 
-def api_load(endpoint, params={}, session=None):
+def cache_load(url, session=None):
     """
     cached loading of JSON objects: we use the URL as key
     """
+    url_copy = url
 
-    # if session is given, add session key to parameters
-    if session != None and 'session_key' in session:
-        params['session_key'] = session['session_key']
+    if session != None:
+        if 'session_key' in session:
+            if url.find('?') != -1:
+                seperator = '&'
+            else:
+                seperator = '?'
+            url = url + seperator + "session_key=" + session['session_key']
 
-    # build url from endpoint and parameters
-    url = helper['settings']['api_url'] + endpoint
-    if params != {}:
-        url += '?' + urllib.urlencode(params)
-
-    # try to use cache
+    url = helper['settings']['api_url'] + url
     rv = cache.get(url)
-
-    # if not found, request
     if rv is None:
-        print '> requesting ' + endpoint
+        print '+ requesting ' + url_copy
         helper['requests'] += 1
         res = urllib2.urlopen(url).read()
 
-        # if session key is invalid, discard it and retry
         if res == '"Invalid session key"':
-            session.pop('session_key')
-            flash("Deine Session ist abgelaufen.", "error")
-            return api_load(endpoint, params, session)
+            if session != None:
+                if 'session_key' in session:
+                    session.pop('session_key')
+                flash("Deine Session ist abgelaufen.", "error")
+                return cache_load(url_copy)
 
         rv = json.loads(res)
 
         if rv['status'] == 'forbidden':
             flash("Zugriff verweigert.", "error")
 
-        # cache object
         cache.set(url, rv, timeout=5 * 60)
-
     return rv
 
 
-def api_loadAll(endpoint, params={}, session=None):
+def get_all(url, session=None):
     """
-    cached loading of all elements given an API endpoint
+    collect all results by repeated calls with offsets
     """
-    
-    # add offset and limit to parameters
-    params['offset'] = 0
-    params['limit'] = helper['result_row_limit_max']
-
+    offset = 0
+    limit = helper['result_row_limit_max']
     result = dict()
 
+    if url.find('?') != -1:
+        seperator = '&'
+    else:
+        seperator = '?'
+
     while True:
-        # get data with current offset
-        obj = api_load(endpoint, params, session)
+        obj = cache_load(url + seperator + 'limit=' + str(limit) + '&offset=' + str(offset), session)
+        offset = offset + limit
 
-        # increase offset
-        params['offset'] += params['limit']
-
-        # combine result arrays
         if len(result) == 0:
             result = obj
         else:
             result['result'] = result['result'] + obj['result']
 
-        # return if we get an array with length below the limit
-        if len(obj['result']) < params['limit']:
+        if len(obj['result']) < limit:
             return result

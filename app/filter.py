@@ -4,10 +4,16 @@ from app import app, helper
 
 from utils import cache_load
 
-from datetime import datetime
 from math import ceil
+
+from datetime import datetime
 import pytz
 import iso8601
+
+# for German dates, time zones and ISO8601 translation
+import locale
+locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
+
 
 @app.template_filter('nicedate')
 def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):

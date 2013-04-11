@@ -17,7 +17,7 @@
 
     <ul>
       {% for p in data.result %}
-      <li><a href="/gliederungen/{{p.id}}"><strong>{{p.name}}</strong></a></li>
+      <li><a href="/gliederungen/{{p.id}}"><strong>{{p.id|unit(True)|safe}}</strong></a></li>
       {% endfor %}
     </ul>
 {% endblock %}

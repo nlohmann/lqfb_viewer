@@ -36,9 +36,6 @@ from app import app, helper
 from utils import cache_load, get_all
 import filter
 
-# for German dates, time zones and ISO8601 translation
-import locale
-locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 
 ###############
 # INITIALIZER #
@@ -56,7 +53,7 @@ def fix_path():
 @app.before_first_request
 def prepare():
     """
-    preload ceartain information for convenience
+    preload certain information for convenience
     """
 
     # load settings

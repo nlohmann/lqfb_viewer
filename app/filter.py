@@ -2,7 +2,7 @@
 from flask import session
 from app import app, helper
 
-from utils import cache_load
+from utils import api_load
 
 from math import ceil
 
@@ -18,7 +18,7 @@ locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 @app.template_filter('nicedate')
 def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
     """
-    filter to format dazes given in ISO8601
+    filter to format dates given in ISO8601
     """
 
     if not timeago:
@@ -71,7 +71,7 @@ def member_filter(member_id, name=False):
 
     result = '<i class="icon-user"></i>&nbsp;<a href="/mitglieder/' + str(member_id) + '">'
     if name:
-        data = cache_load('/member?member_id=' + str(member_id), session)
+        data = api_load('/member', params={'member_id': member_id}, session=session)
         if data['result'][0]['name'] != "":
             result += data['result'][0]['name']
         else:
@@ -132,8 +132,8 @@ def quorum_filter(issue_id):
     a filter to return the quorum of a given issue
     """
     data = dict()
-    data['issue'] = cache_load('/issue?issue_id=' + str(issue_id))
-    data['policy'] = cache_load('/policy?policy_id=' + str(data['issue']['result'][0]['policy_id']))
+    data['issue'] = api_load('/issue', params={'issue_id': issue_id})
+    data['policy'] = api_load('/policy', params={'policy_id': + data['issue']['result'][0]['policy_id']})
     return int(ceil((float(data['policy']['result'][0]['initiative_quorum_num']) / float(data['policy']['result'][0]['initiative_quorum_den'])) * data['issue']['result'][0]['population']))
 
 @app.template_filter('is_url')
@@ -141,4 +141,4 @@ def is_url(url):
     """
     GANZ einfacher Test, ob es sich um eine URL handelt. Kann man mal mit nem RegEx aufbessern
     """
-    return str(url).find('http')>-1 or str(url).find('https')>-1
+    return str(url).find('http') > -1 or str(url).find('https') > -1

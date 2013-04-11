@@ -55,12 +55,17 @@
     </div>
 </div>
 
-<div class="footer muted">{{helper.requests}} Anfragen,
-  {% if session.current_access_level %}
-  <i class="{{ helper.enums.access[session.current_access_level].icon}}"></i> {{ helper.enums.access[session.current_access_level].name }}
-  {% else %}
-  <i class="{{ helper.enums.access['anonymous'].icon}}"></i> {{ helper.enums.access['anonymous'].name }}
-  {% endif %}
+<div class="footer">
+  <div class="container">
+      <p class="muted" style="padding-top:10px;">
+      {{helper.requests}} Anfragen,
+      {% if session.current_access_level %}
+      <i class="{{ helper.enums.access[session.current_access_level].icon}}"></i> {{ helper.enums.access[session.current_access_level].name }}
+      {% else %}
+      <i class="{{ helper.enums.access['anonymous'].icon}}"></i> {{ helper.enums.access['anonymous'].name }}
+      {% endif %}
+      </p>
+  </div>
 </div>
 
 </body>

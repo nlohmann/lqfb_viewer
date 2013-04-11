@@ -15,14 +15,15 @@
       <h1><i class="icon-user"></i> Mitglieder</h1>
     </div>
 
-    <ul>
+    <ul class="unstyled">
       {% for p in data.member.result if p.active %}
-      <li>
+      <li><a href="/mitglieder/{{p.id}}"><i class="icon-user"></i>
       {% if p.name %}
-      <a href="/mitglieder/{{p.id}}"><strong>{{p.name}}</strong></a>
+      <strong>{{p.name}}</strong>
       {% else %}
-      <a href="/mitglieder/{{p.id}}"><strong>Mitglied {{p.id}}</strong></a>
+      <strong>Mitglied {{p.id}}</strong>
       {% endif %}
+      </a>
       </li>
       {% endfor %}
     </ul>

@@ -1,1 +1,15 @@
-.DS_Store?
+# installed statics
+app/static/bootstrap
+app/static/font-awesome
+app/static/jquery.tablesorter
+app/static/jquery
+
+# installed binaries
+components
+flask
+node_modules
+virtualenv.py
+
+# temporary files
+*/.DS_Store
+*.pyc

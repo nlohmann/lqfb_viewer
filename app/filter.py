@@ -18,9 +18,10 @@ def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
     if not timeago:
         return iso8601.parse_date(s).astimezone(pytz.timezone('Europe/Berlin')).strftime(format)
     else:
+        local_tz = pytz.timezone('Europe/Berlin')
         default = "eben gerade"
-        now = datetime.utcnow()
-        date = datetime.strptime(s.encode("iso-8859-16"), "%Y-%m-%dT%H:%M:%S.%fZ")
+        now = datetime.utcnow().replace(tzinfo=local_tz)
+        date = iso8601.parse_date(s).astimezone(local_tz)
         diff = now - date
 
         #verschiedene zeitperioden - woche, monat, jahre eingebaut, falls benoetigt
@@ -60,7 +61,7 @@ def member_filter(member_id, name=False):
     never reveal names to unauthorized users
     """
     if not 'current_access_level' in session or session['current_access_level'] != 'member':
-        name=False
+        return '<i class="icon-user"></i>&nbsp;Mitglied&nbsp;' + str(member_id)
 
     result = '<i class="icon-user"></i>&nbsp;<a href="/mitglieder/' + str(member_id) + '">'
     if name:

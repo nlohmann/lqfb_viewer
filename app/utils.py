@@ -7,7 +7,7 @@ import urllib2,json
 # FUNCTIONS #
 #############
 
-def cache_load(url, session=None):
+def api_load(url, session=None):
     """
     cached loading of JSON objects: we use the URL as key
     """
@@ -44,7 +44,7 @@ def cache_load(url, session=None):
     return rv
 
 
-def get_all(url, session=None):
+def api_load_all(url, session=None):
     """
     collect all results by repeated calls with offsets
     """
@@ -58,7 +58,7 @@ def get_all(url, session=None):
         seperator = '?'
 
     while True:
-        obj = cache_load(url + seperator + 'limit=' + str(limit) + '&offset=' + str(offset), session)
+        obj = api_load(url + seperator + 'limit=' + str(limit) + '&offset=' + str(offset), session)
         offset = offset + limit
 
         if len(result) == 0:

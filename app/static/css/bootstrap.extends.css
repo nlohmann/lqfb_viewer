@@ -14,3 +14,24 @@
 .bar-border-right{
     border-right: 2px solid black !important;
 }
+
+/*
+Sticky Footer by Ryan Fait
+http://ryanfait.com/
+*/
+* {
+    margin: 0;
+}
+html, body {
+    height: 100%;
+}
+.wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -50px; /* the bottom margin is the negative value of the footer's height */
+}
+.footer, .push {
+    margin-left: 20px;
+    height: 50px; /* .push must be the same height as .footer */
+}

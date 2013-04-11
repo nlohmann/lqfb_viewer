@@ -15,7 +15,7 @@
       <h1><i class="icon-columns"></i> Themenbereiche</h1>
     </div>
 
-    <ul class="unstyled">
+    <ul>
       {% for p in data.result|groupby('unit_id') %}
       <li style="padding-bottom: 0.5em;"><a href="/gliederung/{{g.grouper}}">{{ p.grouper|unit(True)|safe }}</a>
         <ul>

@@ -15,7 +15,7 @@
       <h1><i class="icon-book"></i> Regelwerke</h1>
     </div>
 
-    <ul class="unstyled">
+    <ul>
       {% for p in data.result %}
       <li><a href="/regelwerke/{{p.id}}"><strong>{{p.id|policy(True)|safe}}</strong></a></li>
       {% endfor %}

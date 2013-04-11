@@ -1,0 +1,23 @@
+{% extends "_base.html" %}
+
+{% block title %}LQFB › Gliederungen › {{data.result.0.name}}{% endblock %}
+
+{% block navigation %}
+{{ super() }}
+  <ul class="breadcrumb">
+    <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
+    <li><a href="/gliederungen">Gliederungen</a> <span class="divider">/</span></li>
+    <li lass="active">{{data.result.0.name}}</li>
+  </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+      <h1><small>Gliederung</small><br><i class="icon-sitemap"></i> {{data.result.0.name}}</h1>
+    </div>
+
+    <h2>Statistik</h2>
+    <p>{{data.result.0.member_count}} Mitglieder</p>
+
+
+{% endblock %}

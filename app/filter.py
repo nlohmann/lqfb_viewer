@@ -61,6 +61,17 @@ def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
 
         return default
 
+@app.template_filter('avatar')
+def avatar_filter(member_id):
+    if not 'current_access_level' in session or session['current_access_level'] != 'member':
+        return '<i class="icon-user"></i>'
+    
+    data = api_load('/member_image?member_id=' + str(member_id) + '&type=avatar', session)
+    if data['result'] != []:
+        return '<img class="img-rounded" src="data:' + data['result'][0]['content_type'] + ';base64,' + data['result'][0]['data'] + '"/>'
+    else:
+        return '<i class="icon-user"></i>'
+
 @app.template_filter('member')
 def member_filter(member_id, name=False):
     """

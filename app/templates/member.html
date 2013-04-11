@@ -17,7 +17,7 @@
 
 {% block content %}
     <div class="page-header">
-      <h1><small>Mitglied Nr. {{ data.member.result.0.id }}</small><br><i class="icon-user"></i> {{ data.member.result[0].name }}</h1>
+      <h1><small>Mitglied Nr. {{ data.member.result.0.id }}</small><br>{{ data.member.result.0.id|avatar|safe }} {{ data.member.result[0].name }}</h1>
     </div>
 
     {% for pic in data.member_image.result if pic.image_type == "photo" %}

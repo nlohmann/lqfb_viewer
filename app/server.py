@@ -131,6 +131,11 @@ def show_units():
     data = api_load('/unit')
     return render_template('units.html', data=data, helper=helper)
 
+@app.route('/gliederungen/<int:id>')
+def show_unit(id):
+    data = api_load('/unit?unit_id=' + str(id))
+    return render_template('unit.html', data=data, helper=helper)
+
 @app.route('/ereignisse')
 def show_events():
     data = dict()
@@ -160,6 +165,8 @@ def show_initiative(id):
     data['issue'] = api_load('/issue?issue_id=' + str(data['initiative']['result'][0]['issue_id']))
     data['current_draft'] = api_load('/draft?initiative_id=' + str(id) + '&current_draft=true&render_content=html')
     data['battle'] = api_load('/battle?issue_id=' + str(data['initiative']['result'][0]['issue_id']))
+    data['draft'] = api_load('/draft?initiative_id=' + str(id))
+    data['suggestion'] = api_load('/suggestion?initiative_id=' + str(id))
 
     return render_template('initiative.html', data=data, helper=helper)
 

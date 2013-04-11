@@ -17,7 +17,7 @@
 
     <ul>
       {% for p in data.result|groupby('unit_id') %}
-      <li style="padding-bottom: 0.5em;"><a href="/gliederung/{{g.grouper}}">{{ p.grouper|unit(True)|safe }}</a>
+      <li style="padding-bottom: 0.5em;"><a href="/gliederungen/{{p.grouper}}">{{ p.grouper|unit(True)|safe }}</a>
         <ul>
         {% for p2 in p.list %}
           <li><a href="/themenbereiche/{{p2.id}}"><strong>{{ p2.id|area(True)|safe }}</strong></a></li>

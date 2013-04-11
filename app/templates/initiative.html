@@ -110,4 +110,22 @@
     </div>
 
     <p><strong>Stand: </strong>{{ data.current_draft.result[0].created|nicedate(timeago=False) }}</p>
+
+    <h2>Entwürfe</h2>
+    <ol>
+      {% for p in data.draft.result %}
+      <li>{{ p.created|nicedate(timeago=False) }}</li>
+      {% endfor %}
+    </ol>
+
+    <h2>Anregungen</h2>
+    <ol>
+      {% for p in data.suggestion.result|sort(attribute='proportional_order') %}
+      <li>
+        {{ p.name }}<br>
+        {{ p.created|nicedate(timeago=False) }}<br>
+      </li>
+      {% endfor %}
+    </ol>
+
 {% endblock %}

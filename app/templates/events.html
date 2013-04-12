@@ -215,85 +215,68 @@
       {% for p in data.event.result | sort(reverse=True,attribute='occurrence') %}
       <li class="{{p.state}} {{p.event}}{% if data.issue.result[p.issue_id-1].closed %} closed_issue{% else %} open_issue{% endif %}">
         <div class="time">
-            {% autoescape false %}{{ p.occurrence|nicedate }}{% endautoescape %}
+          {{ p.occurrence|nicedate|safe }}
         </div>
         <span class="corner"></span>
-        {% if p.event == "issue_state_changed" %}
-        {% if p.state == "discussion" %}
         <p>
-          <i class="icon-comments icon-2x"></i> {{p.issue_id|issue|safe}} ist jetzt in der <strong>Diskussionsphase</strong>.
-        </p>
-        {% elif p.state == "verification" %}
-        <p>
-          <i class="icon-lock icon-2x"></i> {{p.issue_id|issue|safe}} ist jetzt <strong>eingefroren</strong>
+          {% if p.event == "issue_state_changed" %}
+          <i class="{{helper.enums.issue[p.state].icon}} icon-2x"></i>
+          {% if p.state == "discussion" %}
+          {{p.issue_id|issue|safe}} ist jetzt in der <strong>Diskussionsphase</strong>.
+          {% elif p.state == "verification" %}
+          {{p.issue_id|issue|safe}} ist jetzt <strong>eingefroren</strong>
           <ul>
-          {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
-          {% if p2.supporter_count >= p.issue_id|quorum %}
-          <li>{{p2.id|initiative(True)|safe}}</li>
-          {% else %}
-          <li style="text-decoration: line-through;">{{p2.id|initiative(True)|safe}}</li>
-          {% endif %}
-          {% endfor %}
+            {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
+            {% if p2.supporter_count >= p.issue_id|quorum %}
+            <li>{{p2.id|initiative(True)|safe}}</li>
+            {% else %}
+            <li style="text-decoration: line-through;">{{p2.id|initiative(True)|safe}}</li>
+            {% endif %}
+            {% endfor %}
           </ul>
-        </p>
-        {% elif p.state == "voting" %}
-        <p>
-          <i class="icon-list-ol icon-2x"></i> {{p.issue_id|issue|safe}} wird jetzt <strong>abgestimmt</strong>.
+          {% elif p.state == "voting" %}
+          {{p.issue_id|issue|safe}} wird jetzt <strong>abgestimmt</strong>.
           <ul class="unstyled">
-          {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
-          {% if p2.admitted == True %}
-          <li>{{p2.id|initiative(True)|safe}}</li>
-          {% elif p2.supporter_count >= p.issue_id|quorum %}
-          <li style="text-decoration: line-through;">{{p2.id|initiative(True)|safe}}</li>
-          {% endif %}
-          {% endfor %}
-        </ul>
-        </p>
-        {% elif p.state == "finished_with_winner" %}
-        <p>
-          <i class="icon-ok icon-2x"></i> Die Abstimmung von {{p.issue_id|issue|safe}} wurde <strong>mit einem Gewinner</strong> beendet:
+            {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
+            {% if p2.admitted == True %}
+            <li>{{p2.id|initiative(True)|safe}}</li>
+            {% elif p2.supporter_count >= p.issue_id|quorum %}
+            <li style="text-decoration: line-through;">{{p2.id|initiative(True)|safe}}</li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+          {% elif p.state == "finished_with_winner" %}
+          Die Abstimmung von {{p.issue_id|issue|safe}} wurde <strong>mit einem Gewinner</strong> beendet:
           {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
           {% if p2.winner %}
           {{p2.id|initiative(True)|safe}}.
           {% endif %}
           {% endfor %}
-        </p>
-        {% elif p.state == "finished_without_winner" %}
-        <p>
-          <i class="icon-remove icon-2x"></i> Die Abstimmung von {{p.issue_id|issue|safe}} wurde <strong>ohne einen Gewinner</strong> beendet.
-        </p>
-        {% elif p.state == "canceled_revoked_before_accepted" %}
-        <p>
-          <i class="icon-reply icon-2x"></i> {{p.issue_id|issue|safe}} wurde in der Neu-Phase <strong>abgebrochen</strong>.
-        </p>
-        {% else %}
-        <p>
+          {% elif p.state == "finished_without_winner" %}
+          Die Abstimmung von {{p.issue_id|issue|safe}} wurde <strong>ohne einen Gewinner</strong> beendet.
+          {% elif p.state == "canceled_revoked_before_accepted" %}
+          {{p.issue_id|issue|safe}} wurde in der Neu-Phase <strong>abgebrochen</strong>.
+          {% else %}
           Der Zustand von {{p.issue_id|issue|safe}} hat sich zu <strong>{{ p.state }}</strong> geändert.
+          {% endif %}
+        
+          {% else %}
+          <i class="{{helper.enums.event[p.event].icon}} icon-2x"></i>
+          {% if p.event == "initiative_created_in_new_issue" %}
+          {{p.issue_id|issue|safe}} wurde von {{p.member_id|member(True)|safe}} durch Hinzufügen von {{p.initiative_id|initiative(True)|safe}} <strong>neu angelegt</strong>.
+          {% elif p.event == "initiative_created_in_existing_issue" %}
+          {{p.member_id|member(True)|safe}} hat {{p.initiative_id|initiative(True)|safe}} zu {{p.issue_id|issue|safe}} <strong>hinzugefügt</strong>.
+          {% elif p.event == "suggestion_created" %}
+          {{p.member_id|member(True)|safe}} hat eine <strong>Anregung</strong> zu {{p.initiative_id|initiative(True)|safe}} geschrieben{% if data.suggestion.result[p.suggestion_id-1] %}: {{data.suggestion.result[p.suggestion_id-1].name}}{% endif %}.
+          {% elif p.event == "initiative_revoked" %}
+          {{p.member_id|member(True)|safe}} hat {{p.initiative_id|initiative(True)|safe}} <strong>zurückgezogen</strong>.
+          {% elif p.event == "new_draft_created" %}
+          {{p.member_id|member(True)|safe}} hat einen <strong>neuen Entwurf</strong> von {{p.initiative_id|initiative(True)|safe}} geschrieben.
+          {% else %}
+          {{ p.event }}
+          {% endif %}
+          {% endif %}
         </p>
-        {% endif %}
-        {% elif p.event == "initiative_created_in_new_issue" %}
-        <p>
-          <i class="icon-list-alt icon-2x"></i> {{p.issue_id|issue|safe}} wurde von {{p.member_id|member(True)|safe}} durch Hinzufügen von {{p.initiative_id|initiative(True)|safe}} <strong>neu angelegt</strong>.
-        </p>
-        {% elif p.event == "initiative_created_in_existing_issue" %}
-        <p>
-          <i class="icon-file-alt icon-2x"></i> {{p.member_id|member(True)|safe}} hat {{p.initiative_id|initiative(True)|safe}} zu {{p.issue_id|issue|safe}} <strong>hinzugefügt</strong>.
-        </p>
-        {% elif p.event == "suggestion_created" %}
-        <p>
-          <i class="icon-lightbulb icon-2x"></i> {{p.member_id|member(True)|safe}} hat eine <strong>Anregung</strong> zu {{p.initiative_id|initiative(True)|safe}} geschrieben{% if data.suggestion.result[p.suggestion_id-1] %}: {{data.suggestion.result[p.suggestion_id-1].name}}{% endif %}.
-        </p>
-        {% elif p.event == "initiative_revoked" %}
-        <p>
-          <i class="icon-reply icon-2x"></i> {{p.member_id|member(True)|safe}} hat {{p.initiative_id|initiative(True)|safe}} <strong>zurückgezogen</strong>.
-        </p>
-        {% elif p.event == "new_draft_created" %}
-        <p>
-          <i class="icon-paste icon-2x"></i> {{p.member_id|member(True)|safe}} hat einen <strong>neuen Entwurf</strong> von {{p.initiative_id|initiative(True)|safe}} geschrieben.
-        </p>
-        {% else %}
-        {{ p.event }}
-        {% endif %}
       </li>
       {% endfor %}
     </ol>

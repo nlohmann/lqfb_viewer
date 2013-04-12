@@ -143,7 +143,8 @@
 
     <h3>Ausgehende Delegationen</h3>
     <ul>
-    {% for p in data.delegation.result if p.truster_id == data.member.result[0].id and data.member.result[0].trustee_id %}
+    {% for p in data.delegation.result if p.truster_id == data.member.result[0].id %}
+    {% if p.trustee_id %}
     <li>{{ p.trustee_id|member(True)|safe }}
       {% if p.scope == "unit" %}
       ({{ p.unit_id|unit(True)|safe }})
@@ -153,6 +154,7 @@
       ({{ p.issue_id|issue|safe }})
       {% endif %}
     </li>
+    {% endif %}
     {% else %}
     <li>keine ausgehenden Delegationen</li>
     {% endfor %}

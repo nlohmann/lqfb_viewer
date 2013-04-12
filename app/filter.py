@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import session
+from jinja2._markupsafe import Markup
 from app import app, helper
 
 from utils import api_load
@@ -17,49 +18,79 @@ locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 
 @app.template_filter('nicedate')
 def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
-    """
-    filter to format dazes given in ISO8601
-    """
+    # """
+    # filter to format dazes given in ISO8601
+    # """
+    #
+    # if not timeago:
+    #     return iso8601.parse_date(s).astimezone(pytz.timezone('Europe/Berlin')).strftime(format)
+    # else:
+    #     local_tz = pytz.timezone('Europe/Berlin')
+    #     default = "eben gerade"
+    #     now = datetime.utcnow().replace(tzinfo=local_tz)
+    #     date = iso8601.parse_date(s).astimezone(local_tz)
+    #     diff = now - date
+    #
+    #     #verschiedene zeitperioden - woche, monat, jahre eingebaut, falls benoetigt
+    #     periods = (
+    #         (diff.days / 365, "Jahr", "Jahre"),
+    #         (diff.days / 30, "Monat", "Monate"),
+    #         (diff.days / 7, "Woche", "Wochen"),
+    #         (diff.days, "Tag", "Tagen"),
+    #         #TODO: Fix that m*therf***ing hack down here !!!
+    #         (diff.seconds / 3600 + 2, "Stunde", "Stunden"),
+    #         (diff.seconds / 60, "Minute", "Minuten"),
+    #         (diff.seconds, "Sekunde", "Sekunden"),
+    #     )
+    #     #import locale
+    #     #locale.setlocale(locale.LC_ALL, 'deutsch')
+    #     dateFormatted = datetime.strftime(date, "%d.%m.%Y %H:%M:%S")
+    #     for period, singular, plural in periods:
+    #
+    #         if period:
+    #             if diff.days == 1:
+    #                 return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, "gestern")
+    #             elif 1 < diff.days < 7:
+    #                 return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%A"))
+    #             elif diff.days > 6:
+    #                 date = date
+    #                 return u'<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d. %B").decode('utf-8'))
+    #             elif diff.days > 365:
+    #                 return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d.%m.%Y"))
+    #             else:
+    #                 return '<span data-toggle="tooltip" title="%s">vor %d %s</span>' % (dateFormatted, period, singular if period == 1 else plural)
+    #
+    #     return default
+    return humandate(s,format,False)
 
-    if not timeago:
-        return iso8601.parse_date(s).astimezone(pytz.timezone('Europe/Berlin')).strftime(format)
+
+def humandate(_date,format, timeago=True):
+
+    thisdate = iso8601.parse_date(_date).astimezone(pytz.timezone('Europe/Berlin'))
+    now = datetime.now(tz=pytz.timezone('Europe/Berlin'))
+    delta = now - thisdate
+    is_year = (now.year == thisdate.year)
+    is_week = (thisdate.strftime('%W%Y') == now.strftime('%W%Y'))
+    is_today = (now.day == thisdate.day and now.month == thisdate.month and is_year)
+
+    if delta.seconds < 300:
+        humandatestring = "gerade eben"
+    elif delta.seconds < 3600:
+        humandatestring = "%s Minuten" % (delta.seconds/60)
+    elif (delta.seconds > 3600) and is_today:
+        humandatestring = "%s Stunden" % (delta.seconds/(60*60))
+    elif (delta.days < 2 ) and not is_today:
+        humandatestring = "gestern"
+    elif is_week:
+        humandatestring = thisdate.strftime('%A')
+    elif is_year:
+        humandatestring = thisdate.strftime('%d. %B').decode('utf-8')
     else:
-        local_tz = pytz.timezone('Europe/Berlin')
-        default = "eben gerade"
-        now = datetime.utcnow().replace(tzinfo=local_tz)
-        date = iso8601.parse_date(s).astimezone(local_tz)
-        diff = now - date
+        humandatestring = thisdate.strftime('%d. %B %Y').decode('utf-8')
 
-        #verschiedene zeitperioden - woche, monat, jahre eingebaut, falls benoetigt
-        periods = (
-            (diff.days / 365, "Jahr", "Jahre"),
-            (diff.days / 30, "Monat", "Monate"),
-            (diff.days / 7, "Woche", "Wochen"),
-            (diff.days, "Tag", "Tagen"),
-            #TODO: Fix that m*therf***ing hack down here !!!
-            (diff.seconds / 3600 + 2, "Stunde", "Stunden"),
-            (diff.seconds / 60, "Minute", "Minuten"),
-            (diff.seconds, "Sekunde", "Sekunden"),
-        )
-        #import locale
-        #locale.setlocale(locale.LC_ALL, 'deutsch')
-        dateFormatted = datetime.strftime(date, "%d.%m.%Y %H:%M:%S")
-        for period, singular, plural in periods:
+    return Markup('<span data-toggle="tooltip" title="%s">%s</span>' % (thisdate.strftime('%A, %x, %H:%M Uhr') ,humandatestring))
 
-            if period:
-                if diff.days == 1:
-                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, "gestern")
-                elif 1 < diff.days < 7:
-                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%A"))
-                elif diff.days > 6:
-                    date = date
-                    return u'<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d. %B").decode('utf-8'))
-                elif diff.days > 365:
-                    return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d.%m.%Y"))
-                else:
-                    return '<span data-toggle="tooltip" title="%s">vor %d %s</span>' % (dateFormatted, period, singular if period == 1 else plural)
 
-        return default
 
 @app.template_filter('avatar')
 def avatar_filter(member_id):

@@ -19,6 +19,14 @@
       </h1>
     </div>
 
+    {% if session.current_access_level == 'member' %}
+    <h2>Initiatoren</h2>
+    {% for p in data.initiator.result %}
+      {{ p.member_id|member(True)|safe }}
+    {% endfor %}
+    <br>
+    <br>
+    {% endif %}
 
     {# collecting data for the supporter bar #}
     {% if data.initiative.result[0].supporter_count > data.initiative.result[0].issue_id|quorum %}

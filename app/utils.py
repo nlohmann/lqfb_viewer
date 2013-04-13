@@ -37,9 +37,6 @@ def api_load(url, session=None):
 
         rv = json.loads(res)
 
-        if rv['status'] == 'forbidden':
-            flash("Zugriff verweigert.", "error")
-
         cache.set(url, rv, timeout=5 * 60)
     return rv
 

@@ -156,6 +156,11 @@ def show_issue(id):
     data['issue'] = api_load('/issue?issue_id=' + str(id))
     data['initiative'] = api_load('/initiative?issue_id=' + str(id))
     data['policy'] = api_load('/policy?policy_id=' + str(data['issue']['result'][0]['policy_id']))
+    data['interest'] = dict()
+    data['interest']['latest'] = api_load('/interest?issue_id=' + str(id) + "&snapshot=latest", session)
+    data['interest']['end_of_admission'] = api_load('/interest?issue_id=' + str(id) + "&snapshot=end_of_admission", session)
+    data['interest']['half_freeze'] = api_load('/interest?issue_id=' + str(id) + "&snapshot=half_freeze", session)
+    data['interest']['full_freeze'] = api_load('/interest?issue_id=' + str(id) + "&snapshot=full_freeze", session)
     return render_template('issue.html', data=data, helper=helper)
 
 @app.route('/initiative/<int:id>')
@@ -167,6 +172,7 @@ def show_initiative(id):
     data['battle'] = api_load('/battle?issue_id=' + str(data['initiative']['result'][0]['issue_id']))
     data['draft'] = api_load('/draft?initiative_id=' + str(id))
     data['suggestion'] = api_load('/suggestion?initiative_id=' + str(id))
+    data['initiator'] = api_load('/initiator?initiative_id=' + str(id), session)
 
     return render_template('initiative.html', data=data, helper=helper)
 

@@ -174,7 +174,7 @@ def quorum_filter(issue_id):
     a filter to return the quorum of a given issue
     """
     issue = fob['issue']['id'][issue_id]
-    policy = fob['policy']['id'][data['issue']['result'][0]['policy_id']]
+    policy = fob['policy']['id'][issue['policy_id']]
 
     return int(ceil((float(policy['initiative_quorum_num']) / float(policy['initiative_quorum_den'])) * issue['population']))
 

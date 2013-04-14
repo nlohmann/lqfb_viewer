@@ -85,6 +85,10 @@ def prepare():
     data = api_load('/area')
     fob_store(data['result'], 'id', 'area')
 
+    # issues
+    data = api_load('/issue')
+    fob_store(data['result'], 'id', 'issue')
+
     # initiatives
     data = api_load_all('/initiative')
     fob_store(data['result'], 'id', 'initiative')

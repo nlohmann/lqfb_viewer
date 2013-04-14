@@ -97,7 +97,7 @@ def avatar_filter(member_id):
     if not 'current_access_level' in session or session['current_access_level'] != 'member':
         return '<i class="icon-user"></i>'
     
-    data = api_load('/member_image?member_id=' + str(member_id) + '&type=avatar', session)
+    data = api_load('/member_image', q={'member_id': member_id, 'type': 'avatar'}, session=session)
     if data['result'] != []:
         return '<img class="img-rounded" src="data:' + data['result'][0]['content_type'] + ';base64,' + data['result'][0]['data'] + '"/>'
     else:
@@ -113,7 +113,7 @@ def member_filter(member_id, name=False):
 
     result = '<i class="icon-user"></i>&nbsp;<a href="/mitglieder/%d">' % member_id
     if name:
-        data = api_load('/member?member_id=' + str(member_id), session)
+        data = api_load('/member', q={'member_id': member_id}, session=session)
         if data['result'][0]['name'] != "":
             result += data['result'][0]['name']
         else:
@@ -174,8 +174,8 @@ def quorum_filter(issue_id):
     a filter to return the quorum of a given issue
     """
     data = dict()
-    data['issue'] = api_load('/issue?issue_id=%d' % issue_id)
-    data['policy'] = api_load('/policy?policy_id=%d' % data['issue']['result'][0]['policy_id'])
+    data['issue'] = api_load('/issue', q={'issue_id': issue_id})
+    data['policy'] = api_load('/policy', q={'policy_id': data['issue']['result'][0]['policy_id']})
     return int(ceil((float(data['policy']['result'][0]['initiative_quorum_num']) / float(data['policy']['result'][0]['initiative_quorum_den'])) * data['issue']['result'][0]['population']))
 
 @app.template_filter('is_url')

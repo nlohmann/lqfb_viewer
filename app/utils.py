@@ -1,67 +1,60 @@
 # -*- coding: utf-8 -*-
 from app import helper, cache
 from flask import flash
-import urllib2,json
+import urllib, urllib2, json
 
 #############
 # FUNCTIONS #
 #############
 
-def api_load(url, session=None):
-    """
-    cached loading of JSON objects: we use the URL as key
-    """
-    url_copy = url
+def api_load(endpoint, q=None, session=None, forceLoad=False):
+    if q is None:
+        q = {}
 
-    if session != None:
-        if 'session_key' in session:
-            if url.find('?') != -1:
-                seperator = '&'
-            else:
-                seperator = '?'
-            url = url + seperator + "session_key=" + session['session_key']
+    # if session is given, add session key to parameters
+    if session != None and 'session_key' in session:
+        q['session_key'] = session['session_key']
 
-    url = helper['settings']['api_url'] + url
+    # build url from endpoint and parameters
+    url = helper['settings']['api_url'] + endpoint
+    if q != {}:
+        url += '?' + urllib.urlencode(q)
+
+    # try to use cache
     rv = cache.get(url)
-    if rv is None:
-        print '+ requesting ' + url_copy
+
+    if rv is None or forceLoad == True:
+        print ">", endpoint
+        
         helper['requests'] += 1
         res = urllib2.urlopen(url).read()
 
         if res == '"Invalid session key"':
-            if session != None:
-                if 'session_key' in session:
-                    session.pop('session_key')
-                flash("Deine Session ist abgelaufen.", "error")
-                return cache_load(url_copy)
+            session.pop('session_key')
+            flash("Deine Session ist abgelaufen.", "error")
+            return api_load(endpoint, params, session)
 
         rv = json.loads(res)
 
         cache.set(url, rv, timeout=5 * 60)
     return rv
 
+def api_load_all(endpoint, q=None, session=None, forceLoad=False):
+    if q is None:
+        q = {}
 
-def api_load_all(url, session=None):
-    """
-    collect all results by repeated calls with offsets
-    """
-    offset = 0
-    limit = helper['result_row_limit_max']
+    q['offset'] = 0
+    q['limit'] = helper['result_row_limit_max']
     result = dict()
-
-    if url.find('?') != -1:
-        seperator = '&'
-    else:
-        seperator = '?'
-
+    
     while True:
-        obj = api_load(url + seperator + 'limit=' + str(limit) + '&offset=' + str(offset), session)
-        offset = offset + limit
+        obj = api_load(endpoint, q=q, session=session, forceLoad=forceLoad)
+        q['offset'] += q['limit']
 
         if len(result) == 0:
             result = obj
         else:
             result['result'] = result['result'] + obj['result']
 
-        if len(obj['result']) < limit:
+        if len(obj['result']) < q['limit']:
             return result

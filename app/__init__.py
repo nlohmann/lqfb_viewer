@@ -39,5 +39,6 @@ cache = SimpleCache(threshold=2000)
 
 # global dictionary for convenience data
 helper = dict()
+fob = dict()
 
 from app import server

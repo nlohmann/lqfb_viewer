@@ -31,9 +31,9 @@ import urllib2
 
 # everything for Flask
 from flask import render_template, request, session, flash
-from app import app, helper
+from app import app, helper, fob
 
-from utils import api_load, api_load_all
+from utils import api_load, api_load_all, fob_store
 import filter
 
 
@@ -69,37 +69,25 @@ def prepare():
     # number of http requests
     helper['requests'] = 0
 
-    # policies
-    helper['policy'] = dict()
-    data = api_load('/policy')
-    for p in data['result']:
-        helper['policy'][p['id']] = p['name']
-
-    # unit
-    helper['unit'] = dict()
-    data = api_load('/unit')
-    for p in data['result']:
-        helper['unit'][p['id']] = p['name']
-
-    # areas
-    helper['area'] = dict()
-    data = api_load('/area')
-    for p in data['result']:
-        helper['area'][p['id']] = p['name']
-
-    helper['unit2area'] = dict()
-    for p in data['result']:
-        helper['unit2area'][p['id']] = p['unit_id']
-
     # info (only maximal row limit is interesting)
     data = api_load('/info')
     helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
 
+    # policies
+    data = api_load('/policy')
+    fob_store(data['result'], 'id', 'policy')
+
+    # unit
+    data = api_load('/unit')
+    fob_store(data['result'], 'id', 'unit')
+
+    # areas
+    data = api_load('/area')
+    fob_store(data['result'], 'id', 'area')
+
     # initiatives
-    helper['initiative'] = dict()
     data = api_load_all('/initiative')
-    for p in data['result']:
-        helper['initiative'][p['id']] = p['name']
+    fob_store(data['result'], 'id', 'initiative')
 
     print "+ up and running..."
 
@@ -148,7 +136,7 @@ def show_events():
 @app.route('/themen')
 def show_issues():
     data = api_load_all('/issue')
-    return render_template('issues.html', data=data, helper=helper)
+    return render_template('issues.html', data=data, helper=helper, fob=fob)
 
 @app.route('/themen/<int:id>')
 def show_issue(id):

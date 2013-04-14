@@ -18,7 +18,7 @@
         <a href="{{helper.settings.lqfb_url}}/vote/list.html?issue_id={{data.issue.result[0].id}}" target="lqfb_window" class="btn btn-warning btn-large pull-right" type="button" style="margin-top: 1.5em;">abstimmen</a>
         {% endif %}
         <i class="{{ helper.enums.issue[data.issue.result[0].state].icon }}{% if helper.enums.issue[data.issue.result[0].state].color %} {{ helper.enums.issue[data.issue.result[0].state].color }}{% endif %} icon-2x pull-left"></i>
-        <small>{{ helper.policy[data.issue.result[0].policy_id] }}</small><br><i class="icon-list-alt"></i> Thema {{data.issue.result[0].id}}
+        <small>{{ data.issue.result[0].policy_id|policy(True)|safe }}</small><br><i class="icon-list-alt"></i> Thema {{data.issue.result[0].id}}
       </h1>
     </div>
 
@@ -90,11 +90,11 @@
 
     <h2>Quoren</h2>
     <ul>
-      <li>Grundgesamtheit im Bereich {{ helper.area[data.issue.result[0].area_id] }}: {{ data.issue.result[0].population }}</li>
+      <li>Grundgesamtheit im Bereich {{ data.issue.result[0].area_id|area(True)|safe }}: {{ data.issue.result[0].population }}</li>
 
-      <li>Themen-Quorum im Regelwerk <a href="/regelwerke/{{data.issue.result[0].policy_id}}">{{ helper.policy[data.issue.result[0].policy_id] }}</a>: {{  ((data.policy.result[0].issue_quorum_num / data.policy.result[0].issue_quorum_den)*data.issue.result[0].population)|round(0,'ceil')|int }} ({{ ((data.policy.result[0].issue_quorum_num / data.policy.result[0].issue_quorum_den)*100)|round(1) }}% der Grundgesamtheit)</li>
+      <li>Themen-Quorum im Regelwerk {{ data.issue.result[0].policy_id|policy(True)|safe }}: {{  ((data.policy.result[0].issue_quorum_num / data.policy.result[0].issue_quorum_den)*data.issue.result[0].population)|round(0,'ceil')|int }} ({{ ((data.policy.result[0].issue_quorum_num / data.policy.result[0].issue_quorum_den)*100)|round(1) }}% der Grundgesamtheit)</li>
       
-      <li>Initiativen-Quroum im Regelwerk <a href="/regelwerke/{{data.issue.result[0].policy_id}}">{{ helper.policy[data.issue.result[0].policy_id] }}</a>: {{  ((data.policy.result[0].initiative_quorum_num / data.policy.result[0].initiative_quorum_den)*data.issue.result[0].population)|round(0,'ceil')|int }} ({{ ((data.policy.result[0].initiative_quorum_num / data.policy.result[0].initiative_quorum_den)*100)|round(1) }}% der Grundgesamtheit)</li>
+      <li>Initiativen-Quroum im Regelwerk {{ data.issue.result[0].policy_id|policy(True)|safe }}: {{  ((data.policy.result[0].initiative_quorum_num / data.policy.result[0].initiative_quorum_den)*data.issue.result[0].population)|round(0,'ceil')|int }} ({{ ((data.policy.result[0].initiative_quorum_num / data.policy.result[0].initiative_quorum_den)*100)|round(1) }}% der Grundgesamtheit)</li>
       
       {% if data.issue.result[0].voter_count %}
       <li>

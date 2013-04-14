@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import session
 from jinja2._markupsafe import Markup
-from app import app, helper
+from app import app, helper, fob
 
 from utils import api_load
 
@@ -132,7 +132,7 @@ def area_filter(area_id, title=False):
     result = '<i class="icon-columns"></i>&nbsp;'
 
     if title:
-        result += helper['area'][area_id]
+        result += fob['area']['id'][area_id]['name']
     else:
         result += 'Themnbereich&nbsp;%d' % area_id
     return result
@@ -142,7 +142,7 @@ def policy_filter(policy_id, title=False):
     result = '<i class="icon-book"></i>&nbsp;'
 
     if title:
-        result += helper['policy'][policy_id]
+        result += fob['policy']['id'][policy_id]['name']
     else:
         result += 'Regelwerk&nbsp;%d' % policy_id
     return result
@@ -152,7 +152,7 @@ def unit_filter(unit_id, title=False):
     result = '<i class="icon-sitemap"></i>&nbsp;'
 
     if title:
-        result += helper['unit'][unit_id]
+        result += fob['unit']['id'][unit_id]['name']
     else:
         result += 'Gliederung&nbsp;%d' % unit_id
     return result
@@ -162,7 +162,7 @@ def initiative_filter(initiative_id, title=False):
     result = '<i class="icon-file-alt"></i>&nbsp;<a href="/initiative/%d">' % initiative_id
 
     if title:
-        result += helper['initiative'][initiative_id]
+        result += fob['initiative']['id'][initiative_id]['name']
     else:
         result += 'Initiative&nbsp;%d' % initiative_id
     result += '</a>'
@@ -173,10 +173,10 @@ def quorum_filter(issue_id):
     """
     a filter to return the quorum of a given issue
     """
-    data = dict()
-    data['issue'] = api_load('/issue', q={'issue_id': issue_id})
-    data['policy'] = api_load('/policy', q={'policy_id': data['issue']['result'][0]['policy_id']})
-    return int(ceil((float(data['policy']['result'][0]['initiative_quorum_num']) / float(data['policy']['result'][0]['initiative_quorum_den'])) * data['issue']['result'][0]['population']))
+    issue = fob['issue']['id'][issue_id]
+    policy = fob['policy']['id'][data['issue']['result'][0]['policy_id']]
+
+    return int(ceil((float(policy['initiative_quorum_num']) / float(policy['initiative_quorum_den'])) * issue['population']))
 
 @app.template_filter('is_url')
 def is_url(url):

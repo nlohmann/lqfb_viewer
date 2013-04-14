@@ -110,7 +110,7 @@ $(function(){
         {% for p in data.result %}
         <tr>
           <td><a href="/themen/{{p.id}}">{{p.id}}</a></td>
-          <td>{{ helper.unit[helper.unit2area[p.area_id]] }}</td>
+          <td>{{ fob.area.id[p.area_id].unit_id|unit(True)|safe }}
           <td><a href="/themenbereiche/{{ p.area_id }}">{{ p.area_id|area(True)|safe }}</a></td>
           <td><a href="/regelwerke/{{ p.policy_id }}">{{ p.policy_id|policy(True)|safe }}</a></td>
           <td>

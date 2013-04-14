@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from app import helper, cache
+from app import helper, cache, fob
 from flask import flash
 import urllib, urllib2, json
 
@@ -58,3 +58,11 @@ def api_load_all(endpoint, q=None, session=None, forceLoad=False):
 
         if len(obj['result']) < q['limit']:
             return result
+
+# fob_store(data, 'issue_id', 'issue')
+# fob['issue']['issue_id']
+def fob_store(obj, key, name):
+    fob[name] = dict()
+    fob[name][key] = dict()
+    for element in obj:
+        fob[name][key][element[key]] = element

@@ -6,7 +6,7 @@
     <div class="hero-unit">
       <i class="icon-plus-sign pull-right" style="margin-top: -0.2em; font-size: 200px; color: #ddd;"></i>
       <h1>LiquidFeedback</h1>
-      <h2>{{ helper.unit[1] }}</h2>
+      <h2>{{ 1|unit(True)|safe }}</h2>
       <p>
         <a href="{{ helper.settings.lqfb_url }}">LQFB {{ data.core_version }}</a> |
         <a href="{{ helper.settings.api_url }}">API {{ data.api_version }}</a>

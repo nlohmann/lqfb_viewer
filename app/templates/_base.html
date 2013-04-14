@@ -9,6 +9,9 @@
   <link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
   <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet">
   <link href="/static/css/bootstrap.extends.css" rel="stylesheet">
+
+  <script type="text/javascript" src="/static/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
   {% endblock %}
 </head>
 
@@ -39,6 +42,7 @@
       {% if messages %}
       {% for category, message in messages %}
       <div class="alert alert-{{category}}">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
         {{message|safe}}
       </div>
       {% endfor %}
@@ -47,8 +51,6 @@
 
       {% block content %}
       {% endblock %}
-
-      <a href="https://github.com/nlohmann/lqfb_viewer"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
 
       <div class="push"></div>
 
@@ -70,6 +72,16 @@
       </p>
     </div>
   </div>
+
+  <script>
+  $(document).ready(function() {
+    $(".alert").alert();
+
+    setTimeout(function () {
+      $('.alert').fadeOut()
+    }, 5000);
+  });
+  </script>
 
 </body>
 </html>

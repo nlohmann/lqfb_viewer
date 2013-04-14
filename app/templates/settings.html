@@ -32,6 +32,18 @@
         </div>
 
         <div class="control-group">
+          <label class="control-label">Angemeldeter Benutzer</label>
+          <div class="controls">
+            {% if session.current_member_id %}
+            <span class="input-large uneditable-input">{{ session.current_member_id|member(False)|safe }}</span>
+            {% else %}
+            <span class="input-large uneditable-input"><i class="{{ helper.enums.access['anonymous'].icon}}"></i> {{ helper.enums.access['anonymous'].name }}</span>
+            {% endif %}
+            <p class="help-block">Ein API-Schlüssel ist in der Regel an einen Benutzer gebunden. In Zukunft wird es möglich sein, als angemeldeter Benutzer direkt in diesem System Initiativen oder Anregungen einzustellen oder abzustimmen.</p>
+          </div>
+        </div>
+
+        <div class="control-group">
           <label class="control-label">API-Schlüssel</label>
           <div class="controls">
             <input class="input-large" id="api_key" value="{{ session.api_key }}" name="api_key" type="text" class="input-xlarge">

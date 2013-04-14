@@ -86,12 +86,16 @@ def prepare():
     fob_store(data['result'], 'id', 'area')
 
     # issues
-    data = api_load('/issue')
+    data = api_load_all('/issue')
     fob_store(data['result'], 'id', 'issue')
 
     # initiatives
     data = api_load_all('/initiative')
     fob_store(data['result'], 'id', 'initiative')
+
+    # suggestions
+    data = api_load_all('/suggestion')
+    fob_store(data['result'], 'id', 'suggestion')
 
     print "+ up and running..."
 

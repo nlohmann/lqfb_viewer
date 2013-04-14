@@ -17,54 +17,9 @@ locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 
 
 @app.template_filter('nicedate')
-def nicedate_filter(s, format='%A, %x, %X Uhr', timeago=True):
-    # """
-    # filter to format dazes given in ISO8601
-    # """
-    #
-    # if not timeago:
-    #     return iso8601.parse_date(s).astimezone(pytz.timezone('Europe/Berlin')).strftime(format)
-    # else:
-    #     local_tz = pytz.timezone('Europe/Berlin')
-    #     default = "eben gerade"
-    #     now = datetime.utcnow().replace(tzinfo=local_tz)
-    #     date = iso8601.parse_date(s).astimezone(local_tz)
-    #     diff = now - date
-    #
-    #     #verschiedene zeitperioden - woche, monat, jahre eingebaut, falls benoetigt
-    #     periods = (
-    #         (diff.days / 365, "Jahr", "Jahre"),
-    #         (diff.days / 30, "Monat", "Monate"),
-    #         (diff.days / 7, "Woche", "Wochen"),
-    #         (diff.days, "Tag", "Tagen"),
-    #         #TODO: Fix that m*therf***ing hack down here !!!
-    #         (diff.seconds / 3600 + 2, "Stunde", "Stunden"),
-    #         (diff.seconds / 60, "Minute", "Minuten"),
-    #         (diff.seconds, "Sekunde", "Sekunden"),
-    #     )
-    #     #import locale
-    #     #locale.setlocale(locale.LC_ALL, 'deutsch')
-    #     dateFormatted = datetime.strftime(date, "%d.%m.%Y %H:%M:%S")
-    #     for period, singular, plural in periods:
-    #
-    #         if period:
-    #             if diff.days == 1:
-    #                 return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, "gestern")
-    #             elif 1 < diff.days < 7:
-    #                 return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%A"))
-    #             elif diff.days > 6:
-    #                 date = date
-    #                 return u'<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d. %B").decode('utf-8'))
-    #             elif diff.days > 365:
-    #                 return '<span data-toggle="tooltip" title="%s">%s</span>' % (dateFormatted, datetime.strftime(date, "%d.%m.%Y"))
-    #             else:
-    #                 return '<span data-toggle="tooltip" title="%s">vor %d %s</span>' % (dateFormatted, period, singular if period == 1 else plural)
-    #
-    #     return default
-    return humandate(s,format,False)
-
-
-def humandate(_date,format, timeago=True):
+def nicedate_filter(_date, format='%A, %x, %X Uhr', timeago=True):
+    if not timeago:
+         return iso8601.parse_date(_date).astimezone(pytz.timezone('Europe/Berlin')).strftime(format)
 
     thisdate = iso8601.parse_date(_date).astimezone(pytz.timezone('Europe/Berlin'))
     now = datetime.now(tz=pytz.timezone('Europe/Berlin'))
@@ -147,6 +102,14 @@ def area_filter(area_id, link=False):
 
     # add icon
     return '<i class="icon-columns"></i>&nbsp;' + result
+
+@app.template_filter('suggestion')
+def suggestion_filter(suggestion_id):
+    # get name
+    result = fob['suggestion']['id'][suggestion_id]['name']
+
+    # add icon
+    return '<i class="icon-lightbulb"></i>&nbsp;' + result
 
 @app.template_filter('policy')
 def policy_filter(policy_id, link=False):

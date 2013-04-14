@@ -133,7 +133,7 @@
       {% elif p.scope == "area" %}
       ({{ p.area_id|area(True)|safe }})
       {% else %}
-      ({{ p.issue_id|issue|safe }})
+      ({{ p.issue_id|issue(True)|safe }})
       {% endif %}
     </li>
     {% else %}
@@ -151,7 +151,7 @@
       {% elif p.scope == "area" %}
       ({{ p.area_id|area(True)|safe }})
       {% else %}
-      ({{ p.issue_id|issue|safe }})
+      ({{ p.issue_id|issue(True)|safe }})
       {% endif %}
     </li>
     {% endif %}
@@ -183,8 +183,12 @@
 
     <h3>direkte Teilnahme</h3>
     <ul>
-    {% for p in data.vote.result %}
-    <li>{{ p.issue_id|issue|safe }}: {{ p.initiative_id|initiative(True)|safe }}: {{ p.grade }}</li>
+    {% for p in data.vote.result|groupby('issue_id') %}
+    <li style="padding-bottom: 0.5em;">{{ p.grouper|issue(True)|safe }}
+      <ul class="unstyled">
+    {% for p2 in p.list|sort(attribute='grade', reverse=True) %}
+    <li>{{ p2.initiative_id|initiative(True)|safe }}: {{ p2.grade }}</li>
+    {% endfor %}</li></ul>
     {% else %}
     <li>keine direkte Abstimmung</li>
     {% endfor %}
@@ -193,7 +197,7 @@
     <h3>Teilnahme durch Delegation</h3>
     <ul>
     {% for p in data.delegating_voter.result %}
-    <li>{{ p.issue_id|issue|safe }}: Stimmgewicht {{ p.weight }} an {% for p2 in p.delegate_member_ids %}{{ p2|member(True)|safe }}{% endfor %}</li>
+    <li>{{ p.issue_id|issue(True)|safe }}: Stimmgewicht {{ p.weight }} an {% for p2 in p.delegate_member_ids %}{{ p2|member(True)|safe }}{% endfor %}</li>
     {% else %}
     <li>keine Teilnahme durch Delegation</li>
     {% endfor %}
@@ -202,7 +206,7 @@
     <h3>Abstimmkommentare</h3>
     <ul>
     {% for p in data.voter.result if p.comment %}
-    <li>{{ p.issue_id|issue|safe }}: {{ p.comment|safe }}</li>
+    <li>{{ p.issue_id|issue(True)|safe }}: {{ p.comment|safe }}</li>
     {% else %}
     <li>keine Abstimmkommentare</li>
     {% endfor %}

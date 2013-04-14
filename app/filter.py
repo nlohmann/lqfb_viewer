@@ -104,69 +104,87 @@ def avatar_filter(member_id):
         return '<i class="icon-user"></i>'
 
 @app.template_filter('member')
-def member_filter(member_id, name=False):
-    """
-    never reveal names to unauthorized users
-    """
+def member_filter(member_id, link=False):
+    # get name
     if not 'current_access_level' in session or session['current_access_level'] != 'member':
-        return '<i class="icon-user"></i>&nbsp;Mitglied&nbsp;%d' % member_id
-
-    result = '<i class="icon-user"></i>&nbsp;<a href="/mitglieder/%d">' % member_id
-    if name:
+        result = "Mitglied&nbsp;" + str(member_id)
+        # it does not make sense to link without member access level
+        link = False
+    else:
         data = api_load('/member', q={'member_id': member_id}, session=session)
         if data['result'][0]['name'] != "":
-            result += data['result'][0]['name']
+            result = data['result'][0]['name']
         else:
-            result += 'Mitglied&nbsp;%d' % member_id
-    else:
-        result += 'Mitglied&nbsp;%d' % member_id
-    result += '</a>'
-    return result
+            result = 'Mitglied&nbsp;%d' % member_id
+
+    # add link
+    if link:
+        result = '<a href="/mitglieder/' + str(member_id) + '">' + result + '</a>'
+
+    # add icon
+    return '<i class="icon-user"></i>&nbsp;' + result
 
 @app.template_filter('issue')
-def issue_filter(issue_id):
-    return '<i class="icon-list-alt"></i>&nbsp;<a href="/themen/%d">Thema&nbsp;%d</a>' % (issue_id, issue_id)
+def issue_filter(issue_id, link=False):
+    # get "name"
+    result = "Thema&nbsp;" + str(issue_id)
+
+    # add link
+    if link:
+        result = '<a href="/themen/' + str(issue_id) + '">' + result + '</a>'
+
+    # add icon
+    return '<i class="icon-list-alt"></i>&nbsp;' + result
 
 @app.template_filter('area')
-def area_filter(area_id, title=False):
-    result = '<i class="icon-columns"></i>&nbsp;'
+def area_filter(area_id, link=False):
+    # get name
+    result = fob['area']['id'][area_id]['name']
 
-    if title:
-        result += fob['area']['id'][area_id]['name']
-    else:
-        result += 'Themnbereich&nbsp;%d' % area_id
-    return result
+    # add link
+    if link:
+        result = '<a href="/themenbereiche/' + str(area_id) + '">' + result + '</a>'
+
+    # add icon
+    return '<i class="icon-columns"></i>&nbsp;' + result
 
 @app.template_filter('policy')
-def policy_filter(policy_id, title=False):
-    result = '<i class="icon-book"></i>&nbsp;'
+def policy_filter(policy_id, link=False):
+    # get name
+    result = fob['policy']['id'][policy_id]['name']
 
-    if title:
-        result += fob['policy']['id'][policy_id]['name']
-    else:
-        result += 'Regelwerk&nbsp;%d' % policy_id
-    return result
+    # add link
+    if link:
+        result = '<a href="/regelwerke/' + str(policy_id) + '">' + result + '</a>'
+
+    # add icon
+    return '<i class="icon-book"></i>&nbsp;' + result
 
 @app.template_filter('unit')
-def unit_filter(unit_id, title=False):
-    result = '<i class="icon-sitemap"></i>&nbsp;'
+def unit_filter(unit_id, link=False):
+    # get name
+    result = fob['unit']['id'][unit_id]['name']
 
-    if title:
-        result += fob['unit']['id'][unit_id]['name']
-    else:
-        result += 'Gliederung&nbsp;%d' % unit_id
-    return result
+    # add link
+    if link:
+        result = '<a href="/gliederungen/' + str(unit_id) + '">' + result + '</a>'
+
+    # add icon
+    return '<i class="icon-sitemap"></i>&nbsp;' + result
 
 @app.template_filter('initiative')
-def initiative_filter(initiative_id, title=False):
-    result = '<i class="icon-file-alt"></i>&nbsp;<a href="/initiative/%d">' % initiative_id
+def initiative_filter(initiative_id, link=False):
+    # get name
+    result = fob['initiative']['id'][initiative_id]['name']
 
-    if title:
-        result += fob['initiative']['id'][initiative_id]['name']
-    else:
-        result += 'Initiative&nbsp;%d' % initiative_id
-    result += '</a>'
-    return result
+    # add link
+    if link:
+        result = '<a href="/initiative/' + str(initiative_id) + '">' + result + '</a>'
+
+    # add icon
+    return '<i class="icon-file-alt"></i>&nbsp;' + result
+
+
 
 @app.template_filter('quorum')
 def quorum_filter(issue_id):
@@ -183,4 +201,4 @@ def is_url(url):
     """
     GANZ einfacher Test, ob es sich um eine URL handelt. Kann man mal mit nem RegEx aufbessern
     """
-    return str(url).find('http')>-1 or str(url).find('https')>-1
+    return str(url).find('http') > -1 or str(url).find('https') > -1

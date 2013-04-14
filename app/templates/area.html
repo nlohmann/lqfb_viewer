@@ -19,7 +19,7 @@
     <h2>Informationen</h2>
     <ul>
       <li>Beschreibung: {{data.area.result.0.description}}</li>
-      <li>Bereich: <a href="/bereich/{{data.area.result.0.unit_id}}">{{data.area.result.0.unit_id|unit(True)|safe}}</a></li>
+      <li>Bereich: {{data.area.result.0.unit_id|unit(True)|safe}}</li>
       <li>
         Mitglieder: {{data.area.result.0.direct_member_count}}
         (+{{ data.area.result.0.member_weight - data.area.result.0.direct_member_count }} Delegationen)
@@ -30,7 +30,7 @@
     <ul>
       {% for p in data.allowed_policy.result %}
       <li>
-        <a href="/regelwerke/{{p.policy_id}}">{{ p.policy_id|policy(True)|safe }}</a>
+        {{ p.policy_id|policy(True)|safe }}
         {% if p.default_policy %}
         (Standardregelwerk)
         {% endif %}

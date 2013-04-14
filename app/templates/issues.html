@@ -111,8 +111,8 @@ $(function(){
         <tr>
           <td><a href="/themen/{{p.id}}">{{p.id}}</a></td>
           <td>{{ fob.area.id[p.area_id].unit_id|unit(True)|safe }}
-          <td><a href="/themenbereiche/{{ p.area_id }}">{{ p.area_id|area(True)|safe }}</a></td>
-          <td><a href="/regelwerke/{{ p.policy_id }}">{{ p.policy_id|policy(True)|safe }}</a></td>
+          <td>{{ p.area_id|area(True)|safe }}</td>
+          <td>{{ p.policy_id|policy(True)|safe }}</td>
           <td>
             <i class="{{ helper.enums.issue[p.state].icon }}{% if helper.enums.issue[p.state].color %} {{ helper.enums.issue[p.state].color }}{% endif %}"></i> {{ helper.enums.issue[p.state].name }}
           </td>

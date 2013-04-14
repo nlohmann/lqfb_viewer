@@ -153,7 +153,7 @@ def show_issue(id):
     data['interest']['end_of_admission'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'end_of_admission'}, session=session)
     data['interest']['half_freeze'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'half_freeze'}, session=session)
     data['interest']['full_freeze'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'full_freeze'}, session=session)
-    return render_template('issue.html', data=data, helper=helper)
+    return render_template('issue.html', data=data, helper=helper, fob=fob)
 
 @app.route('/initiative/<int:id>')
 def show_initiative(id):
@@ -231,6 +231,12 @@ def show_settings():
         session['current_access_level'] = data['current_access_level']
         flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', "info")
 
+        # get my membet id
+        if 'current_member_id' in data:
+            session['current_member_id'] = data['current_member_id']
+        else:
+            if 'current_member_id' in session:
+                session.pop('current_member_id')
 
     # delete the key
     if request.method == 'POST' and 'delete_key' in request.form:

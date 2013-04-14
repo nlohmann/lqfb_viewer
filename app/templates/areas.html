@@ -15,12 +15,12 @@
       <h1><i class="icon-columns"></i> Themenbereiche</h1>
     </div>
 
-    <ul>
+    <ul class="unstyled">
       {% for p in data.result|groupby('unit_id') %}
-      <li style="padding-bottom: 0.5em;"><a href="/gliederungen/{{p.grouper}}">{{ p.grouper|unit(True)|safe }}</a>
+      <li style="padding-bottom: 0.5em;">{{ p.grouper|unit(True)|safe }}
         <ul>
         {% for p2 in p.list %}
-          <li><a href="/themenbereiche/{{p2.id}}"><strong>{{ p2.id|area(True)|safe }}</strong></a></li>
+          <li><strong>{{ p2.id|area(True)|safe }}</strong></li>
         {% endfor %}
         </ul>
       </li>

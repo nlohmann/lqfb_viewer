@@ -15,9 +15,9 @@
       <h1><i class="icon-sitemap"></i> Gliederungen</h1>
     </div>
 
-    <ul>
+    <ul class="unstyled">
       {% for p in data.result %}
-      <li><a href="/gliederungen/{{p.id}}"><strong>{{p.id|unit(True)|safe}}</strong></a></li>
+      <li><strong>{{p.id|unit(True)|safe}}</strong></li>
       {% endfor %}
     </ul>
 {% endblock %}

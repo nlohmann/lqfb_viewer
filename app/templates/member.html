@@ -116,7 +116,7 @@
     <h3>Themenbereiche</h3>
     <ul>
     {% for p in data.membership.result %}
-    <li><a href="/themenbereiche/{{p.area_id}}">{{ p.area_id|area(True)|safe }}</a></li>
+    <li>{{ p.area_id|area(True)|safe }}</li>
     {% else %}
     <li>keine Mitgliedschaft</li>
     {% endfor %}
@@ -131,7 +131,7 @@
       {% if p.scope == "unit" %}
       ({{ p.unit_id|unit(True)|safe }})
       {% elif p.scope == "area" %}
-      (<a href="/themenbereiche/{{p.area_id}}">{{ p.area_id|area(True)|safe }}</a>)
+      ({{ p.area_id|area(True)|safe }})
       {% else %}
       ({{ p.issue_id|issue|safe }})
       {% endif %}
@@ -149,7 +149,7 @@
       {% if p.scope == "unit" %}
       ({{ p.unit_id|unit(True)|safe }})
       {% elif p.scope == "area" %}
-      (<a href="/themenbereiche/{{area_id}}">{{ p.area_id|area(True)|safe }}</a>)
+      ({{ p.area_id|area(True)|safe }})
       {% else %}
       ({{ p.issue_id|issue|safe }})
       {% endif %}

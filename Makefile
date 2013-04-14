@@ -10,7 +10,7 @@ install:
 	python virtualenv.py --no-site-packages flask
 
 	# python packages
-	flask/bin/pip install flask iso8601 pytz
+	flask/bin/pip install MarkupSafe flask iso8601 pytz
 	
 	# bower packages
 	npm install bower

@@ -18,7 +18,7 @@
         <a href="{{helper.settings.lqfb_url}}/vote/list.html?issue_id={{data.issue.result[0].id}}" target="lqfb_window" class="btn btn-warning btn-large pull-right" type="button" style="margin-top: 1.5em;">abstimmen</a>
         {% endif %}
         <i class="{{ helper.enums.issue[data.issue.result[0].state].icon }}{% if helper.enums.issue[data.issue.result[0].state].color %} {{ helper.enums.issue[data.issue.result[0].state].color }}{% endif %} icon-2x pull-left"></i>
-        <small>{{ data.issue.result[0].policy_id|policy(True)|safe }}</small><br><i class="icon-list-alt"></i> Thema {{data.issue.result[0].id}}
+        <small>{{ fob.policy.id[data.issue.result[0].policy_id].name }}</small><br><i class="icon-list-alt"></i> Thema {{data.issue.result[0].id}}
       </h1>
     </div>
 

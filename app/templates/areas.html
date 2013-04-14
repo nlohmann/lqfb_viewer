@@ -4,28 +4,28 @@
 
 {% block navigation %}
 {{ super() }}
-  <ul class="breadcrumb">
-    <li><a href="/"><i class="icon-columns"></i></a> <span class="divider">/</span></li>
-    <li class="active">Themenbereiche</li>
-  </ul>
+<ul class="breadcrumb">
+  <li><a href="/"><i class="icon-columns"></i></a> <span class="divider">/</span></li>
+  <li class="active">Themenbereiche</li>
+</ul>
 {% endblock %}
 
 {% block content %}
-    <div class="page-header">
-      <h1><i class="icon-columns"></i> Themenbereiche</h1>
-    </div>
+<div class="page-header">
+  <h1><i class="icon-columns"></i> Themenbereiche</h1>
+</div>
 
-    <ul class="unstyled">
-      {% for p in data.result|groupby('unit_id') %}
-      <li style="padding-bottom: 0.5em;">{{ p.grouper|unit(True)|safe }}
-        <ul>
-        {% for p2 in p.list %}
-          <li><strong>{{ p2.id|area(True)|safe }}</strong></li>
-        {% endfor %}
-        </ul>
-      </li>
+<ul class="unstyled">
+  {% for p in data.result|groupby('unit_id') %}
+  <li style="padding-bottom: 0.5em;">{{ p.grouper|unit(True)|safe }}
+    <ul>
+      {% for p2 in p.list %}
+      <li><strong>{{ p2.id|area(True)|safe }}</strong></li>
       {% endfor %}
     </ul>
+  </li>
+  {% endfor %}
+</ul>
 
-  </div>
+</div>
 {% endblock %}

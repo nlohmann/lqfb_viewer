@@ -111,7 +111,7 @@
     <ol>
       {% for p in data.initiative.result | sort(reverse=False,attribute='rank') %}
       {% if p.admitted %}
-      <li><strong><a href="/initiative/{{p.id}}">{{p.name}}</a></strong> 
+      <li><strong>{{ p.id|initiative(True)|safe }}</strong>
 
         {% if p.winner %}
           <span class="label label-success">Gewinner</span>
@@ -138,7 +138,7 @@
       {% for p in data.initiative.result | sort(reverse=True,attribute='supporter_count') %}
       {% if not p.admitted %}
       <li>
-        <strong><a href="/initiative/{{p.id}}">{{p.name}}</a></strong>
+        <strong>{{ p.id|initiative(True)|safe }}</strong>
         {% if p.revoked %}
         <span class="label">zurückgezogen</span>
         {% else %}
@@ -153,7 +153,7 @@
 
     {% for p in data.initiative.result | sort(reverse=True,attribute='supporter_count') %}
     <li>
-      <strong><a href="/initiative/{{p.id}}">{{p.name}}</a></strong>
+      <strong>{{ p.id|initiative(True)|safe }}</strong>
       {% if p.admitted %}
       <span class="label label-warning">in Abstimmung</span>
       {% else %}

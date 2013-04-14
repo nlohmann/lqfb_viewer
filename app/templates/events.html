@@ -32,9 +32,9 @@
   padding:5px;
   background-color:#FFF;
   -webkit-hyphens: auto;
-   -moz-hyphens: auto;
-   -ms-hyphens: auto;
-   hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
 }
 
 #timeline > li:nth-of-type(odd){
@@ -68,24 +68,24 @@
 
 {% block navigation %}
 {{ super() }}
-  <ul class="breadcrumb">
-    <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
-    <li class="active">Ereignisse</li>
-  </ul>
+<ul class="breadcrumb">
+  <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
+  <li class="active">Ereignisse</li>
+</ul>
 {% endblock %}
 
 {% block content %}
-    <div class="page-header">
-      <h1><i class="icon-info-sign"></i> Ereignisse</h1>
-    </div>
+<div class="page-header">
+  <h1><i class="icon-info-sign"></i> Ereignisse</h1>
+</div>
 
-    <form class="form-horizontal">
-      <style>
-      .control-group { margin-bottom: 0em !important; }
-      .control-label { font-weight: bold; }
-      </style>
+<form class="form-horizontal">
+  <style>
+  .control-group { margin-bottom: 0em !important; }
+  .control-label { font-weight: bold; }
+  </style>
 
-    <fieldset>
+  <fieldset>
       
     <div class="control-group">
       <label class="control-label">Phasen</label>
@@ -153,129 +153,128 @@
       </div>
     </div>
 
-    </fieldset>
-    </form>
+  </fieldset>
+</form>
 
-    <script>
-    $('#suggestion_created').click(function() {
-      $('.suggestion_created').toggle(function() { });
-    });
-    $('#new_draft_created').click(function() {
-      $('.new_draft_created').toggle(function() { });
-    });
-    $('#initiative_created_in_existing_issue').click(function() {
-      $('.initiative_created_in_existing_issue').toggle(function() { });
-      $('.initiative_created_in_new_issue').toggle(function() { });
-    });
-    $('#discussion').click(function() {
-      $('.discussion.issue_state_changed').toggle(function() { });
-    });
-    $('#voting').click(function() {
-      $('.voting.issue_state_changed').toggle(function() { });
-    });
-    $('#initiative_revoked').click(function() {
-      $('.initiative_revoked').toggle(function() { });
-    });
-    $('#verification').click(function() {
-      $('.verification.issue_state_changed').toggle(function() { });
-    });
-    $('#canceled_revoked_before_accepted').click(function() {
-      $('.canceled_revoked_before_accepted').toggle(function() { });
-    });
-    $('#finished_without_winner').click(function() {
-      $('.finished_without_winner').toggle(function() { });
-    });
-    $('#finished_with_winner').click(function() {
-      $('.finished_with_winner').toggle(function() { });
-    });
-    $('#closed_issue').click(function() {
-      $('.closed_issue').toggle(function() { });
-    });
-    $('#open_issue').click(function() {
-      $('.open_issue').toggle(function() { });
-    });
-    </script>
+<script>
+$('#suggestion_created').click(function() {
+  $('.suggestion_created').toggle(function() { });
+});
+$('#new_draft_created').click(function() {
+  $('.new_draft_created').toggle(function() { });
+});
+$('#initiative_created_in_existing_issue').click(function() {
+  $('.initiative_created_in_existing_issue').toggle(function() { });
+  $('.initiative_created_in_new_issue').toggle(function() { });
+});
+$('#discussion').click(function() {
+  $('.discussion.issue_state_changed').toggle(function() { });
+});
+$('#voting').click(function() {
+  $('.voting.issue_state_changed').toggle(function() { });
+});
+$('#initiative_revoked').click(function() {
+  $('.initiative_revoked').toggle(function() { });
+});
+$('#verification').click(function() {
+  $('.verification.issue_state_changed').toggle(function() { });
+});
+$('#canceled_revoked_before_accepted').click(function() {
+  $('.canceled_revoked_before_accepted').toggle(function() { });
+});
+$('#finished_without_winner').click(function() {
+  $('.finished_without_winner').toggle(function() { });
+});
+$('#finished_with_winner').click(function() {
+  $('.finished_with_winner').toggle(function() { });
+});
+$('#closed_issue').click(function() {
+  $('.closed_issue').toggle(function() { });
+});
+$('#open_issue').click(function() {
+  $('.open_issue').toggle(function() { });
+});
+</script>
     
-    <style>
-      ol#timeline li.finished_with_winner  { background-color: #dff0d8; }
-      ol#timeline li.finished_with_winner i { color: #468847; }
-      ol#timeline li.finished_without_winner { background-color: #f2dede; }
-      ol#timeline li.finished_without_winner i { color: #b94a48; }
-      ol#timeline li.canceled_revoked_before_accepted { background-color: #eee; }
-      ol#timeline li.canceled_revoked_before_accepted i { color: #888; }
-      ol#timeline li.voting { background-color: #fcf8e3; }
-      ol#timeline li.voting i { color: #c09853; }
+<style>
+ol#timeline li.finished_with_winner  { background-color: #dff0d8; }
+ol#timeline li.finished_with_winner i { color: #468847; }
+ol#timeline li.finished_without_winner { background-color: #f2dede; }
+ol#timeline li.finished_without_winner i { color: #b94a48; }
+ol#timeline li.canceled_revoked_before_accepted { background-color: #eee; }
+ol#timeline li.canceled_revoked_before_accepted i { color: #888; }
+ol#timeline li.voting { background-color: #fcf8e3; }
+ol#timeline li.voting i { color: #c09853; }
+ol#timeline li i { color: #888; }
+</style>
 
-      ol#timeline li i { color: #888; }
-    </style>
-
-    <ol id="timeline">
-      {% for p in data.event.result | sort(reverse=True,attribute='occurrence') %}
-      <li class="{{p.state}} {{p.event}}{% if data.issue.result[p.issue_id-1].closed %} closed_issue{% else %} open_issue{% endif %}">
-        <div class="time">
-          {{ p.occurrence|nicedate|safe }}
-        </div>
-        <span class="corner"></span>
-        <p>
-          {% if p.event == "issue_state_changed" %}
-          <i class="{{helper.enums.issue[p.state].icon}} icon-2x"></i>
-          {% if p.state == "discussion" %}
-          {{p.issue_id|issue|safe}} ist jetzt in der <strong>Diskussionsphase</strong>.
-          {% elif p.state == "verification" %}
-          {{p.issue_id|issue|safe}} ist jetzt <strong>eingefroren</strong>
-          <ul>
-            {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
-            {% if p2.supporter_count >= p.issue_id|quorum %}
-            <li>{{p2.id|initiative(True)|safe}}</li>
-            {% else %}
-            <li style="text-decoration: line-through;">{{p2.id|initiative(True)|safe}}</li>
-            {% endif %}
-            {% endfor %}
-          </ul>
-          {% elif p.state == "voting" %}
-          {{p.issue_id|issue|safe}} wird jetzt <strong>abgestimmt</strong>.
-          <ul class="unstyled">
-            {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
-            {% if p2.admitted == True %}
-            <li>{{p2.id|initiative(True)|safe}}</li>
-            {% elif p2.supporter_count >= p.issue_id|quorum %}
-            <li style="text-decoration: line-through;">{{p2.id|initiative(True)|safe}}</li>
-            {% endif %}
-            {% endfor %}
-          </ul>
-          {% elif p.state == "finished_with_winner" %}
-          Die Abstimmung von {{p.issue_id|issue|safe}} wurde <strong>mit einem Gewinner</strong> beendet:
-          {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
-          {% if p2.winner %}
-          {{p2.id|initiative(True)|safe}}.
-          {% endif %}
-          {% endfor %}
-          {% elif p.state == "finished_without_winner" %}
-          Die Abstimmung von {{p.issue_id|issue|safe}} wurde <strong>ohne einen Gewinner</strong> beendet.
-          {% elif p.state == "canceled_revoked_before_accepted" %}
-          {{p.issue_id|issue|safe}} wurde in der Neu-Phase <strong>abgebrochen</strong>.
-          {% else %}
-          Der Zustand von {{p.issue_id|issue|safe}} hat sich zu <strong>{{ p.state }}</strong> geändert.
-          {% endif %}
-        
-          {% else %}
-          <i class="{{helper.enums.event[p.event].icon}} icon-2x"></i>
-          {% if p.event == "initiative_created_in_new_issue" %}
-          {{p.issue_id|issue|safe}} wurde von {{p.member_id|member(True)|safe}} durch Hinzufügen von {{p.initiative_id|initiative(True)|safe}} <strong>neu angelegt</strong>.
-          {% elif p.event == "initiative_created_in_existing_issue" %}
-          {{p.member_id|member(True)|safe}} hat {{p.initiative_id|initiative(True)|safe}} zu {{p.issue_id|issue|safe}} <strong>hinzugefügt</strong>.
-          {% elif p.event == "suggestion_created" %}
-          {{p.member_id|member(True)|safe}} hat eine <strong>Anregung</strong> zu {{p.initiative_id|initiative(True)|safe}} geschrieben{% if data.suggestion.result[p.suggestion_id-1] %}: {{data.suggestion.result[p.suggestion_id-1].name}}{% endif %}.
-          {% elif p.event == "initiative_revoked" %}
-          {{p.member_id|member(True)|safe}} hat {{p.initiative_id|initiative(True)|safe}} <strong>zurückgezogen</strong>.
-          {% elif p.event == "new_draft_created" %}
-          {{p.member_id|member(True)|safe}} hat einen <strong>neuen Entwurf</strong> von {{p.initiative_id|initiative(True)|safe}} geschrieben.
-          {% else %}
-          {{ p.event }}
-          {% endif %}
-          {% endif %}
-        </p>
-      </li>
+<ol id="timeline">
+  {% for p in data.event.result | sort(reverse=True,attribute='occurrence') %}
+  <li class="{{p.state}} {{p.event}}{% if data.issue.result[p.issue_id-1].closed %} closed_issue{% else %} open_issue{% endif %}">
+    <div class="time">
+      {{ p.occurrence|nicedate|safe }}
+    </div>
+    <span class="corner"></span>
+    <p>
+      {% if p.event == "issue_state_changed" %}
+      <i class="{{helper.enums.issue[p.state].icon}} icon-2x"></i>
+      {% if p.state == "discussion" %}
+      {{p.issue_id|issue|safe}} ist jetzt in der <strong>Diskussionsphase</strong>.
+      {% elif p.state == "verification" %}
+      {{p.issue_id|issue|safe}} ist jetzt <strong>eingefroren</strong>
+      <ul>
+        {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
+        {% if p2.supporter_count >= p.issue_id|quorum %}
+        <li>{{p2.id|initiative(True)|safe}}</li>
+        {% else %}
+        <li style="text-decoration: line-through;">{{p2.id|initiative(True)|safe}}</li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+      {% elif p.state == "voting" %}
+      {{p.issue_id|issue|safe}} wird jetzt <strong>abgestimmt</strong>.
+      <ul class="unstyled">
+        {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
+        {% if p2.admitted == True %}
+        <li>{{p2.id|initiative(True)|safe}}</li>
+        {% elif p2.supporter_count >= p.issue_id|quorum %}
+        <li style="text-decoration: line-through;">{{p2.id|initiative(True)|safe}}</li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+      {% elif p.state == "finished_with_winner" %}
+      Die Abstimmung von {{p.issue_id|issue|safe}} wurde <strong>mit einem Gewinner</strong> beendet:
+      {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
+      {% if p2.winner %}
+      {{p2.id|initiative(True)|safe}}.
+      {% endif %}
       {% endfor %}
-    </ol>
+      {% elif p.state == "finished_without_winner" %}
+      Die Abstimmung von {{p.issue_id|issue|safe}} wurde <strong>ohne einen Gewinner</strong> beendet.
+      {% elif p.state == "canceled_revoked_before_accepted" %}
+      {{p.issue_id|issue|safe}} wurde in der Neu-Phase <strong>abgebrochen</strong>.
+      {% else %}
+      Der Zustand von {{p.issue_id|issue|safe}} hat sich zu <strong>{{ p.state }}</strong> geändert.
+      {% endif %}
+        
+      {% else %}
+      <i class="{{helper.enums.event[p.event].icon}} icon-2x"></i>
+      {% if p.event == "initiative_created_in_new_issue" %}
+      {{p.issue_id|issue|safe}} wurde von {{p.member_id|member(True)|safe}} durch Hinzufügen von {{p.initiative_id|initiative(True)|safe}} <strong>neu angelegt</strong>.
+      {% elif p.event == "initiative_created_in_existing_issue" %}
+      {{p.member_id|member(True)|safe}} hat {{p.initiative_id|initiative(True)|safe}} zu {{p.issue_id|issue|safe}} <strong>hinzugefügt</strong>.
+      {% elif p.event == "suggestion_created" %}
+      {{p.member_id|member(True)|safe}} hat eine <strong>Anregung</strong> zu {{p.initiative_id|initiative(True)|safe}} geschrieben{% if data.suggestion.result[p.suggestion_id-1] %}: {{data.suggestion.result[p.suggestion_id-1].name}}{% endif %}.
+      {% elif p.event == "initiative_revoked" %}
+      {{p.member_id|member(True)|safe}} hat {{p.initiative_id|initiative(True)|safe}} <strong>zurückgezogen</strong>.
+      {% elif p.event == "new_draft_created" %}
+      {{p.member_id|member(True)|safe}} hat einen <strong>neuen Entwurf</strong> von {{p.initiative_id|initiative(True)|safe}} geschrieben.
+      {% else %}
+      {{ p.event }}
+      {% endif %}
+      {% endif %}
+    </p>
+  </li>
+  {% endfor %}
+</ol>
 {% endblock %}

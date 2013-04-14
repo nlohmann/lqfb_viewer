@@ -4,136 +4,136 @@
 
 {% block navigation %}
 {{ super() }}
-  <ul class="breadcrumb">
-    <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
-    <li><a href="/initiativen">Initiativen</a> <span class="divider">/</span></li>
-    <li class="active">Initiative {{data.initiative.result[0].id}}: {{data.initiative.result[0].name}}</li>
-  </ul>
+<ul class="breadcrumb">
+  <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
+  <li><a href="/initiativen">Initiativen</a> <span class="divider">/</span></li>
+  <li class="active">Initiative {{data.initiative.result[0].id}}: {{data.initiative.result[0].name}}</li>
+</ul>
 {% endblock %}
 
 {% block content %}
-    <div class="page-header">
-      <h1>
-        <small>Initiative {{data.initiative.result[0].id}}</small>
-        <br><i class="icon-file-alt"></i> {{data.initiative.result[0].name}}
-      </h1>
-    </div>
+<div class="page-header">
+  <h1>
+    <small>Initiative {{data.initiative.result[0].id}}</small>
+    <br><i class="icon-file-alt"></i> {{data.initiative.result[0].name}}
+  </h1>
+</div>
 
-    {% if session.current_access_level == 'member' %}
-    <h2>Initiatoren</h2>
-    {% for p in data.initiator.result %}
-      {{ p.member_id|member(True)|safe }}
-    {% endfor %}
-    <br>
-    <br>
-    {% endif %}
+{% if session.current_access_level == 'member' %}
+<h2>Initiatoren</h2>
+{% for p in data.initiator.result %}
+{{ p.member_id|member(True)|safe }}
+{% endfor %}
+<br>
+<br>
+{% endif %}
 
-    {# collecting data for the supporter bar #}
-    {% if data.initiative.result[0].supporter_count > data.initiative.result[0].issue_id|quorum %}
-    {% set balken1 = data.initiative.result[0].issue_id|quorum %}
-    {% set balken2 = data.initiative.result[0].supporter_count - data.initiative.result[0].issue_id|quorum %}
-    {% else %}
-    {% set balken1 = data.initiative.result[0].supporter_count %}
-    {% set balken2 = 0 %}
-    {% endif %}
+{# collecting data for the supporter bar #}
+{% if data.initiative.result[0].supporter_count > data.initiative.result[0].issue_id|quorum %}
+{% set balken1 = data.initiative.result[0].issue_id|quorum %}
+{% set balken2 = data.initiative.result[0].supporter_count - data.initiative.result[0].issue_id|quorum %}
+{% else %}
+{% set balken1 = data.initiative.result[0].supporter_count %}
+{% set balken2 = 0 %}
+{% endif %}
 
-    {# the supporter bar #}
-    <div class="progress">
-      {# color first bar depending on quorum #}
-      {% if balken1 < data.initiative.result[0].issue_id|quorum %}
-        {% if data.issue.result[0].closed %}
-          {% set additional_style = " bar-danger" %}
-        {% else %}
-          {% set additional_style = " bar-warning" %}
-        {% endif %}
-      {% else %}
-        {% set additional_style = "" %}
-      {% endif %}
-      <div class="bar{{ additional_style }}" style="width: {{ ((balken1 / data.issue.result[0].population) * 100)|round(0)|int }}%">{{balken1}}</div>
-      {% if balken2 == 0 %}
-      <div class="bar bar-transparent" style="width: {{ (((data.initiative.result[0].issue_id|quorum - balken1) / data.issue.result[0].population) * 100)|round(0)|int }}%%"></div>
-      <div class="bar bar-border-right"></div>
-      {% else %}
-      <div class="bar bar-border-right"></div>
-      <div class="bar bar-success" style="width: {{ ((balken2 / data.issue.result[0].population) * 100)|round(0)|int }}%">{{balken2}}</div>
-      {% endif %}
-    </div>
+{# the supporter bar #}
+<div class="progress">
+  {# color first bar depending on quorum #}
+  {% if balken1 < data.initiative.result[0].issue_id|quorum %}
+  {% if data.issue.result[0].closed %}
+  {% set additional_style = " bar-danger" %}
+  {% else %}
+  {% set additional_style = " bar-warning" %}
+  {% endif %}
+  {% else %}
+  {% set additional_style = "" %}
+  {% endif %}
+  <div class="bar{{ additional_style }}" style="width: {{ ((balken1 / data.issue.result[0].population) * 100)|round(0)|int }}%">{{balken1}}</div>
+  {% if balken2 == 0 %}
+  <div class="bar bar-transparent" style="width: {{ (((data.initiative.result[0].issue_id|quorum - balken1) / data.issue.result[0].population) * 100)|round(0)|int }}%%"></div>
+  <div class="bar bar-border-right"></div>
+  {% else %}
+  <div class="bar bar-border-right"></div>
+  <div class="bar bar-success" style="width: {{ ((balken2 / data.issue.result[0].population) * 100)|round(0)|int }}%">{{balken2}}</div>
+  {% endif %}
+</div>
 
-    {% if data.initiative.result[0].schulze_rank %}
-    <h2>Abstimmung</h2>
-    <ul>
-      <li>
-        Abstimmungs-Rang: {{ data.initiative.result[0].rank }}
-      </li>
-      <li>
-        Schulze-Rang: {{ data.initiative.result[0].schulze_rank }} (Schulze-Rang des Status Quo: {{ data.issue.result[0].status_quo_schulze_rank }})
-      </li>
-      <li>
-        Zustimmungen: {{ data.initiative.result[0].positive_votes }}
-      </li>
-      <li>
-        Ablehnungen: {{ data.initiative.result[0].negative_votes }}
-      </li>
-    </ul>
+{% if data.initiative.result[0].schulze_rank %}
+<h2>Abstimmung</h2>
+<ul>
+  <li>
+    Abstimmungs-Rang: {{ data.initiative.result[0].rank }}
+  </li>
+  <li>
+    Schulze-Rang: {{ data.initiative.result[0].schulze_rank }} (Schulze-Rang des Status Quo: {{ data.issue.result[0].status_quo_schulze_rank }})
+  </li>
+  <li>
+    Zustimmungen: {{ data.initiative.result[0].positive_votes }}
+  </li>
+  <li>
+    Ablehnungen: {{ data.initiative.result[0].negative_votes }}
+  </li>
+</ul>
 
-    <h3>Vergleiche</h3>
+<h3>Vergleiche</h3>
       
-    <ul>
-      {% for p in data.battle.result if p.winning_initiative_id == data.initiative.result[0].id %}
-      <li>schlägt {{ p.losing_initiative_id }} ({{p.count}})</li>
-      {% endfor %}
-      {% for p in data.battle.result if p.losing_initiative_id == data.initiative.result[0].id %}
-      <li>geschlagen von {{ p.winning_initiative_id }} ({{p.count}})</li>
-      {% endfor %}
-    </ul>
+<ul>
+  {% for p in data.battle.result if p.winning_initiative_id == data.initiative.result[0].id %}
+  <li>schlägt {{ p.losing_initiative_id }} ({{p.count}})</li>
+  {% endfor %}
+  {% for p in data.battle.result if p.losing_initiative_id == data.initiative.result[0].id %}
+  <li>geschlagen von {{ p.winning_initiative_id }} ({{p.count}})</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<h2>Informationen</h2>
+<ul>
+  <li>
+    {{ data.initiative.result[0].supporter_count }} Unterstützer
+  </li>
+  <li>
+    {{ data.initiative.result[0].issue_id|quorum }} Initiativquorum
+  </li>
+  <li>
+    {{ data.issue.result[0].population }} Grundgesamtheit
+  </li>
+  <li>Diskussion mit den Antragstellern: 
+    {% if data.initiative.result[0].discussion_url|is_url %}
+    <a href="{{ data.initiative.result[0].discussion_url }}">{{ data.initiative.result[0].discussion_url }}</a>
+    {% else %}
+    {{ data.initiative.result[0].discussion_url }}
     {% endif %}
+  </li>
+</ul>
 
-    <h2>Informationen</h2>
-    <ul>
-      <li>
-        {{ data.initiative.result[0].supporter_count }} Unterstützer
-      </li>
-      <li>
-        {{ data.initiative.result[0].issue_id|quorum }} Initiativquorum
-      </li>
-      <li>
-        {{ data.issue.result[0].population }} Grundgesamtheit
-      </li>
-      <li>Diskussion mit den Antragstellern: 
-        {% if data.initiative.result[0].discussion_url|is_url %}
-        <a href="{{ data.initiative.result[0].discussion_url }}">{{ data.initiative.result[0].discussion_url }}</a>
-        {% else %}
-        {{ data.initiative.result[0].discussion_url }}
-        {% endif %}
-      </li>
-    </ul>
+<h2>Text</h2>
+<div class="well" id="initiative">
+  <style>
+  #initiative h1 { font-size: 2em; }
+  #initiative h2 { font-size: 1.5em; }
+  </style>
+  {{ data.current_draft.result[0].content|safe }}
+</div>
 
-    <h2>Text</h2>
-    <div class="well" id="initiative">
-      <style>
-      #initiative h1 { font-size: 2em; }
-      #initiative h2 { font-size: 1.5em; }
-      </style>
-      {{ data.current_draft.result[0].content|safe }}
-    </div>
+<p><strong>Stand: </strong>{{ data.current_draft.result[0].created|nicedate(timeago=False) }}</p>
 
-    <p><strong>Stand: </strong>{{ data.current_draft.result[0].created|nicedate(timeago=False) }}</p>
+<h2>Entwürfe</h2>
+<ol>
+  {% for p in data.draft.result %}
+  <li>{{ p.created|nicedate(timeago=False) }}</li>
+  {% endfor %}
+</ol>
 
-    <h2>Entwürfe</h2>
-    <ol>
-      {% for p in data.draft.result %}
-      <li>{{ p.created|nicedate(timeago=False) }}</li>
-      {% endfor %}
-    </ol>
-
-    <h2>Anregungen</h2>
-    <ol>
-      {% for p in data.suggestion.result|sort(attribute='proportional_order') %}
-      <li>
-        {{ p.name }}<br>
-        {{ p.created|nicedate(timeago=False) }}<br>
-      </li>
-      {% endfor %}
-    </ol>
+<h2>Anregungen</h2>
+<ol>
+  {% for p in data.suggestion.result|sort(attribute='proportional_order') %}
+  <li>
+    {{ p.name }}<br>
+    {{ p.created|nicedate(timeago=False) }}<br>
+  </li>
+  {% endfor %}
+</ol>
 
 {% endblock %}

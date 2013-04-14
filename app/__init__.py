@@ -32,8 +32,7 @@ from werkzeug.contrib.cache import SimpleCache
 
 # the Flask app
 app = Flask(__name__)
-app.debug = True
-app.secret_key = 'secret'
+app.config.from_object('config')
 
 # cache
 cache = SimpleCache(threshold=2000)

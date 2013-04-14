@@ -7,7 +7,7 @@ all:
 install:
 	# virtual environment
 	wget https://raw.github.com/pypa/virtualenv/master/virtualenv.py
-	python virtualenv.py flask
+	python virtualenv.py --no-site-packages flask
 
 	# python packages
 	flask/bin/pip install flask iso8601 pytz
@@ -24,7 +24,7 @@ install:
 
 clean:
 	rm -fr virtualenv.py virtualenv.pyc node_modules components
-	rm -fr app/*.pyc
+	rm -fr *.pyc app/*.pyc
 
 veryclean: clean
 	rm -fr flask

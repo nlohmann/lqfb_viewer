@@ -222,7 +222,7 @@ def show_settings():
         rq = json.load(urllib2.urlopen(url, urllib.urlencode(data)))
 
         if rq['status'] == 'ok':
-            flash(u"Dein API-Schlüssel wurde akzeptiert.", "success")
+            flash(u"Dein API-Schlüssel wurde akzeptiert und verschlüsselt im Cookie gespeichert.", "success")
             session['session_key'] = rq['session_key']
         elif rq['status'] == 'forbidden':
             flash(u"Dein API-Schlüssel wurde nicht akzeptiert.", "error")
@@ -248,7 +248,7 @@ def show_settings():
     # delete the key
     if request.method == 'POST' and 'delete_key' in request.form:
         session.clear()
-        flash(u"Der API-Schlüssel wurde gelöscht.", "success")
+        flash(u"Der API-Schlüssel wurde aus dem Cookie gelöscht.", "success")
 
         # get access level
         data = api_load('/info', session=session, forceLoad=True)

@@ -110,7 +110,7 @@ def show_index():
         flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', "info")
         
     session['current_access_level'] = data['current_access_level']
-    return render_template('index.html', data=data, helper=helper)
+    return render_template('index.html', data=data, helper=helper, ourl='index/index.html')
 
 @app.route('/regelwerke')
 def show_policies():

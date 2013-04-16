@@ -115,22 +115,22 @@ def show_index():
 @app.route('/regelwerke')
 def show_policies():
     data = api_load('/policy')
-    return render_template('policies.html', data=data, helper=helper)
+    return render_template('policies.html', data=data, helper=helper, ourl='policy/list.html')
 
 @app.route('/regelwerke/<int:id>')
 def show_policy(id):
     data = api_load('/policy', q={'policy_id': id})
-    return render_template('policy.html', data=data, helper=helper)
+    return render_template('policy.html', data=data, helper=helper, ourl='policy/show/%d.html' % id)
 
 @app.route('/gliederungen')
 def show_units():
     data = api_load('/unit')
-    return render_template('units.html', data=data, helper=helper)
+    return render_template('units.html', data=data, helper=helper, ourl='index/index.html?filter_unit=global')
 
 @app.route('/gliederungen/<int:id>')
 def show_unit(id):
     data = api_load('/unit', q={'unit_id': id})
-    return render_template('unit.html', data=data, helper=helper)
+    return render_template('unit.html', data=data, helper=helper, ourl='unit/show/%d.html' % id)
 
 @app.route('/ereignisse')
 def show_events():
@@ -139,7 +139,7 @@ def show_events():
     data['initiative'] = api_load_all('/initiative')
     data['issue'] = api_load_all('/issue')
     data['suggestion'] = api_load_all('/suggestion', q={'rendered_content': 'html'})
-    return render_template('events.html', data=data, helper=helper)
+    return render_template('events.html', data=data, helper=helper, ourl='index/index.html?tab=timeline&filter_unit=global')
 
 @app.route('/themen')
 def show_issues():
@@ -157,7 +157,7 @@ def show_issue(id):
     data['interest']['end_of_admission'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'end_of_admission'}, session=session)
     data['interest']['half_freeze'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'half_freeze'}, session=session)
     data['interest']['full_freeze'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'full_freeze'}, session=session)
-    return render_template('issue.html', data=data, helper=helper, fob=fob)
+    return render_template('issue.html', data=data, helper=helper, fob=fob, ourl='issue/show/%d.html' % id)
 
 @app.route('/initiative/<int:id>')
 def show_initiative(id):
@@ -167,7 +167,7 @@ def show_initiative(id):
     data['battle'] = api_load('/battle', q={'issue_id': data['initiative']['result'][0]['issue_id']})
     data['draft'] = api_load('/draft', q={'initiative_id': id, 'render_content': 'html'})
     data['suggestion'] = api_load('/suggestion', q={'initiative_id': id, 'rendered_content': 'html'})
-    data['initiator'] = api_load('/initiator', q={'initiative_id': id}, session=session)
+    data['initiator'] = api_load('/initiator', q={'initiative_id': id}, session=session, ourl='initiative/show/%d.html' % id)
 
     return render_template('initiative.html', data=data, helper=helper)
 
@@ -175,7 +175,7 @@ def show_initiative(id):
 def show_members():
     data = dict()
     data['member'] = api_load('/member', session=session)
-    return render_template('members.html', data=data, helper=helper)
+    return render_template('members.html', data=data, helper=helper, ourl='index/index.html?tab=members')
 
 @app.route('/themenbereiche')
 def show_areas():
@@ -187,7 +187,7 @@ def show_area(id):
     data = dict()
     data['area'] = api_load('/area', q={'area_id': id})
     data['allowed_policy'] = api_load('/allowed_policy', q={'area_id': id})
-    return render_template('area.html', data=data, helper=helper)
+    return render_template('area.html', data=data, helper=helper, ourl='area/show/%d.html' % id)
 
 @app.route('/mitglieder/<int:id>')
 def show_member(id):
@@ -203,7 +203,7 @@ def show_member(id):
     data['member'] = api_load('/member', q={'member_id': id, 'render_statement': 'html'}, session=session)
     data['member_image'] = api_load('/member_image', q={'member_id': id}, session=session)
     data['member_history'] = api_load('/member_history', q={'member_id': id}, session=session)
-    return render_template('member.html', data=data, helper=helper, fob=fob)
+    return render_template('member.html', data=data, helper=helper, fob=fob, ourl='member/show/%d.html' % id)
 
 @app.route('/einstellungen', methods=['GET', 'POST'])
 def show_settings():

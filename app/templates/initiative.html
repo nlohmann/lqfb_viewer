@@ -21,9 +21,11 @@
 
 {% if session.current_access_level == 'member' %}
 <h2>Initiatoren</h2>
+<ul class="inline">
 {% for p in data.initiator.result %}
-{{ p.member_id|member(True)|safe }}
+<li>{{ p.member_id|member(True)|safe }}</li>
 {% endfor %}
+</ul>
 <br>
 <br>
 {% endif %}
@@ -121,6 +123,7 @@
 <style>
 .draft h1 { font-size: 2em; }
 .draft h2 { font-size: 1.5em; }
+.draft h3 { font-size: 1.25em; }
 </style>
  
 <div class="tab-content">

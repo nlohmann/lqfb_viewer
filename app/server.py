@@ -167,9 +167,9 @@ def show_initiative(id):
     data['battle'] = api_load('/battle', q={'issue_id': data['initiative']['result'][0]['issue_id']})
     data['draft'] = api_load('/draft', q={'initiative_id': id, 'render_content': 'html'})
     data['suggestion'] = api_load('/suggestion', q={'initiative_id': id, 'rendered_content': 'html'})
-    data['initiator'] = api_load('/initiator', q={'initiative_id': id}, session=session, ourl='initiative/show/%d.html' % id)
+    data['initiator'] = api_load('/initiator', q={'initiative_id': id}, session=session)
 
-    return render_template('initiative.html', data=data, helper=helper)
+    return render_template('initiative.html', data=data, helper=helper, ourl='initiative/show/%d.html' % id)
 
 @app.route('/mitglieder')
 def show_members():

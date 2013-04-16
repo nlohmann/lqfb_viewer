@@ -1,13 +1,13 @@
 {% extends "_base.html" %}
 
-{% block title %}LQFB › Initiativen › Initiative {{data.initiative.result[0].id}}: {{data.initiative.result[0].name}}{% endblock %}
+{% block title %}LQFB › Initiativen › {{data.initiative.result[0].name}}{% endblock %}
 
 {% block navigation %}
 {{ super() }}
 <ul class="breadcrumb">
   <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
   <li><a href="/initiativen">Initiativen</a> <span class="divider">/</span></li>
-  <li class="active">Initiative {{data.initiative.result[0].id}}: {{data.initiative.result[0].name}}</li>
+  <li class="active">{{data.initiative.result[0].name}}</li>
 </ul>
 {% endblock %}
 
@@ -80,10 +80,10 @@
       
 <ul>
   {% for p in data.battle.result if p.winning_initiative_id == data.initiative.result[0].id %}
-  <li>schlägt {{ p.losing_initiative_id }} ({{p.count}})</li>
+  <li>schlägt {{ p.losing_initiative_id|initiative(True)|safe }} ({{p.count}})</li>
   {% endfor %}
   {% for p in data.battle.result if p.losing_initiative_id == data.initiative.result[0].id %}
-  <li>geschlagen von {{ p.winning_initiative_id }} ({{p.count}})</li>
+  <li>geschlagen von {{ p.winning_initiative_id|initiative(True)|safe }} ({{p.count}})</li>
   {% endfor %}
 </ul>
 {% endif %}

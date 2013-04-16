@@ -195,7 +195,7 @@
     {% if data.interest.latest.result %}
     <h3>Aktuell</h3>
     <ul class="unstyled">
-    {% for p in data.interest.latest.result %}
+    {% for p in data.interest.latest.result|sort(attribute='weight', reverse=True) %}
     <li>
       {{ p.member_id|member(True)|safe }}
       {% if p.weight > 1 %}
@@ -209,7 +209,7 @@
     {% if data.interest.end_of_admission.result %}
     <h3>am Ende der Neuphase</h3>
     <ul class="unstyled">
-    {% for p in data.interest.end_of_admission.result %}
+    {% for p in data.interest.end_of_admission.result|sort(attribute='weight', reverse=True) %}
     <li>
       {{ p.member_id|member(True)|safe }}
       {% if p.weight > 1 %}
@@ -223,7 +223,7 @@
     {% if data.interest.half_freeze.result %}
     <h3>am Ende der Diskussion</h3>
     <ul class="unstyled">
-    {% for p in data.interest.half_freeze.result %}
+    {% for p in data.interest.half_freeze.result|sort(attribute='weight', reverse=True) %}
     <li>
       {{ p.member_id|member(True)|safe }}
       {% if p.weight > 1 %}
@@ -237,7 +237,7 @@
     {% if data.interest.full_freeze.result %}
     <h3>zu Beginn der Abstimmung</h3>
     <ul class="unstyled">
-    {% for p in data.interest.full_freeze.result %}
+    {% for p in data.interest.full_freeze.result|sort(attribute='weight', reverse=True) %}
     <li>
       {{ p.member_id|member(True)|safe }}
       {% if p.weight > 1 %}

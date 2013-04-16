@@ -203,7 +203,7 @@ def show_member(id):
     data['member'] = api_load('/member', q={'member_id': id, 'render_statement': 'html'}, session=session)
     data['member_image'] = api_load('/member_image', q={'member_id': id}, session=session)
     data['member_history'] = api_load('/member_history', q={'member_id': id}, session=session)
-    return render_template('member.html', data=data, helper=helper)
+    return render_template('member.html', data=data, helper=helper, fob=fob)
 
 @app.route('/einstellungen', methods=['GET', 'POST'])
 def show_settings():

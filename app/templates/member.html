@@ -184,11 +184,19 @@
     <h3>direkte Teilnahme</h3>
     <ul>
     {% for p in data.vote.result|groupby('issue_id') %}
-    <li style="padding-bottom: 0.5em;">{{ p.grouper|issue(True)|safe }}
+    <li style="padding-bottom: 0.5em;">{{ p.grouper|issue(True)|safe }} ({{fob.issue.id[p.grouper].area_id|area(True)|safe}})
       <ul class="unstyled">
-    {% for p2 in p.list|sort(attribute='grade', reverse=True) %}
-    <li>{{ p2.initiative_id|initiative(True)|safe }}: {{ p2.grade }}</li>
-    {% endfor %}</li></ul>
+      {% for p2 in p.list|sort(attribute='grade', reverse=True) %}
+        <li>{{ p2.initiative_id|initiative(True)|safe }}: {{ p2.grade|vote|safe }}</li>
+      {% endfor %}
+      </ul>
+      {% for p2 in data.voter.result if p2.issue_id == p.grouper and p2.comment != None %}
+      <i class="icon-comment-alt"></i>&nbsp;{{ p2.comment|safe }}<br>
+      {% endfor %}
+      {% for p2 in data.voter.result if p2.issue_id == p.grouper and p2.weight != 1 %}
+      <i class="icon-plus-sign"></i>{{ p2.weight-1 }} eingehende Delegation
+      {% endfor %}
+    </li>
     {% else %}
     <li>keine direkte Abstimmung</li>
     {% endfor %}
@@ -202,15 +210,5 @@
     <li>keine Teilnahme durch Delegation</li>
     {% endfor %}
     </ul>
-
-    <h3>Abstimmkommentare</h3>
-    <ul>
-    {% for p in data.voter.result if p.comment %}
-    <li>{{ p.issue_id|issue(True)|safe }}: {{ p.comment|safe }}</li>
-    {% else %}
-    <li>keine Abstimmkommentare</li>
-    {% endfor %}
-    </ul>
-
 
 {% endblock %}

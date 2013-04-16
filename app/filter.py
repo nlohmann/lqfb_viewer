@@ -137,6 +137,10 @@ def unit_filter(unit_id, link=False):
 
 @app.template_filter('initiative')
 def initiative_filter(initiative_id, link=False):
+    # special case: status quo
+    if initiative_id == None:
+        return "Status Quo"
+    
     # get name
     result = fob['initiative']['id'][initiative_id]['name']
 
@@ -160,8 +164,18 @@ def quorum_filter(issue_id):
     return int(ceil((float(policy['initiative_quorum_num']) / float(policy['initiative_quorum_den'])) * issue['population']))
 
 @app.template_filter('is_url')
-def is_url(url):
+def is_url_filter(url):
     """
     GANZ einfacher Test, ob es sich um eine URL handelt. Kann man mal mit nem RegEx aufbessern
     """
     return str(url).find('http') > -1 or str(url).find('https') > -1
+
+@app.template_filter('vote')
+def vote_ftiler(grade):
+    if grade == 0:
+        return '<span class="badge">%d</span>' % grade
+    if grade > 0:
+        return '<span class="badge badge-success">%d</span>' % grade
+    if grade < 0:
+        return '<span class="badge badge-important">%d</span>' % grade
+        

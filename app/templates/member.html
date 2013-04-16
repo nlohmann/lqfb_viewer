@@ -179,6 +179,15 @@
     {% endfor %}
     </ul>
 
+    <h3>Interesse</h3>
+    <ul>
+      {% for p in data.interest.result|sort(attribute='issue_id') %}
+      <li>{{ p.issue_id|issue(True)|safe }} ({{fob.issue.id[p.issue_id].area_id|area(True)|safe}})</li>
+      {% else %}
+      <li>kein Interesse</li>
+      {% endfor %}
+    </ul>
+
     <h2>Abstimmungen</h2>
 
     <h3>direkte Teilnahme</h3>
@@ -207,7 +216,7 @@
     <ul>
     {% for p in data.delegating_voter.result %}
     <li>
-      {{ p.issue_id|issue(True)|safe }}: delegiert an {% for p2 in p.delegate_member_ids %}{{ p2|member(True)|safe }}
+      {{ p.issue_id|issue(True)|safe }} ({{fob.issue.id[p.issue_id].area_id|area(True)|safe}}) delegiert an {% for p2 in p.delegate_member_ids %}{{ p2|member(True)|safe }}
       {% if p.weight > 1 %}
       {{ (p2.weight-1)|delegation|safe }}
       {% endif %}

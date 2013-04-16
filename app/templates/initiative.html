@@ -132,7 +132,7 @@
     <div class="well draft">
     {{draft.content|safe}}
     </div>
-    <p>Entwurf vom {{draft.created|nicedate(timeago=False)}}</p>
+    <p>Entwurf von {{draft.created|nicedate(timeago=False)}}</p>
   </div>
   {% endfor %}
 </div>
@@ -148,6 +148,7 @@
   })
 </script>
 
+{% if data.suggestion.result|length > 0 %}
 <h2>Anregungen</h2>
 
 <ul class="nav nav-tabs" id="suggestions">
@@ -162,10 +163,39 @@
   {% for suggestion in data.suggestion.result|sort(attribute='proportional_order') %}
   <div class="tab-pane" id="suggestion{{suggestion.id}}">
     <p class="lead">{{suggestion.name}}</p>
+    {% if suggestion.content %}
     <div class="well">
       {{suggestion.content|safe}}
     </div>
-    <p>Anregung vom {{suggestion.created|nicedate(timeago=False)}}</p>
+    {% endif %}
+    <p>Anregung von {{suggestion.created|nicedate(timeago=False)}}</p>
+
+    {% set balken1 = suggestion.plus2_unfulfilled_count + suggestion.plus2_fulfilled_count %}
+    {% set balken2 = suggestion.plus1_unfulfilled_count + suggestion.plus1_fulfilled_count %}
+    {% set balken4 = suggestion.minus1_unfulfilled_count + suggestion.minus1_fulfilled_count %}
+    {% set balken5 = suggestion.minus2_unfulfilled_count + suggestion.minus2_fulfilled_count %}
+    {% set balken3 = data.initiative.result[0].supporter_count - balken1 - balken2 - balken4 - balken5 %}
+    {% set balken1_l = ((balken1 / data.initiative.result[0].supporter_count) * 100)|round(0)|int %}
+    {% set balken2_l = ((balken2 / data.initiative.result[0].supporter_count) * 100)|round(0)|int %}
+    {% set balken4_l = ((balken4 / data.initiative.result[0].supporter_count) * 100)|round(0)|int %}
+    {% set balken5_l = ((balken5 / data.initiative.result[0].supporter_count) * 100)|round(0)|int %}
+    {% set balken3_l = 100 - balken1_l - balken2_l - balken4_l - balken5_l %}
+
+    <div class="progress">
+      <div class="bar bar-success" style="width: {{ balken1_l }}%">{{balken1}}</div>
+      <div class="bar bar-success" style="opacity: 0.75; width: {{ balken2_l }}%">{{balken2}}</div>
+      <div class="bar bar-transparent" style="width: {{ balken3_l }}%">{{balken3}}</div>
+      <div class="bar bar-danger" style="opacity: 0.75; width: {{ balken4_l }}%">{{balken4}}</div>
+      <div class="bar bar-danger" style="width: {{ balken5_l }}%">{{balken5}}</div>
+    </div>
+
+    <ul>
+      <li>Meinung "muss": {{suggestion.plus2_unfulfilled_count + suggestion.plus2_fulfilled_count}} ({{suggestion.plus2_fulfilled_count}} sehen Anregung umgesetzt)</li>
+      <li>Meinung "soll": {{suggestion.plus1_unfulfilled_count + suggestion.plus1_fulfilled_count}} ({{suggestion.plus1_fulfilled_count}} sehen Anregung umgesetzt)</li>
+      <li>keine Meinung: {{ data.initiative.result[0].supporter_count - suggestion.plus2_unfulfilled_count - suggestion.plus2_fulfilled_count - suggestion.plus1_unfulfilled_count - suggestion.plus1_fulfilled_count - suggestion.minus1_unfulfilled_count - suggestion.minus1_fulfilled_count - suggestion.minus2_unfulfilled_count - suggestion.minus2_fulfilled_count}}
+      <li>Meinung "soll nicht": {{suggestion.minus1_unfulfilled_count + suggestion.minus1_fulfilled_count}} ({{suggestion.minus1_fulfilled_count}} sehen Anregung umgesetzt)</li>
+      <li>Meinung "darf nicht": {{suggestion.minus2_unfulfilled_count + suggestion.minus2_fulfilled_count}} ({{suggestion.minus2_fulfilled_count}} sehen Anregung umgesetzt)</li>
+    </ul>
   </div>
   {% endfor %}
 </div>
@@ -180,6 +210,6 @@
     $(this).tab('show');
   })
 </script>
-
+{% endif %}
 
 {% endblock %}

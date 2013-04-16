@@ -200,6 +200,7 @@ def show_member(id):
     data['voter'] = api_load('/voter', q={'member_id': id, 'formatting_engine': 'html'}, session=session)
     data['vote'] = api_load('/vote', q={'member_id': id}, session=session)
     data['event'] = api_load('/event')
+    data['interest'] = api_load('/interest', q={'member_id': id, 'snapshot': 'latest'}, session=session)
     data['member'] = api_load('/member', q={'member_id': id, 'render_statement': 'html'}, session=session)
     data['member_image'] = api_load('/member_image', q={'member_id': id}, session=session)
     data['member_history'] = api_load('/member_history', q={'member_id': id}, session=session)

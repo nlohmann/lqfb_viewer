@@ -185,6 +185,10 @@
     <ul>
     {% for p in data.vote.result|groupby('issue_id') %}
     <li style="padding-bottom: 0.5em;">{{ p.grouper|issue(True)|safe }} ({{fob.issue.id[p.grouper].area_id|area(True)|safe}})
+      {% for p2 in data.voter.result if p2.issue_id == p.grouper and p2.weight != 1 %}
+      {{ (p2.weight-1)|delegation|safe }}
+      {% endfor %}
+
       <ul class="unstyled">
       {% for p2 in p.list|sort(attribute='grade', reverse=True) %}
         <li>{{ p2.initiative_id|initiative(True)|safe }}: {{ p2.grade|vote|safe }}</li>
@@ -192,9 +196,6 @@
       </ul>
       {% for p2 in data.voter.result if p2.issue_id == p.grouper and p2.comment != None %}
       <i class="icon-comment-alt"></i>&nbsp;{{ p2.comment|safe }}<br>
-      {% endfor %}
-      {% for p2 in data.voter.result if p2.issue_id == p.grouper and p2.weight != 1 %}
-      <i class="icon-plus-sign"></i>{{ p2.weight-1 }} eingehende Delegation
       {% endfor %}
     </li>
     {% else %}
@@ -205,7 +206,13 @@
     <h3>Teilnahme durch Delegation</h3>
     <ul>
     {% for p in data.delegating_voter.result %}
-    <li>{{ p.issue_id|issue(True)|safe }}: Stimmgewicht {{ p.weight }} an {% for p2 in p.delegate_member_ids %}{{ p2|member(True)|safe }}{% endfor %}</li>
+    <li>
+      {{ p.issue_id|issue(True)|safe }}: delegiert an {% for p2 in p.delegate_member_ids %}{{ p2|member(True)|safe }}
+      {% if p.weight > 1 %}
+      {{ (p2.weight-1)|delegation|safe }}
+      {% endif %}
+    </li>
+    {% endfor %}
     {% else %}
     <li>keine Teilnahme durch Delegation</li>
     {% endfor %}

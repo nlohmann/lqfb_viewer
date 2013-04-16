@@ -22,7 +22,7 @@
       <li>Bereich: {{data.area.result.0.unit_id|unit(True)|safe}}</li>
       <li>
         Mitglieder: {{data.area.result.0.direct_member_count}}
-        (+{{ data.area.result.0.member_weight - data.area.result.0.direct_member_count }} Delegationen)
+        {{ (data.area.result.0.member_weight - data.area.result.0.direct_member_count)|delegation|safe }}
       </li>
     </ul>
 

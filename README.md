@@ -9,6 +9,7 @@ Der Viewer läuft mit dem Python Framework [Flask](http://flask.pocoo.org). Für
 Um den Viewer zu starten, werden folgende Werkzeuge benötigt:
 
 - [Python](http://www.python.org)
+- [SQLite](http://www.sqlite.org)
 - [npm](https://npmjs.org)
 - [make](http://www.gnu.org/software/make)
 
@@ -41,6 +42,12 @@ gelöscht werden. Mit
     make veryclean
 
 Werden alle Daten gelöscht, die von `make install` erstellt wurden.
+
+Die Datenbank kann mit
+
+    make db_clean
+
+gelöscht werden.
 
 ## Rechtliches
 

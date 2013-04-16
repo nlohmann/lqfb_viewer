@@ -58,13 +58,16 @@
   </div>
 
   <div class="footer">
+    <style>
+    .footer a { color: #999; }
+    </style>
     <div class="container-fluid">
       <p class="muted" style="padding-top:10px;">
         {{helper.requests}} Anfragen,
         {% if session.current_access_level %}
-        <i class="{{ helper.enums.access[session.current_access_level].icon}}"></i> {{ helper.enums.access[session.current_access_level].name }}
+        <i class="{{ helper.enums.access[session.current_access_level].icon}}"></i> <a href="/einstellungen">{{ helper.enums.access[session.current_access_level].name }}</a>
         {% if session.current_member_id %}
-        {{ session.current_member_id|member(False)|safe }}
+        {{ session.current_member_id|member(True)|safe }}
         {% endif %}
         {% else %}
         <i class="{{ helper.enums.access['anonymous'].icon}}"></i> {{ helper.enums.access['anonymous'].name }}

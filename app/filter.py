@@ -171,11 +171,14 @@ def is_url_filter(url):
     return str(url).find('http') > -1 or str(url).find('https') > -1
 
 @app.template_filter('vote')
-def vote_ftiler(grade):
+def vote_filter(grade):
     if grade == 0:
         return '<span class="badge">%d</span>' % grade
     if grade > 0:
         return '<span class="badge badge-success">%d</span>' % grade
     if grade < 0:
         return '<span class="badge badge-important">%d</span>' % grade
-        
+
+@app.template_filter('delegation')
+def delegation_filter(weight):
+    return '<span class="label label-info"><i class="icon-plus"></i> %d</span>' % weight

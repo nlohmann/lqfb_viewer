@@ -25,6 +25,7 @@
 # everything for Flask
 from flask import Flask
 from werkzeug.contrib.cache import SimpleCache
+from flask.ext.sqlalchemy import SQLAlchemy
 
 ###########
 # GLOBALS #
@@ -34,11 +35,14 @@ from werkzeug.contrib.cache import SimpleCache
 app = Flask(__name__)
 app.config.from_object('config')
 
+# database
+db = SQLAlchemy(app)
+
 # cache
-cache = SimpleCache(threshold=2000)
+cache = SimpleCache(threshold=30000, default_timeout=300)
 
 # global dictionary for convenience data
 helper = dict()
 fob = dict()
 
-from app import server
+from app import server, models

@@ -36,7 +36,7 @@ def api_load(endpoint, q=None, session=None, forceLoad=False):
 
         rv = json.loads(res)
 
-        cache.set(url, rv, timeout=5 * 60)
+        cache.set(url, rv)
     return rv
 
 def api_load_all(endpoint, q=None, session=None, forceLoad=False):

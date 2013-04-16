@@ -10,6 +10,10 @@ flask
 node_modules
 virtualenv.py
 
+# data base
+app.db
+
 # temporary files
+.DS_Store
 */.DS_Store
 *.pyc

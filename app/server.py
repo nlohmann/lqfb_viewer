@@ -164,9 +164,8 @@ def show_initiative(id):
     data = dict()
     data['initiative'] = api_load('/initiative', q={'initiative_id': id})
     data['issue'] = api_load('/issue', q={'issue_id': data['initiative']['result'][0]['issue_id']})
-    data['current_draft'] = api_load('/draft', q={'initiative_id': id, 'current_draft': 'true', 'render_content': 'html'})
     data['battle'] = api_load('/battle', q={'issue_id': data['initiative']['result'][0]['issue_id']})
-    data['draft'] = api_load('/draft', q={'initiative_id': id})
+    data['draft'] = api_load('/draft', q={'initiative_id': id, 'render_content': 'html'})
     data['suggestion'] = api_load('/suggestion', q={'initiative_id': id})
     data['initiator'] = api_load('/initiator', q={'initiative_id': id}, session=session)
 

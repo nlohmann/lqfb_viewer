@@ -109,22 +109,41 @@
 </ul>
 
 <h2>Text</h2>
-<div class="well" id="initiative">
-  <style>
-  #initiative h1 { font-size: 2em; }
-  #initiative h2 { font-size: 1.5em; }
-  </style>
-  {{ data.current_draft.result[0].content|safe }}
+
+<ul class="nav nav-tabs" id="drafts">
+  {% set i = data.draft.result|length %}
+  {% for draft in data.draft.result|sort(attribute='id', reverse=True) %}
+  <li><a href="#draft{{draft.id}}">Entwurf {{i}}{% if i == data.draft.result|length %} (aktuell){% endif %}</a></li>
+  {% set i = i-1 %}
+  {% endfor %}
+</ul>
+
+<style>
+.draft h1 { font-size: 2em; }
+.draft h2 { font-size: 1.5em; }
+</style>
+ 
+<div class="tab-content">
+  {% for draft in data.draft.result|sort(attribute='id', reverse=True) %}
+  <div class="tab-pane" id="draft{{draft.id}}">
+    <div class="well draft">
+    {{draft.content|safe}}
+    </div>
+    <p>Entwurf vom {{draft.created|nicedate(timeago=False)}}</p>
+  </div>
+  {% endfor %}
 </div>
 
-<p><strong>Stand: </strong>{{ data.current_draft.result[0].created|nicedate(timeago=False) }}</p>
+<script>
+  $(function () {
+    $('#drafts a:first').tab('show');
+  })
 
-<h2>Entwürfe</h2>
-<ol>
-  {% for p in data.draft.result %}
-  <li>{{ p.created|nicedate(timeago=False) }}</li>
-  {% endfor %}
-</ol>
+  $('#drafts a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  })
+</script>
 
 <h2>Anregungen</h2>
 <ol>

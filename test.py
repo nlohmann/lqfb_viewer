@@ -64,6 +64,10 @@ class FlaskrTestCase(unittest.TestCase):
     </ul>''' in rv.data
         assert rv.status == '200 OK'
 
+    def test_member(self):
+        rv = self.app.get('/mitglieder/1')
+        assert rv.status == '403 FORBIDDEN'
+
     def test_settings(self):
         rv = self.app.get('/einstellungen')
         assert rv.status == '200 OK'

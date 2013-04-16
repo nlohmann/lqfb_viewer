@@ -30,7 +30,7 @@ import urllib
 import urllib2
 
 # everything for Flask
-from flask import render_template, request, session, flash
+from flask import render_template, request, session, flash, abort
 from app import app, helper, fob
 
 from utils import api_load, api_load_all, fob_store
@@ -191,6 +191,9 @@ def show_area(id):
 
 @app.route('/mitglieder/<int:id>')
 def show_member(id):
+    if 'current_access_level' not in session or session['current_access_level'] != 'member':
+        abort(403)
+
     data = dict()
     data['privilege'] = api_load('/privilege', q={'member_id': id}, session=session)
     data['membership'] = api_load('/membership', q={'member_id': id}, session=session)

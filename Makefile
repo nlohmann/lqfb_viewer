@@ -3,6 +3,7 @@ all:
 	@echo "clean:    clean up folder"
 	@echo "verclean: bring folder back to original state"
 	@echo "serve:    start a server"
+	@echo "test:     run test cases"
 
 install:
 	# virtual environment
@@ -32,3 +33,6 @@ veryclean: clean
 
 serve:
 	./run.py
+
+check:
+	./test.py

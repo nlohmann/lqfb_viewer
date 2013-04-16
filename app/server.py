@@ -244,8 +244,8 @@ def show_settings():
 
     # delete the key
     if request.method == 'POST' and 'delete_key' in request.form:
-        flash(u"Der API-Schlüssel wurde gelöscht.", "success")
         session.clear()
+        flash(u"Der API-Schlüssel wurde gelöscht.", "success")
 
         # get access level
         data = api_load('/info', session=session, forceLoad=True)

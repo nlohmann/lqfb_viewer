@@ -146,13 +146,37 @@
 </script>
 
 <h2>Anregungen</h2>
-<ol>
-  {% for p in data.suggestion.result|sort(attribute='proportional_order') %}
-  <li>
-    {{ p.name }}<br>
-    {{ p.created|nicedate(timeago=False) }}<br>
-  </li>
+
+<ul class="nav nav-tabs" id="suggestions">
+  {% set i = 1 %}
+  {% for suggestion in data.suggestion.result|sort(attribute='proportional_order') %}
+  <li><a href="#suggestion{{suggestion.id}}">Anregung {{i}}</a></li>
+  {% set i = i+1 %}
   {% endfor %}
-</ol>
+</ul>
+
+<div class="tab-content">
+  {% for suggestion in data.suggestion.result|sort(attribute='proportional_order') %}
+  <div class="tab-pane" id="suggestion{{suggestion.id}}">
+    <p class="lead">{{suggestion.name}}</p>
+    <div class="well">
+      {{suggestion.content|safe}}
+    </div>
+    <p>Anregung vom {{suggestion.created|nicedate(timeago=False)}}</p>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+  $(function () {
+    $('#suggestions a:first').tab('show');
+  })
+
+  $('#suggestions a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  })
+</script>
+
 
 {% endblock %}

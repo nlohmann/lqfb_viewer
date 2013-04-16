@@ -166,7 +166,7 @@ def show_initiative(id):
     data['issue'] = api_load('/issue', q={'issue_id': data['initiative']['result'][0]['issue_id']})
     data['battle'] = api_load('/battle', q={'issue_id': data['initiative']['result'][0]['issue_id']})
     data['draft'] = api_load('/draft', q={'initiative_id': id, 'render_content': 'html'})
-    data['suggestion'] = api_load('/suggestion', q={'initiative_id': id})
+    data['suggestion'] = api_load('/suggestion', q={'initiative_id': id, 'rendered_content': 'html'})
     data['initiator'] = api_load('/initiator', q={'initiative_id': id}, session=session)
 
     return render_template('initiative.html', data=data, helper=helper)

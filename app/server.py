@@ -277,6 +277,9 @@ def show_settings():
         send_email('[LQFB] E-Mail-Benachrichtigung', app.config['ADMINS'][0], [session['email']], 'Adresse eingetragen.', 'Adresse eingetragen.')
 
     if request.method == 'POST' and 'delete_email' in request.form:
+        if 'current_access_level' not in session or session['current_access_level'] != 'member':
+            abort(403)
+
         if 'email' in session:
             session.pop('email')
         u = models.Member.query.get(session['current_member_id'])

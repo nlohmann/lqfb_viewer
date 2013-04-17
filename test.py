@@ -78,7 +78,13 @@ class FlaskrTestCase(unittest.TestCase):
 
         rv = self.app.post('/einstellungen', data={'delete_key': ''})
         assert rv.status == '200 OK'
-        assert 'Der API-Schlüssel wurde gelöscht.' in rv.data
+        assert 'Der API-Schlüssel wurde aus dem Cookie gelöscht.' in rv.data
+
+        rv = self.app.post('/einstellungen', data={'submit_email': ''})
+        assert rv.status == '403 FORBIDDEN'
+
+        rv = self.app.post('/einstellungen', data={'delete_email': ''})
+        assert rv.status == '403 FORBIDDEN'
 
 if __name__ == '__main__':
     unittest.main()

@@ -21,11 +21,13 @@ bower_packages:
 	# bower packages
 	npm install bower
 	node_modules/bower/bin/bower install bootstrap font-awesome jquery.tablesorter
+	node_modules/bower/bin/bower install https://github.com/arnab/jQuery.PrettyTextDiff.git
 	cd components/bootstrap ; npm install ; make build bootstrap
 	cp -fr components/bootstrap/bootstrap app/static/bootstrap
 	cp -fr components/jquery app/static
 	cp -fr components/font-awesome app/static
 	cp -fr components/jquery.tablesorter app/static
+	cp -fr components/jQuery.PrettyTextDiff app/static
 
 app.db:
 	./db_create.py
@@ -36,7 +38,7 @@ clean:
 
 veryclean: clean
 	rm -fr venv
-	rm -fr app/static/bootstrap app/static/jquery app/static/font-awesome app/static/jquery.tablesorter
+	rm -fr app/static/bootstrap app/static/jquery app/static/font-awesome app/static/jquery.tablesorter app/static/jQuery.PrettyTextDiff
 
 dbclean:
 	rm -fr db_repository app.db

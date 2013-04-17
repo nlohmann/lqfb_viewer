@@ -12,7 +12,7 @@
 {{ super() }}
 <ul class="breadcrumb">
   <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
-  <li><a href="/initiativen">Initiativen</a> <span class="divider">/</span></li>
+  <li><a href="/themen/{{data.initiative.result[0].issue_id}}">Thema {{data.initiative.result[0].issue_id}}</a> <span class="divider">/</span></li>
   <li class="active">{{data.initiative.result[0].name}}</li>
 </ul>
 {% endblock %}

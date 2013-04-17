@@ -264,11 +264,11 @@ ol#timeline li i { color: #888; }
       {% elif p.event == "initiative_created_in_existing_issue" %}
       {{p.member_id|member(True)|safe}} hat {{p.initiative_id|initiative(True)|safe}} zu {{p.issue_id|issue(True)|safe}} <strong>hinzugefügt</strong>.
       {% elif p.event == "suggestion_created" %}
-      {{p.member_id|member(True)|safe}} hat eine <strong>Anregung</strong> zu {{p.initiative_id|initiative(True)|safe}} geschrieben: {{p.suggestion_id|suggestion|safe}}.
+      {{p.member_id|member(True)|safe}} hat eine <strong>Anregung</strong> zu {{p.initiative_id|initiative(True)|safe}} ({{p.issue_id|issue(True)|safe}}) geschrieben: {{p.suggestion_id|suggestion|safe}}.
       {% elif p.event == "initiative_revoked" %}
       {{p.member_id|member(True)|safe}} hat {{p.initiative_id|initiative(True)|safe}} <strong>zurückgezogen</strong>.
       {% elif p.event == "new_draft_created" %}
-      {{p.member_id|member(True)|safe}} hat einen <strong>neuen Entwurf</strong> von {{p.initiative_id|initiative(True)|safe}} geschrieben.
+      {{p.member_id|member(True)|safe}} hat einen <strong>neuen Entwurf</strong> von {{p.initiative_id|initiative(True)|safe}} ({{p.issue_id|issue(True)|safe}}) geschrieben.
       {% else %}
       {{ p.event }}
       {% endif %}

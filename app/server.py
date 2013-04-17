@@ -32,7 +32,7 @@ import urllib2
 # everything for Flask
 from flask import render_template, request, session, flash, abort
 from app import app, helper, fob, models, db
-from emails import send_email
+#from emails import send_email
 from utils import api_load, api_load_all, fob_store
 import filter
 
@@ -274,7 +274,7 @@ def show_settings():
             u.email = request.form['email']
             flash('E-Mail-Adresse aktualisert.', 'info')
         db.session.commit()
-        send_email('[LQFB] E-Mail-Benachrichtigung', app.config['ADMINS'][0], [session['email']], 'Adresse eingetragen.', 'Adresse eingetragen.')
+        #send_email('[LQFB] E-Mail-Benachrichtigung', app.config['ADMINS'][0], [session['email']], 'Adresse eingetragen.', 'Adresse eingetragen.')
 
     if request.method == 'POST' and 'delete_email' in request.form:
         if 'current_access_level' not in session or session['current_access_level'] != 'member':

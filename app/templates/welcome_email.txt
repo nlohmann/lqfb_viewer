@@ -1,0 +1,10 @@
+Hallo,
+
+wir haben deine E-Mail-Adresse {{session.email}} gespeichert, damit wir dir in Zukunft Benachrichtigungen schicken können. Du kannst jederzeit unter
+
+{{url_for("show_settings", _external = True)}}
+
+deine E-Mail-Adresse ändern oder auch die Benachrichtigungen ausschalten.
+
+Beste Grüße,
+Niels.

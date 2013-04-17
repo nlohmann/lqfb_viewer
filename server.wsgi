@@ -1,6 +1,6 @@
 import sys
 
-path = '/projects/lf'
+path = '/projects/lf.nlohmann.me/lqfb_viewer'
 
 activate_this = path + '/venv/bin/activate_this.py'
 execfile(activate_this, dict(__file__=activate_this))

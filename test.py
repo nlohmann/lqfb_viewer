@@ -1,4 +1,4 @@
-#!flask/bin/python
+#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from app import app

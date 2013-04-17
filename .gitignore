@@ -6,7 +6,7 @@ app/static/jquery
 
 # installed binaries
 components
-flask
+venv
 node_modules
 virtualenv.py
 

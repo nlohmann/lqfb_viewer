@@ -5,17 +5,17 @@ all:
 	@echo "serve:    start a server"
 	@echo "test:     run test cases"
 
-install: venv pip_packages bower_packages app.db
+install: vienv pip_packages bower_packages app.db
 
-venv:
+vienv:
 	# virtual environment
 	wget https://raw.github.com/pypa/virtualenv/master/virtualenv.py
-	python virtualenv.py --no-site-packages flask
+	python virtualenv.py --no-site-packages venv
 
 pip_packages:
 	# python packages
-	flask/bin/pip install sqlalchemy==0.7.9
-	flask/bin/pip install MarkupSafe flask iso8601 pytz flask-sqlalchemy sqlalchemy-migrate flask-mail
+	venv/bin/pip install sqlalchemy==0.7.9
+	venv/bin/pip install MarkupSafe flask iso8601 pytz flask-sqlalchemy sqlalchemy-migrate flask-mail
 	
 bower_packages:
 	# bower packages
@@ -35,7 +35,7 @@ clean:
 	rm -fr *.pyc app/*.pyc
 
 veryclean: clean
-	rm -fr flask
+	rm -fr venv
 	rm -fr app/static/bootstrap app/static/jquery app/static/font-awesome app/static/jquery.tablesorter
 
 dbclean:

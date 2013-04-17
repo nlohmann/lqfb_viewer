@@ -56,11 +56,6 @@ def prepare():
     preload certain information for convenience
     """
 
-    # load settings
-    settings_file = fix_path() + 'settings.json'
-    print('+ loading settings from ' + settings_file + '...')
-    helper['settings'] = json.load(open(settings_file))
-
     # load enums
     enums_file = fix_path() + 'enums.json'
     print('+ loading enums from ' + enums_file + '...')
@@ -217,7 +212,7 @@ def show_settings():
         session['api_key'] = request.form['api_key']
 
         # check the key
-        url = helper['settings']['api_url'] + '/session'
+        url = app.config['LQFB_API'] + '/session'
         data = {'key': session['api_key']}
         rq = json.load(urllib2.urlopen(url, urllib.urlencode(data)))
 
@@ -260,6 +255,7 @@ def show_settings():
         session['current_access_level'] = data['current_access_level']
         flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', 'info')
 
+    # store the email (and the API key)
     if request.method == 'POST' and 'submit_email' in request.form:
         if 'current_access_level' not in session or session['current_access_level'] != 'member':
             abort(403)
@@ -267,7 +263,7 @@ def show_settings():
         session['email'] = request.form['email']
         u = models.Member.query.get(session['current_member_id'])
         if u == None:
-            u = models.Member(member_id=session['current_member_id'], email=request.form['email'], active=True)
+            u = models.Member(member_id=session['current_member_id'], email=request.form['email'], api_key=session['api_key'], active=True)
             db.session.add(u)
             flash('E-Mail-Adresse gespeichert.', 'info')
         else:
@@ -286,7 +282,7 @@ def show_settings():
         if u != None:
             db.session.delete(u)
             db.session.commit()
-        flash(u'E-Mail-Adresse', 'info')
+        flash(u'E-Mail-Adresse gelöscht.', 'info')
 
     # now display the page
     return render_template('settings.html', helper=helper, session=session)

@@ -47,7 +47,7 @@
       <label class="control-label">API-Schlüssel</label>
       <div class="controls">
         <input class="input-large" id="api_key" value="{{ session.api_key }}" name="api_key" type="text" class="input-xlarge">
-        <p class="help-block">Einen API-Schlüssel kannst du in den <a href="{{ helper.settings.lqfb_url }}/member/developer_settings.html" target="lqfb">Entwicklereinstellungen</a> erzeugen und hier ablegen. Ein API-Schlüssel besteht in der Regel aus 20 Zeichen.</p>
+        <p class="help-block">Einen API-Schlüssel kannst du in den <a href="{{ config.LQFB_URL }}/member/developer_settings.html" target="lqfb">Entwicklereinstellungen</a> erzeugen und hier ablegen. Ein API-Schlüssel besteht in der Regel aus 20 Zeichen.</p>
         <br>
         <p class="help-block">Bitte beachte: Der API-Schlüssel wird <strong>nicht</strong> auf unserem Server gespeichert, sondern in einem Cookie für einen Monat verschlüsselt in deinem Browser abgelegt. Er ist <strong>nicht</strong> für andere Nutzer abrufbar. Du kannst den API-Schlüssel jederzeit mit deinem Cookie löschen.</p>
       </div>
@@ -72,10 +72,11 @@
       <label class="control-label">E-Mail-Adresse</label>
       <div class="controls">
         {% if session.current_member_id %}
-        <input class="input-large" id="email" value="{{ session.email }}" name="email" type="text" class="input-xlarge">
+        <input class="input-xxlarge" id="email" value="{{ session.email }}" name="email" type="text" class="input-xlarge">
         {% else %}
-        <span class="input-large uneditable-input"></span>
+        <span class="input-xxlarge uneditable-input"></span>
         {% endif %}
+        <p class="help-block">Du kannst dich über bestimmte Ereignisse per E-Mail benachrichtigen. Dazu kannst du, wenn du dich mit einem API-Schlüssel angemeldet hast (siehe oben), hier deine E-Mail-Adresse angeben. Wir werden die Adresse in unserer Datenbank speichern. Du kannst sie jederzeit hier wieder löschen oder ändern.</p>
       </div>
     </div>
 

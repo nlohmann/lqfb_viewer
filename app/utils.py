@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from app import helper, cache, fob
+from app import helper, cache, fob, app
 from flask import flash
 import urllib, urllib2, json
 
@@ -16,7 +16,7 @@ def api_load(endpoint, q=None, session=None, forceLoad=False):
         q['session_key'] = session['session_key']
 
     # build url from endpoint and parameters
-    url = helper['settings']['api_url'] + endpoint
+    url = app.config['LQFB_API'] + endpoint
     if q != {}:
         url += '?' + urllib.urlencode(q)
 

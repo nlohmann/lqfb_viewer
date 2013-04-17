@@ -23,7 +23,7 @@ eingerichtet.
 
 Die Datei `config.py.default` enthält eine Standardkonfiguration. Diese musst du (vor allem für E-Mail-Benachrichtigungen) anpassen. Speichere die angepasste Datei als `config.py` ab.
 
-Standardmäßig ist die Instanz der [SMV Mecklenburg-Vorpommern](http://smv.piratenpartei-mv.de) als Datenquelle angegeben. Andere Quellen können durch setzen der Felder `api_url` und `lqfb_url` in der Datei `settings.json` festgelegt werden.
+Standardmäßig ist die Instanz der [SMV Mecklenburg-Vorpommern](http://smv.piratenpartei-mv.de) als Datenquelle angegeben. Andere Quellen können durch setzen der Felder `LQFB_URL` und `LQFB_API` festgelegt werden.
 
 ### Server starten
 

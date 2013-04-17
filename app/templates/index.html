@@ -8,8 +8,8 @@
       <h1>LiquidFeedback</h1>
       <h2 class="faded">{{ 1|unit(False)|safe }}</h2>
       <p>
-        <a href="{{ helper.settings.lqfb_url }}">LQFB {{ data.core_version }}</a> |
-        <a href="{{ helper.settings.api_url }}">API {{ data.api_version }}</a>
+        <a href="{{ config.LQFB_URL }}">LQFB {{ data.core_version }}</a> |
+        <a href="{{ config.LQFB_API }}">API {{ data.api_version }}</a>
       </p>
     </div>
     

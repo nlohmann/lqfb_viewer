@@ -4,65 +4,91 @@
 
 {% block navigation %}
 {{ super() }}
-  <ul class="breadcrumb">
-    <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
-    <li class="active">Einstellungen</li>
-  </ul>
+<ul class="breadcrumb">
+  <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
+  <li class="active">Einstellungen</li>
+</ul>
 {% endblock %}
 
 {% block content %}
-    <div class="page-header">
-      <h1><i class="icon-cog"></i> Einstellungen</h1>
+<div class="page-header">
+  <h1><i class="icon-cog"></i> Einstellungen</h1>
+</div>
+
+<form class="form-horizontal" action="einstellungen" method="post">
+  <fieldset>
+    <legend>Zugangsdaten</legend>
+
+    <div class="control-group">
+      <label class="control-label">Zugangsberechtigung</label>
+      <div class="controls">
+        {% if session.current_access_level %}
+        <span class="input-large uneditable-input"><i class="{{ helper.enums.access[session.current_access_level].icon}}"></i> {{ helper.enums.access[session.current_access_level].name }}</span>
+        {% else %}
+        <span class="input-large uneditable-input"><i class="{{ helper.enums.access['anonymous'].icon}}"></i> {{ helper.enums.access['anonymous'].name }}</span>
+        {% endif %}
+        <p class="help-block">Gewisse Informationen im LiquidFeedback (z.B. die Liste aller <a href="/mitglieder">Mitglieder</a>) können nur angezeigt werden, wenn du die notwendige Zugangsberechtigung hast. Eine Authentifizierung ist momentan nur über einen sogenannten API-Schlüssel möglich.</p>
+      </div>
     </div>
 
-    <form class="form-horizontal" action="einstellungen" method="post">
-      <fieldset>
-        <legend>Zugangsdaten</legend>
+    <div class="control-group">
+      <label class="control-label">Angemeldeter Benutzer</label>
+      <div class="controls">
+        {% if session.current_member_id %}
+        <span class="input-large uneditable-input">{{ session.current_member_id|member(False)|safe }}</span>
+        {% else %}
+        <span class="input-large uneditable-input"><i class="{{ helper.enums.access['anonymous'].icon}}"></i> {{ helper.enums.access['anonymous'].name }}</span>
+        {% endif %}
+        <p class="help-block">Ein API-Schlüssel ist in der Regel an einen Benutzer gebunden. In Zukunft wird es möglich sein, als angemeldeter Benutzer direkt in diesem System Initiativen oder Anregungen einzustellen oder abzustimmen.</p>
+      </div>
+    </div>
 
-        <div class="control-group">
-          <label class="control-label">Zugangsberechtigung</label>
-          <div class="controls">
-            {% if session.current_access_level %}
-            <span class="input-large uneditable-input"><i class="{{ helper.enums.access[session.current_access_level].icon}}"></i> {{ helper.enums.access[session.current_access_level].name }}</span>
-            {% else %}
-            <span class="input-large uneditable-input"><i class="{{ helper.enums.access['anonymous'].icon}}"></i> {{ helper.enums.access['anonymous'].name }}</span>
-            {% endif %}
-            <p class="help-block">Gewisse Informationen im LiquidFeedback (z.B. die Liste aller <a href="/mitglieder">Mitglieder</a>) können nur angezeigt werden, wenn du die notwendige Zugangsberechtigung hast. Eine Authentifizierung ist momentan nur über einen sogenannten API-Schlüssel möglich.</p>
-          </div>
-        </div>
+    <div class="control-group">
+      <label class="control-label">API-Schlüssel</label>
+      <div class="controls">
+        <input class="input-large" id="api_key" value="{{ session.api_key }}" name="api_key" type="text" class="input-xlarge">
+        <p class="help-block">Einen API-Schlüssel kannst du in den <a href="{{ helper.settings.lqfb_url }}/member/developer_settings.html" target="lqfb">Entwicklereinstellungen</a> erzeugen und hier ablegen. Ein API-Schlüssel besteht in der Regel aus 20 Zeichen.</p>
+        <br>
+        <p class="help-block">Bitte beachte: Der API-Schlüssel wird <strong>nicht</strong> auf unserem Server gespeichert, sondern in einem Cookie für einen Monat verschlüsselt in deinem Browser abgelegt. Er ist <strong>nicht</strong> für andere Nutzer abrufbar. Du kannst den API-Schlüssel jederzeit mit deinem Cookie löschen.</p>
+      </div>
+    </div>
 
-        <div class="control-group">
-          <label class="control-label">Angemeldeter Benutzer</label>
-          <div class="controls">
-            {% if session.current_member_id %}
-            <span class="input-large uneditable-input">{{ session.current_member_id|member(False)|safe }}</span>
-            {% else %}
-            <span class="input-large uneditable-input"><i class="{{ helper.enums.access['anonymous'].icon}}"></i> {{ helper.enums.access['anonymous'].name }}</span>
-            {% endif %}
-            <p class="help-block">Ein API-Schlüssel ist in der Regel an einen Benutzer gebunden. In Zukunft wird es möglich sein, als angemeldeter Benutzer direkt in diesem System Initiativen oder Anregungen einzustellen oder abzustimmen.</p>
-          </div>
-        </div>
+    <div class="control-group">
+      <label class="control-label"></label>
+      <div class="controls">
+        <button name="submit_key" class="btn btn-primary"><i class="icon-save"></i> Cookie mit API-Schlüssel speichern</button>
+        <button name="delete_key" class="btn btn-danger"><i class="icon-trash"></i> Cookie mit API-Schlüssel löschen</button>
+      </div>
+    </div>
 
-        <div class="control-group">
-          <label class="control-label">API-Schlüssel</label>
-          <div class="controls">
-            <input class="input-large" id="api_key" value="{{ session.api_key }}" name="api_key" type="text" class="input-xlarge">
-            <p class="help-block">Einen API-Schlüssel kannst du in den <a href="{{ helper.settings.lqfb_url }}/member/developer_settings.html" target="lqfb">Entwicklereinstellungen</a> erzeugen und hier ablegen. Ein API-Schlüssel besteht in der Regel aus 20 Zeichen.</p>
-            <br>
-            <p class="help-block">Bitte beachte: Der API-Schlüssel wird <strong>nicht</strong> auf unserem Server gespeichert, sondern in einem Cookie für einen Monat verschlüsselt in deinem Browser abgelegt. Er ist <strong>nicht</strong> für andere Nutzer abrufbar. Du kannst den API-Schlüssel jederzeit mit deinem Cookie löschen.</p>
-          </div>
-        </div>
+  </fieldset>
+</form>
 
-        <div class="control-group">
-          <label class="control-label"></label>
-          <div class="controls">
-            <button name="submit_key" class="btn btn-primary"><i class="icon-save"></i> Cookie mit API-Schlüssel speichern</button>
-            <button name="delete_key" class="btn btn-danger"><i class="icon-trash"></i> Cookie mit API-Schlüssel löschen</button>
-          </div>
-        </div>
+<form class="form-horizontal" action="einstellungen" method="post">
+  <fieldset>
+    <legend>Benachrichtigung</legend>
 
-      </fieldset>
-    </form>
+    <div class="control-group">
+      <label class="control-label">E-Mail-Adresse</label>
+      <div class="controls">
+        {% if session.current_member_id %}
+        <input class="input-large" id="email" value="{{ session.email }}" name="email" type="text" class="input-xlarge">
+        {% else %}
+        <span class="input-large uneditable-input"></span>
+        {% endif %}
+      </div>
+    </div>
 
-  </div>
+    <div class="control-group">
+      <label class="control-label"></label>
+      <div class="controls">
+        <button name="submit_email" class="btn btn-primary"><i class="icon-save"></i> Einstellungen speichern</button>
+        <button name="delete_email" class="btn btn-danger"><i class="icon-trash"></i> Einstellungen löschen</button>
+      </div>
+    </div>
+
+  </fieldset>
+</form>
+
+
 {% endblock %}

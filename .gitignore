@@ -12,6 +12,7 @@ virtualenv.py
 
 # data base
 app.db
+db_repository
 
 # temporary files
 .DS_Store

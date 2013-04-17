@@ -31,7 +31,7 @@ import urllib2
 
 # everything for Flask
 from flask import render_template, request, session, flash, abort
-from app import app, helper, fob
+from app import app, helper, fob, models, db
 
 from utils import api_load, api_load_all, fob_store
 import filter
@@ -107,7 +107,7 @@ def prepare():
 def show_index():
     data = api_load('/info', session=session)
     if not 'current_access_level' in session:
-        flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', "info")
+        flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', 'info')
         
     session['current_access_level'] = data['current_access_level']
     return render_template('index.html', data=data, helper=helper, ourl='index/index.html')
@@ -236,11 +236,16 @@ def show_settings():
         # get access level
         data = api_load('/info', session=session, forceLoad=True)
         session['current_access_level'] = data['current_access_level']
-        flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', "info")
+        flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', 'info')
 
-        # get my membet id
+        # get my member id
         if 'current_member_id' in data:
             session['current_member_id'] = data['current_member_id']
+
+            # take care of the email address
+            u = models.Member.query.get(session['current_member_id'])
+            if u != None:
+                session['email'] = u.email
         else:
             if 'current_member_id' in session:
                 session.pop('current_member_id')
@@ -253,6 +258,31 @@ def show_settings():
         # get access level
         data = api_load('/info', session=session, forceLoad=True)
         session['current_access_level'] = data['current_access_level']
-        flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', "info")
+        flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', 'info')
 
+    if request.method == 'POST' and 'submit_email' in request.form:
+        if 'current_access_level' not in session or session['current_access_level'] != 'member':
+            abort(403)
+        
+        session['email'] = request.form['email']
+        u = models.Member.query.get(session['current_member_id'])
+        if u == None:
+            u = models.Member(member_id=session['current_member_id'], email=request.form['email'], active=True)
+            db.session.add(u)
+            flash('E-Mail-Adresse gespeichert.', 'info')
+        else:
+            u.email = email=request.form['email']
+            flash('E-Mail-Adresse aktualisert.', 'info')
+        db.session.commit()
+
+    if request.method == 'POST' and 'delete_email' in request.form:
+        if 'email' in session:
+            session.pop('email')
+        u = models.Member.query.get(session['current_member_id'])
+        if u != None:
+            db.session.delete(u)
+            db.session.commit()
+        flash(u'E-Mail-Adresse', 'info')
+
+    # now display the page
     return render_template('settings.html', helper=helper, session=session)

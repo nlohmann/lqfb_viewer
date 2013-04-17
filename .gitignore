@@ -3,6 +3,7 @@ app/static/bootstrap
 app/static/font-awesome
 app/static/jquery.tablesorter
 app/static/jquery
+app/static/jQuery.PrettyTextDiff
 
 # installed binaries
 components

@@ -26,6 +26,7 @@
 from flask import Flask
 from werkzeug.contrib.cache import SimpleCache
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.mail import Mail
 
 ###########
 # GLOBALS #
@@ -37,6 +38,9 @@ app.config.from_object('config')
 
 # database
 db = SQLAlchemy(app)
+
+# email
+mail = Mail(app)
 
 # cache
 cache = SimpleCache(threshold=30000, default_timeout=300)

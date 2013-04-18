@@ -8,6 +8,8 @@ import urllib, urllib2, json
 #############
 
 def api_load(endpoint, q=None, session=None, forceLoad=False):
+    original_q = q
+
     if q is None:
         q = {}
 
@@ -30,9 +32,10 @@ def api_load(endpoint, q=None, session=None, forceLoad=False):
         res = urllib2.urlopen(url).read()
 
         if res == '"Invalid session key"':
-            session.pop('session_key')
+            if session != None and 'session_key' in session:
+                session.pop('session_key')
             flash("Deine Session ist abgelaufen.", "error")
-            return api_load(endpoint, q, session)
+            return api_load(endpoint=endpoint, q=original_q, forceLoad=forceLoad)
 
         rv = json.loads(res)
 

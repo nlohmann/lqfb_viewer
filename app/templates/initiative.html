@@ -219,11 +219,25 @@ $("#diff{{i}}-{{i-1}}").click(function () {
     {% set balken3_l = 100 - balken1_l - balken2_l - balken4_l - balken5_l %}
 
     <div class="progress">
+      {% if balken1 > 0 %}
       <div class="bar bar-success" style="width: {{ balken1_l }}%">{{balken1}}</div>
+      {% endif %}
+
+      {% if balken2 > 0 %}
       <div class="bar bar-success" style="opacity: 0.75; width: {{ balken2_l }}%">{{balken2}}</div>
+      {% endif %}
+
+      {% if balken3 > 0 %}
       <div class="bar bar-transparent" style="width: {{ balken3_l }}%">{{balken3}}</div>
+      {% endif %}
+
+      {% if balken4 > 0 %}
       <div class="bar bar-danger" style="opacity: 0.75; width: {{ balken4_l }}%">{{balken4}}</div>
+      {% endif %}
+
+      {% if balken5 > 0 %}
       <div class="bar bar-danger" style="width: {{ balken5_l }}%">{{balken5}}</div>
+      {% endif %}
     </div>
 
     <ul>

@@ -101,7 +101,7 @@ def prepare():
 @app.route('/')
 def show_index():
     data = api_load('/info', session=session)
-    if not 'current_access_level' in session:
+    if session == None or not 'current_access_level' in session:
         flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', 'info')
         
     session['current_access_level'] = data['current_access_level']
@@ -134,7 +134,7 @@ def show_events():
     data['initiative'] = api_load_all('/initiative')
     data['issue'] = api_load_all('/issue')
     data['suggestion'] = api_load_all('/suggestion', q={'rendered_content': 'html'})
-    return render_template('events.html', data=data, helper=helper, ourl='index/index.html?tab=timeline&filter_unit=global')
+    return render_template('events.html', data=data, helper=helper, fob=fob, ourl='index/index.html?tab=timeline&filter_unit=global')
 
 @app.route('/themen')
 def show_issues():

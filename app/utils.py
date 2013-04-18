@@ -32,7 +32,7 @@ def api_load(endpoint, q=None, session=None, forceLoad=False):
         if res == '"Invalid session key"':
             session.pop('session_key')
             flash("Deine Session ist abgelaufen.", "error")
-            return api_load(endpoint, params, session)
+            return api_load(endpoint, q, session)
 
         rv = json.loads(res)
 

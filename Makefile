@@ -5,7 +5,7 @@ all:
 	@echo "serve:    start a server"
 	@echo "test:     run test cases"
 
-install: vienv pip_packages bower_packages app.db config.py
+install: vienv pip_packages bower_packages config.py app.db
 
 vienv:
 	# virtual environment

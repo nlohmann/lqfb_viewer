@@ -1,5 +1,7 @@
 # LiquidFeedback Viewer - Bootstrap version
 
+[![Build Status](https://travis-ci.org/nlohmann/lqfb_viewer.png?branch=master)](https://travis-ci.org/nlohmann/lqfb_viewer)
+
 ## Technisches
 
 Der Viewer läuft mit dem Python Framework [Flask](http://flask.pocoo.org). Für die Templates wird [Jinja](http://jinja.pocoo.org) genutzt.
@@ -21,7 +23,7 @@ eingerichtet.
 
 ### Konfiguration
 
-Die Datei `config.py.default` enthält eine Standardkonfiguration. Diese musst du (vor allem für E-Mail-Benachrichtigungen) anpassen. Speichere die angepasste Datei als `config.py` ab.
+Die Datei `config.py.default` enthält eine Standardkonfiguration. Diese wird von `make install` nach `config.py` kopiert. Diese musst du (vor allem für E-Mail-Benachrichtigungen) anpassen.
 
 Standardmäßig ist die Instanz der [SMV Mecklenburg-Vorpommern](http://smv.piratenpartei-mv.de) als Datenquelle angegeben. Andere Quellen können durch setzen der Felder `LQFB_URL` und `LQFB_API` festgelegt werden.
 

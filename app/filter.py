@@ -13,7 +13,10 @@ import iso8601
 
 # for German dates, time zones and ISO8601 translation
 import locale
-locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
+try:
+    locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
+except:
+    pass
 
 
 @app.template_filter('nicedate')

@@ -5,7 +5,7 @@ all:
 	@echo "serve:    start a server"
 	@echo "test:     run test cases"
 
-install: vienv pip_packages bower_packages app.db
+install: vienv pip_packages bower_packages app.db config.py
 
 vienv:
 	# virtual environment
@@ -31,6 +31,10 @@ bower_packages:
 
 app.db:
 	./db_create.py
+
+config.py:
+	test -f config.py || echo "WARNING: USING DEFAULT CONFIGURATION. PLEASE EDIT config.py!"
+	test -f config.py || cp config.py.default config.py
 
 clean:
 	rm -fr virtualenv.py virtualenv.pyc node_modules components

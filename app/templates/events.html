@@ -244,11 +244,17 @@ ol#timeline li i { color: #888; }
       </ul>
       {% elif p.state == "finished_with_winner" %}
       Die Abstimmung von {{p.issue_id|issue(True)|safe}} wurde <strong>mit einem Gewinner</strong> beendet:
-      {% for p2 in data.initiative.result if p2.issue_id == p.issue_id %}
-      {% if p2.winner %}
-      {{p2.id|initiative(True)|safe}}.
+      <ol>
+      {% for p2 in data.initiative.result|sort(reverse=False,attribute='rank') %}
+      {% if p2.issue_id == p.issue_id and p2.eligible == True %}
+      <li>
+        {% if p2.winner %}<strong>{% endif %}
+        {{p2.id|initiative(True)|safe}}
+        {% if p2.winner %}</strong>{% endif %}
+      </li>
       {% endif %}
       {% endfor %}
+      </ol>
       {% elif p.state == "finished_without_winner" %}
       Die Abstimmung von {{p.issue_id|issue(True)|safe}} wurde <strong>ohne einen Gewinner</strong> beendet.
       {% elif p.state == "canceled_revoked_before_accepted" %}

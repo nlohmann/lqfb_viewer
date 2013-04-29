@@ -16,10 +16,18 @@
       <h1><small>Regelwerk</small><br><i class="icon-book"></i> {{data.result[0].name}}</h1>
     </div>
 
-    <h2><i class="icon-info-sign"></i> Beschreibung</h2>
-    <p>{{data.result[0].description}}</p>
+    {% if data.result.0.description %}
+    <p class="lead">{{data.result[0].description}}</p>
+    {% endif %}
 
-    <h2><i class="icon-time"></i> Fristen</h2>
+    <h2>Fristen</h2>
+
+    <div class="progress" style="height: 2.2em; line-height: 1.1em;">
+      <div class="bar bar-primary" style="width: {{ data.result[0].id|policy_time_bars('admission_time') }}%;"><strong>neu</strong><br>maximal {{data.result[0].id|policy_time('admission_time')}}</div>
+      <div class="bar bar-primary" style="width: {{ data.result[0].id|policy_time_bars('discussion_time') }}%;"><strong>Diskussion</strong><br>{{data.result[0].id|policy_time('discussion_time')}}</div>
+      <div class="bar bar-info" style="width: {{ data.result[0].id|policy_time_bars('verification_time') }}%;"><strong>eingefroren</strong><br>{{data.result[0].id|policy_time('verification_time')}}</div>
+      <div class="bar bar-warning" style="width: {{ data.result[0].id|policy_time_bars('voting_time') }}%;"><strong>Abstimmung</strong><br>{{data.result[0].id|policy_time('voting_time')}}</div>
+    </div>
 
     <ul>
       <li>Phase Neu: maximal
@@ -63,14 +71,14 @@
       </li>
     </ul>
 
-    <h2><i class="icon-bar-chart"></i> Quoren</h2>
+    <h2>Quoren</h2>
 
     <ul>
-      <li>Thema: ≥ {{ data.result[0].issue_quorum_num }}/{{ data.result[0].issue_quorum_den }}</li>
-      <li>Initiative: ≥ {{ data.result[0].initiative_quorum_num }}/{{ data.result[0].initiative_quorum_den }}</li>
+      <li>Thema: ≥ {{ data.result[0].issue_quorum_num }}/{{ data.result[0].issue_quorum_den }} - Das Thema geht in die Diskussionsphase über, sobald eine Initiative die entsprechende Interessentenzahl erreicht.</li>
+      <li>Initiative: ≥ {{ data.result[0].initiative_quorum_num }}/{{ data.result[0].initiative_quorum_den }} - Eine Initiative wird für die Abstimmung zugelassen, falls sie am Ende der Phase eingefroren mindestens diese Interessentenzahl erreicht.</li>
     </ul>
 
-    <h2><i class="icon-tasks"></i> Mehrheiten</h2>
+    <h2>Mehrheiten</h2>
     <ul>
       <li>direkte Mehrheit:
         {% if data.result[0].direct_majority_strict %}
@@ -106,7 +114,7 @@
       </li>
     </ul>
 
-    <h2><i class="icon-cogs"></i> Weitere Optionen</h2>
+    <h2>Weitere Optionen</h2>
     <ul>
       <li>{% if not data.result[0].no_reverse_beat_path %}kein {% endif %}rückwärts gerichteter Schlagpfad erlaubt</li>
       <li>{% if not data.result[0].no_multistage_majority %}keine {% endif %}mehrstufige Mehrheiten erlaubt</li>

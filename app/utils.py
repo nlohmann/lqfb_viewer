@@ -59,7 +59,7 @@ def api_load_all(endpoint, q=None, session=None, forceLoad=False):
         else:
             result['result'] = result['result'] + obj['result']
 
-        if len(obj['result']) < q['limit']:
+        if not 'result' in obj or len(obj['result']) < q['limit']:
             return result
 
 # fob_store(data, 'issue_id', 'issue')

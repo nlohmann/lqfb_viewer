@@ -185,3 +185,60 @@ def vote_filter(grade):
 @app.template_filter('delegation')
 def delegation_filter(weight):
     return '<span class="label label-info"><i class="icon-plus"></i> %d</span>' % weight
+
+
+@app.template_filter('policy_time_bars')
+def policy_time_bars_filter(policy_id, phase):
+    p = fob['policy']['id'][policy_id]
+    result = dict()
+
+    print p
+
+    result['admission_time'] = 0
+    if 'minutes' in p['admission_time']:
+        result['admission_time'] += p['admission_time']['minutes']
+    if 'hours' in p['admission_time']:
+        result['admission_time'] += p['admission_time']['hours'] * 60
+    if 'days' in p['admission_time']:
+        result['admission_time'] += p['admission_time']['days'] * 60 * 24
+
+    result['discussion_time'] = 0
+    if 'minutes' in p['discussion_time']:
+        result['discussion_time'] += p['discussion_time']['minutes']
+    if 'hours' in p['discussion_time']:
+        result['discussion_time'] += p['discussion_time']['hours'] * 60
+    if 'days' in p['discussion_time']:
+        result['discussion_time'] += p['discussion_time']['days'] * 60 * 24
+
+    result['verification_time'] = 0
+    if 'minutes' in p['verification_time']:
+        result['verification_time'] += p['verification_time']['minutes']
+    if 'hours' in p['verification_time']:
+        result['verification_time'] += p['verification_time']['hours'] * 60
+    if 'days' in p['verification_time']:
+        result['verification_time'] += p['verification_time']['days'] * 60 * 24
+
+    result['voting_time'] = 0
+    if 'minutes' in p['voting_time']:
+        result['voting_time'] += p['voting_time']['minutes']
+    if 'hours' in p['voting_time']:
+        result['voting_time'] += p['voting_time']['hours'] * 60
+    if 'days' in p['voting_time']:
+        result['voting_time'] += p['voting_time']['days'] * 60 * 24
+
+    total_time = result['admission_time'] + result['discussion_time'] + result['verification_time'] + result['voting_time']
+
+    return (result[phase] / float(total_time)) * 100.0
+
+@app.template_filter('policy_time')
+def policy_time_filter(policy_id, phase):
+    p = fob['policy']['id'][policy_id]
+
+    if 'minutes' in p[phase]:
+        return "%d Minuten" % p[phase]['minutes'] 
+    if 'hours' in p[phase]:
+        return "%d Stunden" % p[phase]['hours'] 
+    if 'days' in p[phase]:
+        return "%d Tage" % p[phase]['days'] 
+    if 'years' in p[phase]:
+        return "%d Jahre" % p[phase]['years'] 

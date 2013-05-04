@@ -192,8 +192,6 @@ def policy_time_bars_filter(policy_id, phase):
     p = fob['policy']['id'][policy_id]
     result = dict()
 
-    print p
-
     result['admission_time'] = 0
     if 'minutes' in p['admission_time']:
         result['admission_time'] += p['admission_time']['minutes']

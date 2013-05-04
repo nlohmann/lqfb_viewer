@@ -200,7 +200,12 @@
 
       <ul class="unstyled">
       {% for p2 in p.list|sort(attribute='grade', reverse=True) %}
-        <li>{{ p2.initiative_id|initiative(True)|safe }}: {{ p2.grade|vote|safe }}</li>
+        <li>
+          {{ p2.initiative_id|initiative(True)|safe }}: {{ p2.grade|vote|safe }}
+          {% if fob.initiative.id[p2.initiative_id].winner %}
+          <i class="icon-trophy"></i>
+          {% endif %}
+        </li>
       {% endfor %}
       </ul>
       {% for p2 in data.voter.result if p2.issue_id == p.grouper and p2.comment != None %}
@@ -225,6 +230,19 @@
     {% else %}
     <li>keine Teilnahme durch Delegation</li>
     {% endfor %}
+    </ul>
+
+    <h3>Keine Teilnahme trotz Interesse</h3>
+    <ul>
+      {% for p in data.interest.result if fob.issue.id[p.issue_id].closed %}
+      {% for p2 in data.vote.result if p.issue_id == p2.issue_id %}
+      {% else %}
+      {% for p3 in data.delegating_voter.result if p.issue_id == p3.issue_id %}
+      {% else %}
+      <li>{{p.issue_id|issue(True)|safe}} ({{fob.issue.id[p.issue_id].area_id|area(True)|safe}})</li>
+      {% endfor %}
+      {% endfor %}
+      {% endfor %}
     </ul>
 
 {% endblock %}

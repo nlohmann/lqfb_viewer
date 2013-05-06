@@ -22,7 +22,7 @@
     <ul>
     {% for issue in data.closed.result %}
     <li>
-      Im Themenbereich {{issue.area_id|area(True)|safe}} wurde mit Regelwerk {{ issue.policy_id|policy(True)|safe }} über {{ issue.id|issue(True)|safe }} abgestimmt. Es nahmen {{issue.voter_count}} Piraten an der Abstimmung Teil.
+      Im Themenbereich {{issue.area_id|area(True)|safe}} wurde mit Regelwerk {{ issue.policy_id|policy(True)|safe }} über {{ issue.id|issue(True)|safe }} abgestimmt. Es nahmen {{issue.voter_count}} Piraten an der Abstimmung teil.
       {% if issue.state == 'finished_without_winner' %}
       Es gab keinen Gewinner.
       {% endif %}

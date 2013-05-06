@@ -19,16 +19,27 @@
 
     {% if data.closed.result %}
     <p>Folgende Abstimmungen gingen letzte Woche zu Ende:</p>
+
     <ul>
-    {% for issue in data.closed.result %}
+    {% for issue in data.closed.result if issue.voter_count %}
     <li>
-      Im Themenbereich {{issue.area_id|area(True)|safe}} wurde mit Regelwerk {{ issue.policy_id|policy(True)|safe }} über {{ issue.id|issue(True)|safe }} abgestimmt. Es nahmen {{issue.voter_count}} Piraten an der Abstimmung teil.
+      Im Themenbereich {{issue.area_id|area(True)|safe}} wurde mit Regelwerk {{issue.policy_id|policy(True)|safe}} über {{issue.id|issue(True)|safe}} abgestimmt.
+      Es nahmen {{issue.voter_count}} Piraten an der Abstimmung teil.
+      
       {% if issue.state == 'finished_without_winner' %}
       Es gab keinen Gewinner.
       {% endif %}
     </li>
     {% endfor %}
+
+    <br>
+    {% for issue in data.closed.result if not issue.voter_count %}
+    <li>
+      Im Themenbereich {{issue.area_id|area(True)|safe}} erreichte  {{issue.id|issue(True)|safe}} nicht das notwendige Quorum des Regelwerkes {{issue.policy_id|policy(True)|safe}}.
+    </li>
+    {% endfor %}
     </ul>
+    
     {% else %}
     In der letzten Woche ist keine Abstimmung zu Ende gegangen.
     {% endif %}
@@ -36,9 +47,10 @@
     <h2>Was wird</h2>
 
     {% if data.created.result %}
+    <p>Es gab in der letzten Woche folgenden neuen Themen:</p>
     <ul>
-    {% for issue in data.created.result %}
-    <li>{{ issue.id|issue(True)|safe }}</li>
+    {% for issue in data.created.result if (issue.state == 'discussion' or issue.state == 'admission') %}
+    <li>Im Themenbereich {{issue.area_id|area(True)|safe}} gibt es mit Regelwerk {{issue.policy_id|policy(True)|safe}} das Thema {{issue.id|issue(True)|safe}}</li>
     {% endfor %}
     </ul>
     {% else %}
@@ -48,10 +60,10 @@
     {% if data.frozen.result %}
     <p>Diese Themen wurden in der letzten Woche eingefroren:</p>
     <ul>
-    {% for issue in data.frozen.result %}
-    <li>Im Themenbereich {{issue.area_id|area(True)|safe}}: {{ issue.id|issue(True)|safe }} mit Regelwerk {{issue.policy_id|policy(True)|safe}}.
+    {% for issue in data.frozen.result if issue.state == 'verification' %}
+    <li>Im Themenbereich {{issue.area_id|area(True)|safe}}: {{issue.id|issue(True)|safe}} mit Regelwerk {{issue.policy_id|policy(True)|safe}}.
     
-    Die Abstimmung beginnt {{ issue.half_frozen|future_date(issue.verification_time)|mynicedate|safe }}.
+    Die Abstimmung beginnt {{issue.half_frozen|future_date(issue.verification_time)|mynicedate|safe}}.
     </li>
     {% endfor %}
     </ul>
@@ -61,9 +73,9 @@
     {% if data.voting.result %}
     <p>Diese Themen sind gerade in der Abstimmung:</p>
     <ul>
-    {% for issue in data.voting.result %}
+    {% for issue in data.voting.result if issue.state == 'voting' %}
     <li>
-      Im Themenbereich {{issue.area_id|area(True)|safe}} kann noch {{ issue.fully_frozen|future_date(issue.voting_time)|mynicedate(True)|safe }} über {{ issue.id|issue(True)|safe }} abgestimmt werden.
+      Im Themenbereich {{issue.area_id|area(True)|safe}} kann noch {{issue.fully_frozen|future_date(issue.voting_time)|mynicedate(True)|safe}} mit Regelwerk {{issue.policy_id|policy(True)|safe}} über {{issue.id|issue(True)|safe}} abgestimmt werden.
     </li>
     {% endfor %}
     </ul>

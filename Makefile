@@ -26,7 +26,7 @@ bower_packages:
 	cp -fr components/bootstrap/bootstrap app/static/bootstrap
 	cp -fr components/jquery app/static
 	cp -fr components/font-awesome app/static
-	cp -fr components/jquery.tablesorter app/static
+	cp -fr components/tablesorter app/static
 	cp -fr components/jQuery.PrettyTextDiff app/static
 
 app.db:
@@ -42,7 +42,7 @@ clean:
 
 veryclean: clean
 	rm -fr venv
-	rm -fr app/static/bootstrap app/static/jquery app/static/font-awesome app/static/jquery.tablesorter app/static/jQuery.PrettyTextDiff
+	rm -fr app/static/bootstrap app/static/jquery app/static/font-awesome app/static/tablesorter app/static/jQuery.PrettyTextDiff
 
 dbclean:
 	rm -fr db_repository app.db

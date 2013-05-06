@@ -36,6 +36,10 @@ from emails import send_email
 from utils import api_load, api_load_all, fob_store
 import filter
 
+# Wochenschau
+from datetime import datetime, date, timedelta
+import iso8601
+
 
 ###############
 # INITIALIZER #
@@ -90,7 +94,8 @@ def prepare():
 
     # suggestions
     data = api_load_all('/suggestion')
-    fob_store(data['result'], 'id', 'suggestion')
+    if 'result' in data:
+        fob_store(data['result'], 'id', 'suggestion')
 
     print "+ up and running..."
 
@@ -286,3 +291,15 @@ def show_settings():
 
     # now display the page
     return render_template('settings.html', helper=helper, session=session)
+
+@app.route('/wochenschau')
+def show_wochenschau():
+    week_ago = datetime.now()-timedelta(days=7)
+    data = dict()
+    data['monday'] = week_ago.isoformat()
+    data['week_number'] = week_ago.isocalendar()[1] + 1
+    data['closed']  = api_load('/issue', q={'issue_closed_after': week_ago.isoformat()})
+    data['created'] = api_load('/issue', q={'issue_created_after': week_ago.isoformat()})
+    data['frozen']  = api_load('/issue', q={'issue_half_frozen_after': week_ago.isoformat()})
+    data['voting']  = api_load('/issue', q={'issue_fully_frozen_after': week_ago.isoformat()})
+    return render_template('wochenschau.html', data=data, helper=helper)

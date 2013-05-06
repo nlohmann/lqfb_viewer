@@ -15,7 +15,7 @@ vienv:
 pip_packages:
 	# python packages
 	venv/bin/pip install sqlalchemy==0.7.9
-	venv/bin/pip install MarkupSafe flask iso8601 pytz flask-sqlalchemy sqlalchemy-migrate flask-mail
+	venv/bin/pip install MarkupSafe flask iso8601 pytz flask-sqlalchemy sqlalchemy-migrate flask-mail python-dateutil
 	
 bower_packages:
 	# bower packages

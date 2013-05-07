@@ -301,5 +301,5 @@ def show_wochenschau():
     data['closed']  = api_load_all('/issue', q={'issue_closed_after': week_ago.isoformat()})
     data['created'] = api_load_all('/issue', q={'issue_created_after': week_ago.isoformat()})
     data['frozen']  = api_load_all('/issue', q={'issue_half_frozen_after': week_ago.isoformat()})
-    data['voting']  = api_load_all('/issue', q={'issue_fully_frozen_after': week_ago.isoformat()})
+    data['voting']  = api_load_all('/issue') #, q={'issue_fully_frozen_after': week_ago.isoformat()})
     return render_template('wochenschau.html', data=data, helper=helper)

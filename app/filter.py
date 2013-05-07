@@ -373,6 +373,21 @@ def mynicedate_filter(_date, interval=False):
             result = str((days + 365 / 2) / 365) + ' Monate'
         return result
 
+    def get_small_interval(seconds):
+        if seconds < 10:
+            result = 'bis gleich'
+        elif seconds < 60:
+            result = str((seconds + 1 / 2) / 1) + ' Sekunden'
+        elif seconds < 120:
+            result = 'eine Minute'
+        elif seconds < 3600:
+            result = str((seconds + 60 / 2) / 60) + ' Minuten'
+        elif seconds < 7200:
+            result = 'eine Stunde'
+        else:
+            result = str((seconds + 3600 / 2) / 3600) + ' Stunden'
+        return result
+
     time = iso8601.parse_date(_date).astimezone(pytz.timezone('Europe/Berlin'))
     now = datetime.now(time.tzinfo)
 
@@ -388,7 +403,10 @@ def mynicedate_filter(_date, interval=False):
     humandatestring = ""
 
     if days is 0:
-        humandatestring = get_small_increments(diff.seconds, past)
+        if interval:
+            humandatestring = get_small_interval(diff.seconds)
+        else:
+            humandatestring = get_small_increments(diff.seconds, past)
     else:
         if interval:
             humandatestring = get_large_interval(days)

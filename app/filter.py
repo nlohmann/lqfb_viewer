@@ -117,7 +117,7 @@ def area_filter(area_id, link=False, icon=True):
     return result
 
 @app.template_filter('suggestion')
-def suggestion_filter(suggestion_id):
+def suggestion_filter(suggestion_id, icon=True):
     # get name
     result = fob['suggestion']['id'][suggestion_id]['name']
 

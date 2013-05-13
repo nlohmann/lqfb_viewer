@@ -173,6 +173,12 @@
     <ul>
       {% if data.issue.result[0].created %}
       <li>neu: {{ data.issue.result[0].created|nicedate(timeago=False) }}</li>
+      {% if not data.issue.result[0].accepted %}
+      <li>
+        <strong>Spätestes Ende der Phase neu: {{ data.issue.result[0].created|future_date(fob.policy.id[data.issue.result[0].policy_id].admission_time)|nicedate(timeago=False) }}
+          ({{data.issue.result[0].created|future_date(fob.policy.id[data.issue.result[0].policy_id].admission_time)|mynicedate}})</strong>
+      </li>
+      {% endif %}
       {% endif %}
 
       {% if data.issue.result[0].accepted %}

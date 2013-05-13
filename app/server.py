@@ -30,10 +30,11 @@ import urllib
 import urllib2
 
 # everything for Flask
-from flask import render_template, request, session, flash, abort
+from flask import render_template, request, Response, session, flash, abort
 from app import app, helper, fob, models, db
 from emails import send_email
 from utils import api_load, api_load_all, fob_store
+from ical import create_ical
 import filter
 
 # Wochenschau
@@ -292,6 +293,10 @@ def show_settings():
     # now display the page
     return render_template('settings.html', helper=helper, session=session)
 
+@app.route('/kalender.ics')
+def show_ical():
+    return Response(create_ical(), mimetype='text/calendar')
+
 @app.route('/wochenschau')
 def show_wochenschau():
     week_ago = datetime.now()-timedelta(days=7)
@@ -301,5 +306,5 @@ def show_wochenschau():
     data['closed']  = api_load_all('/issue', q={'issue_closed_after': week_ago.isoformat()})
     data['created'] = api_load_all('/issue', q={'issue_created_after': week_ago.isoformat()})
     data['frozen']  = api_load_all('/issue', q={'issue_half_frozen_after': week_ago.isoformat()})
-    data['voting']  = api_load_all('/issue') #, q={'issue_fully_frozen_after': week_ago.isoformat()})
+    data['voting']  = api_load_all('/issue', q={'issue_state': 'voting'})
     return render_template('wochenschau.html', data=data, helper=helper)

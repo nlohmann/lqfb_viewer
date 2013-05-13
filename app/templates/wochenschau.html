@@ -73,7 +73,7 @@
     {% if data.voting.result %}
     <p>Diese Themen sind gerade in der Abstimmung:</p>
     <ul>
-    {% for issue in data.voting.result if issue.state == 'voting' %}
+    {% for issue in data.voting.result %}
     <li>
       Im Themenbereich {{issue.area_id|area(True)|safe}} kann noch {{issue.fully_frozen|future_date(issue.voting_time)|mynicedate(True)|safe}} mit Regelwerk {{issue.policy_id|policy(True)|safe}} über {{issue.id|issue(True)|safe}} abgestimmt werden.
     </li>

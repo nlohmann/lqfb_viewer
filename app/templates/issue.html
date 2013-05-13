@@ -174,15 +174,37 @@
       {% if data.issue.result[0].created %}
       <li>neu: {{ data.issue.result[0].created|nicedate(timeago=False) }}</li>
       {% endif %}
+
       {% if data.issue.result[0].accepted %}
       <li>in Diskussion: {{ data.issue.result[0].accepted|nicedate(timeago=False) }}</li>
+      {% if not data.issue.result[0].half_frozen %}
+      <li>
+        <strong>Ende der Diskussion: {{ data.issue.result[0].accepted|future_date(fob.policy.id[data.issue.result[0].policy_id].discussion_time)|nicedate(timeago=False) }}
+          ({{data.issue.result[0].accepted|future_date(fob.policy.id[data.issue.result[0].policy_id].discussion_time)|mynicedate}})</strong>
+      </li>
       {% endif %}
+      {% endif %}
+
       {% if data.issue.result[0].half_frozen %}
       <li>eingefroren: {{ data.issue.result[0].half_frozen|nicedate(timeago=False) }}</li>
+      {% if not data.issue.result[0].fully_frozen %}
+      <li>
+        <strong>Ende der Phase: {{ data.issue.result[0].half_frozen|future_date(fob.policy.id[data.issue.result[0].policy_id].verification_time)|nicedate(timeago=False) }}
+        ({{ data.issue.result[0].half_frozen|future_date(fob.policy.id[data.issue.result[0].policy_id].verification_time)|mynicedate }})</strong>
+      </li>
       {% endif %}
+      {% endif %}
+
       {% if data.issue.result[0].fully_frozen %}
       <li>Beginn der Abstimmung: {{ data.issue.result[0].fully_frozen|nicedate(timeago=False) }}</li>
+      {% if not data.issue.result[0].closed %}
+      <li>
+        <strong>Ende der Abstimmung: {{ data.issue.result[0].fully_frozen|future_date(fob.policy.id[data.issue.result[0].policy_id].voting_time)|nicedate(timeago=False) }}
+          ({{ data.issue.result[0].fully_frozen|future_date(fob.policy.id[data.issue.result[0].policy_id].voting_time)|mynicedate }})</strong>
+      </li>
       {% endif %}
+      {% endif %}
+
       {% if data.issue.result[0].closed %}
       <li>geschlossen: {{ data.issue.result[0].closed|nicedate(timeago=False) }}</li>
       {% endif %}

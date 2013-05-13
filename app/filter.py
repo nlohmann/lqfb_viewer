@@ -304,10 +304,31 @@ def policy_time_filter(policy_id, phase):
 def future_date_filter(_base, _offset):
     thisdate = iso8601.parse_date(_base).astimezone(pytz.timezone('Europe/Berlin'))
     result = thisdate
+    if 'minutes' in _offset:
+        result += relativedelta(minutes = +_offset['minutes'])
+    if 'hours' in _offset:
+        result += relativedelta(hours = +_offset['hours'])
     if 'days' in _offset:
         result += relativedelta(days = +_offset['days'])
+    if 'years' in _offset:
+        result += relativedelta(years = +_offset['years'])
 
     return result.isoformat()
+
+
+# A filter to calculate the end of a given phase of a policy.
+@app.template_filter('end_of_phase')
+def end_of_phase_filter(policy_id, phase):
+    p = fob['policy']['id'][policy_id]
+    thisdate=datetime.now(tz=pytz.timezone('Europe/Berlin'))
+
+    end_of = dict()
+    end_of['admission_time']    = future_date_filter(thisdate.isoformat(), p['admission_time'])
+    end_of['discussion_time']   = future_date_filter(end_of['admission_time'], p['discussion_time'])
+    end_of['verification_time'] = future_date_filter(end_of['discussion_time'], p['verification_time'])
+    end_of['voting_time']       = future_date_filter(end_of['verification_time'], p['voting_time'])
+
+    return end_of[phase]
 
 
 # The following functions are taken from https://github.com/imtapps/django-pretty-times/blob/master/pretty_times/pretty.py to have a nicer (relative) representation of times in the past and future.
@@ -338,6 +359,8 @@ def mynicedate_filter(_date, interval=False):
     def get_large_increments(days, past):
         if days == 1:
             result = past and 'gestern' or 'morgen'
+        elif days == 2:
+            result = past and 'vorgestern' or u'übermorgen'
         elif days < 7:
             result = _pretty_format(days, 1, 'Tagen', past)
         elif days < 14:

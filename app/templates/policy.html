@@ -30,44 +30,17 @@
     </div>
 
     <ul>
-      <li>Phase Neu: maximal
-        {% if data.result[0].admission_time.days %}
-        {{ data.result[0].admission_time.days }} Tage
-        {% elif data.result[0].admission_time.years %}
-        {{ data.result[0].admission_time.years }} Jahre
-        {% else %}
-        {{ data.result[0].admission_time.hours }} Stunden
-        {% endif %}
+      <li>
+        Phase Neu: maximal {{data.result.0.id|policy_time('admission_time')}} - {{data.result.0.id|end_of_phase('admission_time')|nicedate(timeago=False)}}
       </li>
-
-      <li>Phase Diskussion:
-        {% if data.result[0].discussion_time.days %}
-        {{ data.result[0].discussion_time.days }} Tage
-        {% elif data.result[0].discussion_time.years %}
-        {{ data.result[0].discussion_time.years }} Jahre
-        {% else %}
-        {{ data.result[0].discussion_time.hours }} Stunden
-        {% endif %}
+      <li>
+        Phase Diskussion: {{data.result.0.id|policy_time('discussion_time')}} - {{data.result.0.id|end_of_phase('discussion_time')|nicedate(timeago=False)}}
       </li>
-
-      <li>Phase Eingefroren:
-        {% if data.result[0].verification_time.days %}
-        {{ data.result[0].verification_time.days }} Tage
-        {% elif data.result[0].verification_time.years %}
-        {{ data.result[0].verification_time.years }} Jahre
-        {% else %}
-        {{ data.result[0].verification_time.hours }} Stunden
-        {% endif %}
+      <li>
+        Phase Eingefroren: {{data.result.0.id|policy_time('verification_time')}} - {{data.result.0.id|end_of_phase('verification_time')|nicedate(timeago=False)}}
       </li>
-
-      <li>Abstimmphase:
-        {% if data.result[0].voting_time.days %}
-        {{ data.result[0].voting_time.days }} Tage
-        {% elif data.result[0].voting_time.years %}
-        {{ data.result[0].voting_time.years }} Jahre
-        {% else %}
-        {{ data.result[0].voting_time.hours }} Stunden
-        {% endif %}
+      <li>
+        Abstimmphase: {{data.result.0.id|policy_time('voting_time')}} - {{data.result.0.id|end_of_phase('voting_time')|nicedate(timeago=False)}}
       </li>
     </ul>
 

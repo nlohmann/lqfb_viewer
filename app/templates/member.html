@@ -84,11 +84,11 @@
       {% endif %}
 
       {% if data.member.result.0.last_activity %}
-      <li>letzte Aktivität: {{data.member.result.0.last_activity|nicedate("%A, %x",False)}}</li>
+      <li>letzte Aktivität: {{data.member.result.0.last_activity|nicedate("%A, %x",False)}} ({{data.member.result.0.last_activity|mynicedate(coarse=True)}})</li>
       {% endif %}
       
       {% if data.member.result.0.created %}
-      <li>Account erstellt: {{data.member.result.0.created|nicedate("%A, %x",False)}}</li>
+      <li>Account erstellt: {{data.member.result.0.created|nicedate("%A, %x",False)}} ({{data.member.result.0.created|mynicedate(coarse=True)}})</li>
       {% endif %}
       
       <li>Aktiviert (Mitgliedschaften, Unterstützungen und Abstimmungen werden derzeit gezählt): {{ data.member.result.0.active }}</li>
@@ -164,7 +164,7 @@
     <h3>Initiator</h3>
     <ul>
     {% for p in data.initiator.result %}
-    <li>{{ p.initiative_id|initiative(True)|safe }}</li>
+    <li>{{ p.initiative_id|initiative(True)|safe }} in {{ fob.initiative.id[p.initiative_id].issue_id|issue(True)|safe }}</li>
     {% else %}
     <li>keine Initiativen initiiert</li>
     {% endfor %}
@@ -173,7 +173,12 @@
     <h3>Sonstiges</h3>
     <ul>
     {% for p in data.event.result if p.member_id == data.member.result[0].id %}
-    <li><i class="{{ helper.enums.event[p.event].icon }}"></i> {{ helper.enums.event[p.event].name }} ({{ p.occurrence|nicedate|safe }})</li>
+    <li><i class="{{ helper.enums.event[p.event].icon }}"></i> {{ helper.enums.event[p.event].name }}
+      {% if p.initiative_id %}
+      zu {{ p.initiative_id|initiative(True)|safe }} in
+      {% endif %}
+      {{ p.issue_id|issue(True)|safe }}
+    ({{ p.occurrence|mynicedate }})</li>
     {% else %}
     <li>keine Aktivität</li>
     {% endfor %}

@@ -16,8 +16,15 @@
     </div>
 
     <ul class="unstyled">
-      {% for p in data.member.result if p.active %}
-      <li><strong>{{ p.id|member(True)|safe }}</strong></li>
+      {% for p in data.member.result|sort(attribute='name') %}
+      {% if p.active %}
+      <li>
+        <strong>{{ p.id|member(True)|safe }}</strong>
+        {% if p.admin %}
+        <span class="label label-inverse">Admin</span>
+        {% endif %}
+      </li>
+      {% endif %}
       {% endfor %}
     </ul>
 {% endblock %}

@@ -333,7 +333,7 @@ def end_of_phase_filter(policy_id, phase):
 
 # The following functions are taken from https://github.com/imtapps/django-pretty-times/blob/master/pretty_times/pretty.py to have a nicer (relative) representation of times in the past and future.
 @app.template_filter('mynicedate')
-def mynicedate_filter(_date, interval=False):
+def mynicedate_filter(_date, interval=False, coarse=True):
     def _pretty_format(diff_amount, units, text, past):
         pretty_time = (diff_amount + units / 2) / units
         if past:
@@ -357,7 +357,9 @@ def mynicedate_filter(_date, interval=False):
         return result
 
     def get_large_increments(days, past):
-        if days == 1:
+        if days == 0:
+            result = 'heute'
+        elif days == 1:
             result = past and 'gestern' or 'morgen'
         elif days == 2:
             result = past and 'vorgestern' or u'übermorgen'
@@ -425,7 +427,7 @@ def mynicedate_filter(_date, interval=False):
 
     humandatestring = ""
 
-    if days is 0:
+    if days is 0 and not coarse:
         if interval:
             humandatestring = get_small_interval(diff.seconds)
         else:

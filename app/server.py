@@ -107,7 +107,9 @@ def show_units():
 
 @app.route('/gliederungen/<int:id>')
 def show_unit(id):
-    data = api_load('/unit', q={'unit_id': id})
+    data = dict()
+    data['unit'] = api_load('/unit', q={'unit_id': id})
+    data['privilege'] = api_load('/privilege', q={'unit_id': id}, session=session)
     return render_template('unit.html', data=data, helper=helper, ourl='unit/show/%d.html' % id)
 
 @app.route('/ereignisse')

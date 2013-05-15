@@ -76,6 +76,9 @@ def member_filter(member_id, link=False, icon=True):
         else:
             result = 'Mitglied&nbsp;%d' % member_id
 
+    if result == None:
+        result = 'Mitglied&nbsp;%d' % member_id
+
     # add link
     if link:
         result = '<a href="/mitglieder/' + str(member_id) + '">' + result + '</a>'

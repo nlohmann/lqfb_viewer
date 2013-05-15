@@ -163,24 +163,49 @@
     </ul>
 
     <h3>Ausgehende Delegationen</h3>
+
+    <h4>Aktuell</h4>
     <ul>
     {% for p in data.delegation_out.result|sort(attribute='scope',reverse=True) %}
-    {% if p.trustee_id %}
-    <li>
-      {{ p.trustee_id|member(True)|safe }}
+      {% if p.trustee_id %}
       {% if p.scope == "unit" %}
-      ({{ p.unit_id|unit(True)|safe }})
+      <li>
+        {{ p.trustee_id|member(True)|safe }}
+        ({{ p.unit_id|unit(True)|safe }})
+      </li>
       {% elif p.scope == "area" %}
-      ({{ p.area_id|area(True)|safe }})
-      {% else %}
-      ({{ p.issue_id|issue(True)|safe }})
+      <li>
+        {{ p.trustee_id|member(True)|safe }}
+        ({{ p.area_id|area(True)|safe }})
+      </li>
+      {% elif p.scope == "issue" and not fob_get('issue', 'id', p.issue_id).closed %}
+      <li>
+        {{ p.trustee_id|member(True)|safe }}
+        ({{ p.issue_id|issue(True)|safe }})
+      </li>
       {% endif %}
-    </li>
-    {% endif %}
+      {% endif %}
     {% else %}
-    <li>keine ausgehenden Delegationen</li>
+    <li>keine eingehenden Delegationen</li>
     {% endfor %}
     </ul>
+
+    <h4>Vergangen</h4>
+    <ul>
+    {% for p in data.delegation_out.result %}
+    {% if p.trustee_id %}
+      {% if p.scope == "issue" and fob_get('issue', 'id', p.issue_id).closed  %}
+      <li>
+      {{ p.trustee_id|member(True)|safe }}
+      ({{ p.issue_id|issue(True)|safe }})
+    </li>
+      {% endif %}
+      {% endif %}
+    {% else %}
+    <li>keine eingehenden Delegationen</li>
+    {% endfor %}
+    </ul>
+
 
     <h2>Aktivität</h2>
     <h3>Initiator</h3>

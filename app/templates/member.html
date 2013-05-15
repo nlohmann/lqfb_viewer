@@ -250,7 +250,7 @@
     <li>
       {{ p.issue_id|issue(True)|safe }} ({{fob_get('issue', 'id', p.issue_id).area_id|area(True)|safe}}) delegiert an {% for p2 in p.delegate_member_ids %}{{ p2|member(True)|safe }}
       {% if p.weight > 1 %}
-      {{ (p2.weight-1)|delegation|safe }}
+      {{ (p.weight-1)|delegation|safe }}
       {% endif %}
     </li>
     {% endfor %}

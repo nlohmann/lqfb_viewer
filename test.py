@@ -86,5 +86,13 @@ class FlaskrTestCase(unittest.TestCase):
         rv = self.app.post('/einstellungen', data={'delete_email': ''})
         assert rv.status == '403 FORBIDDEN'
 
+    def test_ical(self):
+        rv = self.app.get('/kalender.ics')
+        assert rv.status == '200 OK'
+
+    def test_wochenschau(self):
+        rv = self.app.get('/wochenschau')
+        assert rv.status == '200 OK'
+
 if __name__ == '__main__':
     unittest.main()

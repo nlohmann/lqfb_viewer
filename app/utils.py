@@ -69,3 +69,41 @@ def fob_store(obj, key, name):
     fob[name][key] = dict()
     for element in obj:
         fob[name][key][element[key]] = element
+
+def fob_get(a, b, c):
+    try:
+        element = fob[a][b][c]
+    except:
+        fob_update()
+        element = fob[a][b][c]
+    return element
+
+def fob_update():
+    # info (only maximal row limit is interesting)
+    data = api_load('/info')
+    helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
+
+    # policies
+    data = api_load('/policy')
+    fob_store(data['result'], 'id', 'policy')
+
+    # unit
+    data = api_load('/unit')
+    fob_store(data['result'], 'id', 'unit')
+
+    # areas
+    data = api_load('/area')
+    fob_store(data['result'], 'id', 'area')
+
+    # issues
+    data = api_load_all('/issue')
+    fob_store(data['result'], 'id', 'issue')
+
+    # initiatives
+    data = api_load_all('/initiative')
+    fob_store(data['result'], 'id', 'initiative')
+
+    # suggestions
+    data = api_load_all('/suggestion')
+    if 'result' in data:
+        fob_store(data['result'], 'id', 'suggestion')

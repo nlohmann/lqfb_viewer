@@ -31,9 +31,9 @@ import urllib2
 
 # everything for Flask
 from flask import render_template, request, Response, session, flash, abort
-from app import app, helper, fob, models, db
+from app import app, helper, models, db
 from emails import send_email
-from utils import api_load, api_load_all, fob_store
+from utils import api_load, api_load_all, fob_update, fob_get
 from ical import create_ical
 import filter
 
@@ -69,34 +69,11 @@ def prepare():
     # number of http requests
     helper['requests'] = 0
 
-    # info (only maximal row limit is interesting)
-    data = api_load('/info')
-    helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
+    # initialize the FOB
+    fob_update()
 
-    # policies
-    data = api_load('/policy')
-    fob_store(data['result'], 'id', 'policy')
-
-    # unit
-    data = api_load('/unit')
-    fob_store(data['result'], 'id', 'unit')
-
-    # areas
-    data = api_load('/area')
-    fob_store(data['result'], 'id', 'area')
-
-    # issues
-    data = api_load_all('/issue')
-    fob_store(data['result'], 'id', 'issue')
-
-    # initiatives
-    data = api_load_all('/initiative')
-    fob_store(data['result'], 'id', 'initiative')
-
-    # suggestions
-    data = api_load_all('/suggestion')
-    if 'result' in data:
-        fob_store(data['result'], 'id', 'suggestion')
+    # register the fob_get functions for Jinja templates
+    app.jinja_env.globals.update(fob_get=fob_get)
 
     print "+ up and running..."
 
@@ -140,12 +117,12 @@ def show_events():
     data['initiative'] = api_load_all('/initiative')
     data['issue'] = api_load_all('/issue')
     data['suggestion'] = api_load_all('/suggestion', q={'rendered_content': 'html'})
-    return render_template('events.html', data=data, helper=helper, fob=fob, ourl='index/index.html?tab=timeline&filter_unit=global')
+    return render_template('events.html', data=data, helper=helper, ourl='index/index.html?tab=timeline&filter_unit=global')
 
 @app.route('/themen')
 def show_issues():
     data = api_load_all('/issue')
-    return render_template('issues.html', data=data, helper=helper, fob=fob)
+    return render_template('issues.html', data=data, helper=helper)
 
 @app.route('/themen/<int:id>')
 def show_issue(id):
@@ -158,7 +135,7 @@ def show_issue(id):
     data['interest']['end_of_admission'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'end_of_admission'}, session=session)
     data['interest']['half_freeze'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'half_freeze'}, session=session)
     data['interest']['full_freeze'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'full_freeze'}, session=session)
-    return render_template('issue.html', data=data, helper=helper, fob=fob, ourl='issue/show/%d.html' % id)
+    return render_template('issue.html', data=data, helper=helper, ourl='issue/show/%d.html' % id)
 
 @app.route('/initiative/<int:id>')
 def show_initiative(id):
@@ -208,7 +185,7 @@ def show_member(id):
     data['member'] = api_load('/member', q={'member_id': id, 'render_statement': 'html'}, session=session)
     data['member_image'] = api_load('/member_image', q={'member_id': id}, session=session)
     data['member_history'] = api_load('/member_history', q={'member_id': id}, session=session)
-    return render_template('member.html', data=data, helper=helper, fob=fob, ourl='member/show/%d.html' % id)
+    return render_template('member.html', data=data, helper=helper, ourl='member/show/%d.html' % id)
 
 @app.route('/einstellungen', methods=['GET', 'POST'])
 def show_settings():

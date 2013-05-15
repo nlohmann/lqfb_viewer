@@ -164,7 +164,7 @@
     <h3>Initiator</h3>
     <ul>
     {% for p in data.initiator.result %}
-    <li>{{ p.initiative_id|initiative(True)|safe }} in {{ fob.initiative.id[p.initiative_id].issue_id|issue(True)|safe }}</li>
+    <li>{{ p.initiative_id|initiative(True)|safe }} in {{ fob_get('initiative', 'id', p.initiative_id).issue_id|issue(True)|safe }}</li>
     {% else %}
     <li>keine Initiativen initiiert</li>
     {% endfor %}
@@ -187,7 +187,7 @@
     <h3>Interesse</h3>
     <ul>
       {% for p in data.interest.result|sort(attribute='issue_id') %}
-      <li>{{ p.issue_id|issue(True)|safe }} ({{fob.issue.id[p.issue_id].area_id|area(True)|safe}})</li>
+      <li>{{ p.issue_id|issue(True)|safe }} ({{ fob_get('issue', 'id', p.issue_id).area_id|area(True)|safe}})</li>
       {% else %}
       <li>kein Interesse</li>
       {% endfor %}
@@ -198,7 +198,7 @@
     <h3>direkte Teilnahme</h3>
     <ul>
     {% for p in data.vote.result|groupby('issue_id') %}
-    <li style="padding-bottom: 0.5em;">{{ p.grouper|issue(True)|safe }} ({{fob.issue.id[p.grouper].area_id|area(True)|safe}})
+    <li style="padding-bottom: 0.5em;">{{ p.grouper|issue(True)|safe }} ({{fob_get('issue', 'id', p.grouper).area_id|area(True)|safe}})
       {% for p2 in data.voter.result if p2.issue_id == p.grouper and p2.weight != 1 %}
       {{ (p2.weight-1)|delegation|safe }}
       {% endfor %}
@@ -207,7 +207,7 @@
       {% for p2 in p.list|sort(attribute='grade', reverse=True) %}
         <li>
           {{ p2.initiative_id|initiative(True)|safe }}: {{ p2.grade|vote|safe }}
-          {% if fob.initiative.id[p2.initiative_id].winner %}
+          {% if fob_get('initiative', 'id', p2.initiative_id).winner %}
           <i class="icon-trophy"></i>
           {% endif %}
         </li>
@@ -226,7 +226,7 @@
     <ul>
     {% for p in data.delegating_voter.result %}
     <li>
-      {{ p.issue_id|issue(True)|safe }} ({{fob.issue.id[p.issue_id].area_id|area(True)|safe}}) delegiert an {% for p2 in p.delegate_member_ids %}{{ p2|member(True)|safe }}
+      {{ p.issue_id|issue(True)|safe }} ({{fob_get('issue', 'id', p.issue_id).area_id|area(True)|safe}}) delegiert an {% for p2 in p.delegate_member_ids %}{{ p2|member(True)|safe }}
       {% if p.weight > 1 %}
       {{ (p2.weight-1)|delegation|safe }}
       {% endif %}
@@ -239,12 +239,12 @@
 
     <h3>Keine Teilnahme trotz Interesse</h3>
     <ul>
-      {% for p in data.interest.result if fob.issue.id[p.issue_id].closed %}
+      {% for p in data.interest.result if fob_get('issue', 'id', p.issue_id).closed %}
       {% for p2 in data.vote.result if p.issue_id == p2.issue_id %}
       {% else %}
       {% for p3 in data.delegating_voter.result if p.issue_id == p3.issue_id %}
       {% else %}
-      <li>{{p.issue_id|issue(True)|safe}} ({{fob.issue.id[p.issue_id].area_id|area(True)|safe}})</li>
+      <li>{{p.issue_id|issue(True)|safe}} ({{fob_get('issue', 'id', p.issue_id).area_id|area(True)|safe}})</li>
       {% endfor %}
       {% endfor %}
       {% endfor %}

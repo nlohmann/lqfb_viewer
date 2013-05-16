@@ -28,6 +28,9 @@ from werkzeug.contrib.cache import SimpleCache
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.mail import Mail
 
+# Celery
+from celery import Celery
+
 ###########
 # GLOBALS #
 ###########
@@ -38,6 +41,10 @@ app.config.from_object('config')
 
 # database
 db = SQLAlchemy(app)
+
+# Celery
+celery = Celery('app.tasks')
+celery.conf.update(app.config)
 
 # email
 mail = Mail(app)

@@ -1,5 +1,14 @@
+# for periodic tasks
+from datetime import timedelta
 import os
+
+# get the basedir to make this robust against WSGI
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+
+#-------#
+# Flask #
+#-------#
 
 # debug mode
 DEBUG = True
@@ -7,9 +16,19 @@ DEBUG = True
 # secret key
 SECRET_KEY = 'secret'
 
+
+#-------------#
+# SQL Alchemy #
+#-------------#
+
 # database
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
+
+
+#--------------#
+# Flask E-Mail #
+#--------------#
 
 # email server
 MAIL_SERVER = 'smtp.googlemail.com'
@@ -22,6 +41,45 @@ MAIL_PASSWORD = ''
 # administrator list
 ADMINS = ['you@somewhere.com']
 
-# LQFB
+
+#----------------#
+# LiquidFeedback #
+#----------------#
+
+# LQFB (MV)
 LQFB_URL = 'https://lqpp.de/smvmv'
 LQFB_API = 'https://api-smvmv.lqpp.de'
+
+# LQFB (Bund)
+#LQFB_URL = 'https://lqfb.piratenpartei.de/lf'
+#LQFB_API = 'https://lqfb.piratenpartei.de/api'
+
+# LQFB (Test)
+#LQFB_API = 'http://apitest.liquidfeedback.org:25520'
+#LQFB_URL = 'http://dev.liquidfeedback.org/lf2'
+
+
+#--------#
+# Celery #
+#--------#
+
+# the databases
+BROKER_URL = 'sqla+sqlite:///' + os.path.join(basedir, 'celery_broker.db')
+CELERY_RESULT_BACKEND = 'database'
+CELERY_RESULT_DBURI = 'sqlite:///' + os.path.join(basedir, 'celery_result.db')
+
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Berlin'
+CELERY_ENABLE_UTC = True
+
+#CELERYBEAT_SCHEDULE = {
+#    'add-every-30-seconds': {
+#        'task': 'app.tasks.c_send',
+#        'schedule': timedelta(seconds=30),
+#        'args': ()
+#    },
+#}
+
+# which tasks are allowed?
+CELERY_IMPORTS=("app.tasks")

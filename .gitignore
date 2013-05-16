@@ -1,7 +1,7 @@
 # installed statics
 app/static/bootstrap
 app/static/font-awesome
-app/static/jquery.tablesorter
+app/static/tablesorter
 app/static/jquery
 app/static/jQuery.PrettyTextDiff
 

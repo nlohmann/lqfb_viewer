@@ -25,7 +25,7 @@ bower_packages:
 	cd components/bootstrap ; npm install ; make build bootstrap
 	cp -fr components/bootstrap/bootstrap app/static/bootstrap
 	cp -fr components/jquery app/static
-	cp -fr components/font-awesome app/static
+	cp -fr components/font-awesome/build/assets/font-awesome app/static
 	cp -fr components/tablesorter app/static
 	cp -fr components/jQuery.PrettyTextDiff app/static
 

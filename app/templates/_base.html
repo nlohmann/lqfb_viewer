@@ -63,7 +63,6 @@
     </style>
     <div class="container-fluid">
       <p class="muted" style="padding-top:10px;">
-        {{helper.requests}} Anfragen,
         {% if session.current_access_level %}
         <i class="{{ helper.enums.access[session.current_access_level].icon}}"></i> <a href="/einstellungen">{{ helper.enums.access[session.current_access_level].name }}</a>
         {% if session.current_member_id %}

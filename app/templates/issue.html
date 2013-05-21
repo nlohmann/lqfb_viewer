@@ -18,7 +18,7 @@
         <a href="{{config.LQFB_URL}}/vote/list.html?issue_id={{data.issue.result[0].id}}" target="lqfb_window" class="btn btn-warning btn-large pull-right" type="button" style="margin-top: 1.5em;">abstimmen</a>
         {% endif %}
         <i class="{{ helper.enums.issue[data.issue.result[0].state].icon }}{% if helper.enums.issue[data.issue.result[0].state].color %} {{ helper.enums.issue[data.issue.result[0].state].color }}{% endif %} icon-2x pull-left"></i>
-        <small>{{ fob_get('policy', 'id', data.issue.result[0].policy_id).name }}</small><br><i class="icon-list-alt"></i> Thema {{data.issue.result[0].id}}
+        <small>{{ fob_get('policy', data.issue.result[0].policy_id).name }}</small><br><i class="icon-list-alt"></i> Thema {{data.issue.result[0].id}}
       </h1>
     </div>
 
@@ -175,8 +175,8 @@
       <li>neu: {{ data.issue.result[0].created|nicedate(timeago=False) }}</li>
       {% if not data.issue.result[0].accepted %}
       <li>
-        <strong>Spätestes Ende der Phase neu: {{ data.issue.result[0].created|future_date(fob_get('policy', 'id', data.issue.result[0].policy_id).admission_time)|nicedate(timeago=False) }}
-          ({{data.issue.result[0].created|future_date(fob_get('policy', 'id', data.issue.result[0].policy_id).admission_time)|mynicedate}})</strong>
+        <strong>Spätestes Ende der Phase neu: {{ data.issue.result[0].created|future_date(fob_get('policy', data.issue.result[0].policy_id).admission_time)|nicedate(timeago=False) }}
+          ({{data.issue.result[0].created|future_date(fob_get('policy', data.issue.result[0].policy_id).admission_time)|mynicedate}})</strong>
       </li>
       {% endif %}
       {% endif %}
@@ -185,8 +185,8 @@
       <li>in Diskussion: {{ data.issue.result[0].accepted|nicedate(timeago=False) }}</li>
       {% if not data.issue.result[0].half_frozen %}
       <li>
-        <strong>Ende der Diskussion: {{ data.issue.result[0].accepted|future_date(fob_get('policy', 'id', data.issue.result[0].policy_id).discussion_time)|nicedate(timeago=False) }}
-          ({{data.issue.result[0].accepted|future_date(fob_get('policy', 'id', data.issue.result[0].policy_id).discussion_time)|mynicedate}})</strong>
+        <strong>Ende der Diskussion: {{ data.issue.result[0].accepted|future_date(fob_get('policy', data.issue.result[0].policy_id).discussion_time)|nicedate(timeago=False) }}
+          ({{data.issue.result[0].accepted|future_date(fob_get('policy', data.issue.result[0].policy_id).discussion_time)|mynicedate}})</strong>
       </li>
       {% endif %}
       {% endif %}
@@ -195,8 +195,8 @@
       <li>eingefroren: {{ data.issue.result[0].half_frozen|nicedate(timeago=False) }}</li>
       {% if not data.issue.result[0].fully_frozen %}
       <li>
-        <strong>Ende der Phase: {{ data.issue.result[0].half_frozen|future_date(fob_get('policy', 'id', data.issue.result[0].policy_id).verification_time)|nicedate(timeago=False) }}
-        ({{ data.issue.result[0].half_frozen|future_date(fob_get('policy', 'id', data.issue.result[0].policy_id).verification_time)|mynicedate }})</strong>
+        <strong>Ende der Phase: {{ data.issue.result[0].half_frozen|future_date(fob_get('policy', data.issue.result[0].policy_id).verification_time)|nicedate(timeago=False) }}
+        ({{ data.issue.result[0].half_frozen|future_date(fob_get('policy', data.issue.result[0].policy_id).verification_time)|mynicedate }})</strong>
       </li>
       {% endif %}
       {% endif %}
@@ -205,8 +205,8 @@
       <li>Beginn der Abstimmung: {{ data.issue.result[0].fully_frozen|nicedate(timeago=False) }}</li>
       {% if not data.issue.result[0].closed %}
       <li>
-        <strong>Ende der Abstimmung: {{ data.issue.result[0].fully_frozen|future_date(fob_get('policy', 'id', data.issue.result[0].policy_id).voting_time)|nicedate(timeago=False) }}
-          ({{ data.issue.result[0].fully_frozen|future_date(fob_get('policy', 'id', data.issue.result[0].policy_id).voting_time)|mynicedate }})</strong>
+        <strong>Ende der Abstimmung: {{ data.issue.result[0].fully_frozen|future_date(fob_get('policy', data.issue.result[0].policy_id).voting_time)|nicedate(timeago=False) }}
+          ({{ data.issue.result[0].fully_frozen|future_date(fob_get('policy', data.issue.result[0].policy_id).voting_time)|mynicedate }})</strong>
       </li>
       {% endif %}
       {% endif %}

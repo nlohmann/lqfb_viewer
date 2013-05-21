@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from icalendar import Calendar, Event
-from app import app, helper, fob
+from app import app, helper
 from utils import api_load, api_load_all
 import pytz
 from datetime import datetime
@@ -24,9 +24,9 @@ def create_ical():
         end_time = iso8601.parse_date(future_date_filter(issue['fully_frozen'], issue['voting_time'])).astimezone(pytz.timezone('Europe/Berlin'))
 
         event = Event()
-        event.add('summary', u'Abstimmung %s %d' % (fob['policy']['id'][issue['policy_id']]['name'],issue['id']))
-        event.add('description', u'Abstimmung über Thema %d im Themenbereich "%s" mit Regelwerk %s.' % (issue['id'],fob['area']['id'][issue['area_id']]['name'],fob['policy']['id'][issue['policy_id']]['name']) )
-        event.add('location', u'%s' % fob['area']['id'][issue['area_id']]['name'])
+        event.add('summary', u'Abstimmung %s %d' % (fob_get('policy', issue['policy_id'])['name'],issue['id']))
+        event.add('description', u'Abstimmung über Thema %d im Themenbereich "%s" mit Regelwerk %s.' % (issue['id'],fob_get('area', issue['area_id'])['name'],fob_get('policy', issue['policy_id'])['name']) )
+        event.add('location', u'%s' % fob_get('area', issue['area_id'])['name'])
         event.add('url', '%s/issue/show/%d.html' % (app.config['LQFB_URL'], issue['id']))
         event.add('dtstart', start_time)
         event.add('dtend', end_time)

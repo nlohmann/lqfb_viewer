@@ -54,6 +54,5 @@ cache = SimpleCache(threshold=30000, default_timeout=300)
 
 # global dictionary for convenience data
 helper = dict()
-fob = dict()
 
 from app import server, models

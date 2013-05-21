@@ -8,3 +8,12 @@ class Member(db.Model):
 
     def __repr__(self):
         return '<Member %r>' % (self.member_id)
+
+
+class APIData(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    endpoint = db.Column(db.Text, primary_key = True)
+    payload = db.Column(db.Text)
+    
+    def __repr__(self):
+        return '<APIData %r %s>' % (self.id, self.endpoint)

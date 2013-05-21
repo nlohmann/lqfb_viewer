@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from app import helper, cache, fob, app
+from app import helper, cache, app, models, db
 from flask import flash
 import urllib, urllib2, json
 
@@ -28,7 +28,6 @@ def api_load(endpoint, q=None, session=None, forceLoad=False):
     if rv is None or forceLoad == True:
         print ">", endpoint
         
-        helper['requests'] += 1
         res = urllib2.urlopen(url).read()
 
         if res == '"Invalid session key"':
@@ -62,21 +61,25 @@ def api_load_all(endpoint, q=None, session=None, forceLoad=False):
         if not 'result' in obj or len(obj['result']) < q['limit']:
             return result
 
-# fob_store(data, 'issue_id', 'issue')
-# fob['issue']['issue_id']
-def fob_store(obj, key, name):
-    fob[name] = dict()
-    fob[name][key] = dict()
-    for element in obj:
-        fob[name][key][element[key]] = element
+def fob_store(objects, endpoint):
+    for element in objects:
+        u = models.APIData.query.get((element['id'], endpoint))
+        if u == None:
+            u = models.APIData(id=element['id'], endpoint=endpoint, payload=json.dumps(element))
+            db.session.add(u)
+        else:
+            u.endpoint=endpoint
 
-def fob_get(a, b, c):
-    try:
-        element = fob[a][b][c]
-    except:
+    db.session.commit()
+
+def fob_get(endpoint, id):
+    u = models.APIData.query.get((id, endpoint))
+
+    if u == None:
         fob_update()
-        element = fob[a][b][c]
-    return element
+        u = models.APIData.query.get((id, endpoint))
+
+    return json.loads(u.payload)
 
 def fob_update():
     # info (only maximal row limit is interesting)
@@ -85,25 +88,24 @@ def fob_update():
 
     # policies
     data = api_load('/policy')
-    fob_store(data['result'], 'id', 'policy')
+    fob_store(data['result'], 'policy')
 
     # unit
     data = api_load('/unit')
-    fob_store(data['result'], 'id', 'unit')
+    fob_store(data['result'], 'unit')
 
     # areas
     data = api_load('/area')
-    fob_store(data['result'], 'id', 'area')
+    fob_store(data['result'], 'area')
 
     # issues
     data = api_load_all('/issue')
-    fob_store(data['result'], 'id', 'issue')
+    fob_store(data['result'], 'issue')
 
     # initiatives
     data = api_load_all('/initiative')
-    fob_store(data['result'], 'id', 'initiative')
+    fob_store(data['result'], 'initiative')
 
     # suggestions
     data = api_load_all('/suggestion')
-    if 'result' in data:
-        fob_store(data['result'], 'id', 'suggestion')
+    fob_store(data['result'], 'suggestion')

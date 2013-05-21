@@ -272,7 +272,7 @@ ol#timeline li i { color: #888; }
       {% elif p.event == "suggestion_created" %}
       {{p.member_id|member(True)|safe}} hat eine <strong>Anregung</strong> zu {{p.initiative_id|initiative(True)|safe}} ({{p.issue_id|issue(True)|safe}}) geschrieben: {{p.suggestion_id|suggestion|safe}}.
       {% elif p.event == "initiative_revoked" %}
-      {{p.member_id|member(True)|safe}} hat {{p.initiative_id|initiative(True)|safe}} <strong>zurückgezogen</strong>.
+      {{p.member_id|member(True)|safe}} hat {{p.initiative_id|initiative(True)|safe}} aus {{p.issue_id|issue(True)|safe}} <strong>zurückgezogen</strong>.
       {% elif p.event == "new_draft_created" %}
       {{p.member_id|member(True)|safe}} hat einen <strong>neuen Entwurf</strong> von {{p.initiative_id|initiative(True)|safe}} ({{p.issue_id|issue(True)|safe}}) geschrieben.
       {% else %}

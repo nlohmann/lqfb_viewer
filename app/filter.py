@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import session
-from jinja2._markupsafe import Markup
+from markupsafe import Markup
 
 from app import app, helper, fob
 from utils import api_load

@@ -4,6 +4,7 @@ app/static/font-awesome
 app/static/tablesorter
 app/static/jquery
 app/static/jQuery.PrettyTextDiff
+app/static/Chart.js
 
 # installed binaries
 components
@@ -14,6 +15,9 @@ virtualenv.py
 # data base
 app.db
 db_repository
+celery_broker.db
+celery_result.db
+celerybeat-schedule
 
 # temporary files
 .DS_Store

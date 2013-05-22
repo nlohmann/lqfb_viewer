@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template
 from app import app, celery
-from emails import send_email
-from utils import fob_update
+from utils import cascaded_update, regular_update
 
 @celery.task
-def c_send():
-    send_email('[LQFB] E-Mail-Benachrichtigung', 'niels.lohmann@gmail.com', ['niels.lohmann@gmail.com'], 'foo', 'foo')
+def c_cascaded_update():
+    cascaded_update()
 
 @celery.task
-def c_update_db():
-    fob_update()
+def c_regular_update():
+    regular_update()

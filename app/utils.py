@@ -3,9 +3,9 @@ from app import helper, cache, app, models, db
 from flask import flash
 import urllib, urllib2, json
 
-#############
-# FUNCTIONS #
-#############
+#################
+# API-INTERFACE #
+#################
 
 def api_load(endpoint, q=None, session=None, forceLoad=False):
     original_q = q
@@ -27,6 +27,7 @@ def api_load(endpoint, q=None, session=None, forceLoad=False):
 
     if rv is None or forceLoad == True:
         print ">", endpoint
+        #print ">", url
         
         res = urllib2.urlopen(url).read()
 
@@ -48,6 +49,7 @@ def api_load_all(endpoint, q=None, session=None, forceLoad=False):
     q['offset'] = 0
     q['limit'] = helper['result_row_limit_max']
     result = dict()
+    result['result'] = list()
     
     while True:
         obj = api_load(endpoint, q=q, session=session, forceLoad=forceLoad)
@@ -60,6 +62,10 @@ def api_load_all(endpoint, q=None, session=None, forceLoad=False):
 
         if not 'result' in obj or len(obj['result']) < q['limit']:
             return result
+
+#################
+# FOB-INTERFACE #
+#################
 
 def fob_store(objects, endpoint):
     for element in objects:
@@ -81,22 +87,97 @@ def fob_get(endpoint, id):
 
     return json.loads(u.payload)
 
-def fob_update():
+def regular_update():
+    # These information are seldomly updated, and new data cannot be detected any other way than by a regular forced update. This function should be called each time the server is started, and periodically every hour.
+    
     # info (only maximal row limit is interesting)
     data = api_load('/info')
     helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
-
-    # policies
-    data = api_load('/policy')
-    fob_store(data['result'], 'policy')
 
     # unit
     data = api_load('/unit')
     fob_store(data['result'], 'unit')
 
+    # policies
+    data = api_load('/policy')
+    fob_store(data['result'], 'policy')
+
     # areas
     data = api_load('/area')
     fob_store(data['result'], 'area')
+
+    print '>> regular DB update complete'
+
+def cascaded_update():
+    # info (only maximal row limit is interesting)
+    data = api_load('/info')
+    helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
+
+    # get all events
+    events = api_load_all('/event')
+
+    # get stored last id
+    u = models.Timestamp.query.get("event")
+    if u == None:
+        last_id = None
+        new_last_id = 0
+    else:
+        last_id = u.id
+        new_last_id = last_id
+
+    # collect all events that need processing
+    todo_events = list()
+    for event in events['result']:
+        if last_id == None or event['id'] > last_id:
+            todo_events.append(event)
+            if event['id'] > new_last_id:
+                new_last_id = event['id']
+
+    # update db with new last id
+    if u == None:
+        u = models.Timestamp(id = new_last_id, endpoint="event")
+        db.session.add(u)
+    else:
+        u.id = new_last_id
+    db.session.commit()
+
+    # store new events
+    fob_store(todo_events, 'event')
+
+    # collect issues and initiatives that have changed
+    todo_issues = set()
+    todo_initiatives = set()
+
+    for event in todo_events:
+        if 'issue_id' in event and event['issue_id'] != None:
+            todo_issues.add(event['issue_id'])
+        if 'initiative_id' in event and event['initiative_id'] != None:
+            todo_initiatives.add(event['initiative_id'])
+
+    # query and store new issues
+    if len(todo_issues) > 0:
+        data = api_load('/issue', q={'issue_id': ",".join(str(x) for x in todo_issues)})
+        fob_store(data['result'], 'issue')
+
+    # query and store new initiatives, drafts, and suggestions
+    if len(todo_initiatives) > 0:
+        data = api_load('/initiative', q={'initiative_id': ",".join(str(x) for x in todo_initiatives)})
+        fob_store(data['result'], 'initiative')
+        data = api_load('/draft', q={'initiative_id': ",".join(str(x) for x in todo_initiatives)})
+        fob_store(data['result'], 'initiative')
+        data = api_load('/suggestion', q={'initiative_id': ",".join(str(x) for x in todo_initiatives)})
+        fob_store(data['result'], 'suggestion')
+
+    print '>> processed ', len(todo_events), 'new events'
+
+
+def fob_update():
+    # info (only maximal row limit is interesting)
+    data = api_load('/info')
+    helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
+
+    # update unit, area, and policy
+    regular_update()
 
     # issues
     data = api_load_all('/issue')
@@ -109,3 +190,7 @@ def fob_update():
     # suggestions
     data = api_load_all('/suggestion')
     fob_store(data['result'], 'suggestion')
+
+    # events
+    data = api_load_all('/event')
+    fob_store(data['result'], 'event')

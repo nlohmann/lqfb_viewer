@@ -1,29 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#############################################################################
-# LiquidFeedback Viewer - Bootstrap version
-#
-# Copyright (c) 2013 Niels Lohmann
-# 
-# Permission is hereby granted, free of charge, to any person obtaining a
-# copy of this software and associated documentation files (the 'Software'),
-# to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-# and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
-#############################################################################
-
 import json
 import os
 import urllib
@@ -288,3 +264,10 @@ def show_wochenschau():
     data['frozen']  = api_load_all('/issue', q={'issue_half_frozen_after': week_ago.isoformat()})
     data['voting']  = api_load_all('/issue', q={'issue_state': 'voting'})
     return render_template('wochenschau.html', data=data, helper=helper)
+
+@app.route('/statistiken')
+def show_statistiken():
+    data = dict()
+    data['issue'] = api_load_all('/issue', q={'unit_id': 1})
+    data['unit'] = api_load('/unit')
+    return render_template('stats.html', data=data, helper=helper)

@@ -23,13 +23,14 @@ pip_packages:
 bower_packages:
 	# bower packages
 	npm install bower
-	node_modules/bower/bin/bower install bootstrap font-awesome jquery.tablesorter
+	node_modules/bower/bin/bower install bootstrap font-awesome jquery.tablesorter Chart.js
 	node_modules/bower/bin/bower install https://github.com/arnab/jQuery.PrettyTextDiff.git
 	# bootstrap needs to be built
 	cd components/bootstrap ; npm install ; make build bootstrap
 	# copy components
 	cp -fr components/bootstrap/bootstrap app/static/bootstrap
 	cp -fr components/jquery app/static
+	cp -fr components/Chart.js app/static
 	cp -fr components/font-awesome/build/assets/font-awesome app/static
 	cp -fr components/tablesorter app/static
 	cp -fr components/jQuery.PrettyTextDiff app/static

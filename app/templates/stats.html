@@ -1,0 +1,75 @@
+{% extends "_base.html" %}
+
+{% block title %}LQFB › Statistiken{% endblock %}
+
+{% block head %}
+{{ super() }}
+<script type="text/javascript" src="/static/Chart.js/Chart.min.js"></script>
+{% endblock %}
+
+{% block navigation %}
+{{ super() }}
+<ul class="breadcrumb">
+  <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
+  <li class="active">Statistiken</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1><i class="icon-bar-chart"></i> Statistiken</h1>
+</div>
+
+<h2>Mitglieder</h2>
+
+<canvas id="unit_members" height="300" width="900"></canvas>
+<script>
+  var barChartData = {
+    labels : [{% for p in data.unit.result %}"{{ p.name }}", {% endfor %}],
+    datasets : [
+      {
+        fillColor : "rgba(151,187,205,0.5)",
+        strokeColor : "rgba(151,187,205,1)",
+        data : [{% for p in data.unit.result %}{{ p.member_count }}, {% endfor %}],
+      }
+    ]
+  }
+var myLine = new Chart(document.getElementById("unit_members").getContext("2d")).Bar(barChartData, {animation : false});
+</script>
+
+<h2>Beteiligung</h2>
+
+<h3>Absolut</h3>
+<canvas id="issue_voters_absolute" height="300" width="900"></canvas>
+<script>
+  var barChartData = {
+    labels : [{% for p in data.issue.result|sort(attribute='closed') %}{% if p.voter_count %}"{{ p.id }}", {% endif %}{% endfor %}],
+    datasets : [
+      {
+        fillColor : "rgba(151,187,205,0.5)",
+        strokeColor : "rgba(151,187,205,1)",
+        data : [{% for p in data.issue.result|sort(attribute='closed') %}{% if p.voter_count %}{{ p.voter_count }}, {% endif %}{% endfor %}],
+      }
+    ]
+  }
+var myLine = new Chart(document.getElementById("issue_voters_absolute").getContext("2d")).Line(barChartData, {animation : false});
+</script>
+
+<h3>Relativ</h3>
+<canvas id="issue_voters_relative" height="300" width="900"></canvas>
+<script>
+  var barChartData = {
+    labels : [{% for p in data.issue.result|sort(attribute='closed') %}{% if p.voter_count %}"{{ p.id }}", {% endif %}{% endfor %}],
+    datasets : [
+      {
+        fillColor : "rgba(151,187,205,0.5)",
+        strokeColor : "rgba(151,187,205,1)",
+        data : [{% for p in data.issue.result|sort(attribute='closed') %}{% if p.voter_count %}{{ p.voter_count/p.population }}, {% endif %}{% endfor %}],
+      }
+    ]
+  }
+var myLine = new Chart(document.getElementById("issue_voters_relative").getContext("2d")).Line(barChartData, {animation : false});
+</script>
+
+
+{% endblock %}

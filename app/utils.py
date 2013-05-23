@@ -26,9 +26,16 @@ def api_load(endpoint, q=None, session=None, forceLoad=False):
     rv = cache.get(url)
 
     if rv is None or forceLoad == True:
-        print ">", endpoint
-        #print ">", url
-        
+        status = "> " + endpoint
+        if q != {}:
+            status += ' (query)'
+        if forceLoad:
+            status += " !"
+        if session != None:
+            status = ">" + status
+        print status
+        #print url
+
         res = urllib2.urlopen(url).read()
 
         if res == '"Invalid session key"':
@@ -63,6 +70,53 @@ def api_load_all(endpoint, q=None, session=None, forceLoad=False):
         if not 'result' in obj or len(obj['result']) < q['limit']:
             return result
 
+
+################
+# DB-INTERFACE #
+################
+
+def db_load(endpoint, q=None):
+    # strip the slash from the endpoint
+    endpoint = endpoint[1:]
+
+    # make sure the query is a dict
+    if q is None:
+        q = {}
+
+    # make sure we only answer for endpoints that are stored in the database
+    if not endpoint in ['unit', 'policy', 'area', 'event', 'initiative', 'draft', 'suggestion', 'initiative', 'issue']:
+        return None
+
+    # use primary key if possible
+    if endpoint + '_id' in q:
+        # in case the query contains 'area_id=x' for the endpoint '/area', query the database for (endpoint='area', id=x)
+        id = q[endpoint + '_id']
+        rows = models.APIData.query.filter_by(id=id, endpoint=endpoint).all()
+        # remove the entry from the query for future checks
+        del q[endpoint + '_id']
+    else:
+        rows = models.APIData.query.filter_by(endpoint=endpoint).all()
+
+    # put the result into a dict for compatibility reasons
+    result = dict()
+    result['result'] = list()
+
+    # filter elements according to query
+    for row in rows:
+        element = json.loads(row.payload)
+        keep_element = True
+
+        # drop element if query is not fulfilled
+        for key in q.iterkeys():
+            if element[key] != q[key]:
+                keep_element = False
+
+        if keep_element:
+            result['result'].append(element)
+
+    return result
+
+
 #################
 # FOB-INTERFACE #
 #################
@@ -78,6 +132,7 @@ def fob_store(objects, endpoint):
 
     db.session.commit()
 
+
 def fob_get(endpoint, id):
     u = models.APIData.query.get((id, endpoint))
 
@@ -86,6 +141,11 @@ def fob_get(endpoint, id):
         u = models.APIData.query.get((id, endpoint))
 
     return json.loads(u.payload)
+
+
+##############
+# DB-UPDATES #
+##############
 
 def regular_update():
     # These information are seldomly updated, and new data cannot be detected any other way than by a regular forced update. This function should be called each time the server is started, and periodically every hour.
@@ -106,7 +166,7 @@ def regular_update():
     data = api_load('/area')
     fob_store(data['result'], 'area')
 
-    print '>> regular DB update complete'
+    print '[] regular DB update complete'
 
 def cascaded_update():
     # info (only maximal row limit is interesting)
@@ -163,12 +223,12 @@ def cascaded_update():
     if len(todo_initiatives) > 0:
         data = api_load('/initiative', q={'initiative_id': ",".join(str(x) for x in todo_initiatives)})
         fob_store(data['result'], 'initiative')
-        data = api_load('/draft', q={'initiative_id': ",".join(str(x) for x in todo_initiatives)})
-        fob_store(data['result'], 'initiative')
-        data = api_load('/suggestion', q={'initiative_id': ",".join(str(x) for x in todo_initiatives)})
+        data = api_load('/draft', q={'initiative_id': ",".join(str(x) for x in todo_initiatives), 'render_content': 'html'})
+        fob_store(data['result'], 'draft')
+        data = api_load('/suggestion', q={'initiative_id': ",".join(str(x) for x in todo_initiatives), 'rendered_content': 'html'})
         fob_store(data['result'], 'suggestion')
 
-    print '>> processed ', len(todo_events), 'new events'
+    print '[] processed ', len(todo_events), 'new events'
 
 
 def fob_update():
@@ -179,6 +239,9 @@ def fob_update():
     # update unit, area, and policy
     regular_update()
 
+    # update the rest
+    cascaded_update()
+
     # issues
     data = api_load_all('/issue')
     fob_store(data['result'], 'issue')
@@ -188,7 +251,7 @@ def fob_update():
     fob_store(data['result'], 'initiative')
 
     # suggestions
-    data = api_load_all('/suggestion')
+    data = api_load_all('/suggestion', q={'rendered_content': 'html'})
     fob_store(data['result'], 'suggestion')
 
     # events

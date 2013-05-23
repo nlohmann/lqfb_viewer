@@ -9,7 +9,7 @@ import urllib2
 from flask import render_template, request, Response, session, flash, abort
 from app import app, helper, models, db
 from emails import send_email
-from utils import api_load, api_load_all, fob_update, fob_get
+from utils import api_load, api_load_all, fob_update, fob_get, db_load
 from ical import create_ical
 import filter
 
@@ -51,7 +51,7 @@ def prepare():
     # register the fob_get functions for Jinja templates
     app.jinja_env.globals.update(fob_get=fob_get)
 
-    print "+ up and running..."
+    print "[] up and running..."
 
 ##############
 # END POINTS #
@@ -62,70 +62,87 @@ def show_index():
     data = api_load('/info', session=session)
     if session == None or not 'current_access_level' in session:
         flash('Deine neue Zugangsberechtigung ist: <i class="' + helper['enums']['access'][data['current_access_level']]['icon'] + '"></i> ' + helper['enums']['access'][data['current_access_level']]['name'] + '.', 'info')
-        
+
     session['current_access_level'] = data['current_access_level']
     return render_template('index.html', data=data, helper=helper, ourl='index/index.html')
 
 @app.route('/regelwerke')
 def show_policies():
-    data = api_load('/policy')
+    data = db_load('/policy')
     return render_template('policies.html', data=data, helper=helper, ourl='policy/list.html')
 
 @app.route('/regelwerke/<int:policy_id>')
 def show_policy(policy_id):
-    data = api_load('/policy', q={'policy_id': policy_id})
+    data = db_load('/policy', q={'policy_id': policy_id})
     return render_template('policy.html', data=data, helper=helper, ourl='policy/show/%d.html' % policy_id)
 
 @app.route('/gliederungen')
 def show_units():
-    data = api_load('/unit')
+    data = db_load('/unit')
     return render_template('units.html', data=data, helper=helper, ourl='index/index.html?filter_unit=global')
 
 @app.route('/gliederungen/<int:unit_id>')
 def show_unit(unit_id):
     data = dict()
-    data['unit'] = api_load('/unit', q={'unit_id': unit_id})
+    data['unit'] = db_load('/unit', q={'unit_id': unit_id})
+
     data['privilege'] = api_load('/privilege', q={'unit_id': unit_id}, session=session)
+
     return render_template('unit.html', data=data, helper=helper, ourl='unit/show/%d.html' % unit_id)
 
 @app.route('/ereignisse')
 def show_events():
     data = dict()
-    data['event'] = api_load_all('/event')
-    data['initiative'] = api_load_all('/initiative')
-    data['issue'] = api_load_all('/issue')
-    data['suggestion'] = api_load_all('/suggestion', q={'rendered_content': 'html'})
+    data['event'] = db_load('/event')
+    data['initiative'] = db_load('/initiative')
+    data['issue'] = db_load('/issue')
+    data['suggestion'] = db_load('/suggestion')
     return render_template('events.html', data=data, helper=helper, ourl='index/index.html?tab=timeline&filter_unit=global')
 
 @app.route('/themen')
 def show_issues():
-    data = api_load_all('/issue')
+    data = db_load('/issue')
     return render_template('issues.html', data=data, helper=helper)
 
 @app.route('/themen/<int:issue_id>')
 def show_issue(issue_id):
     data = dict()
-    data['issue'] = api_load('/issue', q={'issue_id': issue_id})
-    data['initiative'] = api_load('/initiative', q={'issue_id': issue_id})
-    data['policy'] = api_load('/policy', q={'policy_id': data['issue']['result'][0]['policy_id']})
+    data['issue'] = db_load('/issue', q={'issue_id': issue_id})
+    data['initiative'] = db_load('/initiative', q={'issue_id': issue_id})
+    data['policy'] = db_load('/policy', q={'policy_id': data['issue']['result'][0]['policy_id']})
+
     data['interest'] = dict()
     data['interest']['latest'] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': 'latest'}, session=session)
     data['interest']['end_of_admission'] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': 'end_of_admission'}, session=session)
     data['interest']['half_freeze'] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': 'half_freeze'}, session=session)
     data['interest']['full_freeze'] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': 'full_freeze'}, session=session)
+
     return render_template('issue.html', data=data, helper=helper, ourl='issue/show/%d.html' % issue_id)
 
 @app.route('/initiative/<int:initiative_id>')
 def show_initiative(initiative_id):
     data = dict()
-    data['initiative'] = api_load('/initiative', q={'initiative_id': initiative_id})
-    data['issue'] = api_load('/issue', q={'issue_id': data['initiative']['result'][0]['issue_id']})
+    data['initiative'] = db_load('/initiative', q={'initiative_id': initiative_id})
+    data['issue'] = db_load('/issue', q={'issue_id': data['initiative']['result'][0]['issue_id']})
+    data['draft'] = db_load('/draft', q={'initiative_id': initiative_id})
+    data['suggestion'] = db_load('/suggestion', q={'initiative_id': initiative_id})
     data['battle'] = api_load('/battle', q={'issue_id': data['initiative']['result'][0]['issue_id']})
-    data['draft'] = api_load('/draft', q={'initiative_id': initiative_id, 'render_content': 'html'})
-    data['suggestion'] = api_load('/suggestion', q={'initiative_id': initiative_id, 'rendered_content': 'html'})
+
     data['initiator'] = api_load('/initiator', q={'initiative_id': initiative_id}, session=session)
 
     return render_template('initiative.html', data=data, helper=helper, ourl='initiative/show/%d.html' % initiative_id)
+
+@app.route('/themenbereiche')
+def show_areas():
+    data = db_load('/area')
+    return render_template('areas.html', data=data, helper=helper)
+
+@app.route('/themenbereiche/<int:area_id>')
+def show_area(area_id):
+    data = dict()
+    data['area'] = db_load('/area', q={'area_id': area_id})
+    data['allowed_policy'] = api_load('/allowed_policy', q={'area_id': area_id})
+    return render_template('area.html', data=data, helper=helper, ourl='area/show/%d.html' % area_id)
 
 @app.route('/mitglieder')
 def show_members():
@@ -133,24 +150,14 @@ def show_members():
     data['member'] = api_load('/member', session=session)
     return render_template('members.html', data=data, helper=helper, ourl='index/index.html?tab=members')
 
-@app.route('/themenbereiche')
-def show_areas():
-    data = api_load('/area')
-    return render_template('areas.html', data=data, helper=helper)
-
-@app.route('/themenbereiche/<int:area_id>')
-def show_area(area_id):
-    data = dict()
-    data['area'] = api_load('/area', q={'area_id': area_id})
-    data['allowed_policy'] = api_load('/allowed_policy', q={'area_id': area_id})
-    return render_template('area.html', data=data, helper=helper, ourl='area/show/%d.html' % area_id)
-
 @app.route('/mitglieder/<int:member_id>')
 def show_member(member_id):
     if 'current_access_level' not in session or session['current_access_level'] != 'member':
         abort(403)
 
     data = dict()
+    data['event'] = db_load('/event')
+
     data['privilege'] = api_load('/privilege', q={'member_id': member_id}, session=session)
     data['membership'] = api_load('/membership', q={'member_id': member_id}, session=session)
     data['initiator'] = api_load('/initiator', q={'member_id': member_id}, session=session)
@@ -159,11 +166,11 @@ def show_member(member_id):
     data['delegating_voter'] = api_load('/delegating_voter', q={'member_id': member_id}, session=session)
     data['voter'] = api_load('/voter', q={'member_id': member_id, 'formatting_engine': 'html'}, session=session)
     data['vote'] = api_load('/vote', q={'member_id': member_id}, session=session)
-    data['event'] = api_load('/event')
     data['interest'] = api_load('/interest', q={'member_id': member_id, 'snapshot': 'latest'}, session=session)
     data['member'] = api_load('/member', q={'member_id': member_id, 'render_statement': 'html'}, session=session)
     data['member_image'] = api_load('/member_image', q={'member_id': member_id}, session=session)
     data['member_history'] = api_load('/member_history', q={'member_id': member_id}, session=session)
+
     return render_template('member.html', data=data, helper=helper, ourl='member/show/%d.html' % member_id)
 
 @app.route('/einstellungen', methods=['GET', 'POST'])
@@ -269,5 +276,5 @@ def show_wochenschau():
 def show_statistiken():
     data = dict()
     data['issue'] = api_load_all('/issue', q={'unit_id': 1})
-    data['unit'] = api_load('/unit')
+    data['unit'] = db_load('/unit')
     return render_template('stats.html', data=data, helper=helper)

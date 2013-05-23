@@ -39,7 +39,7 @@ MAIL_USERNAME = ''
 MAIL_PASSWORD = ''
 
 # administrator list
-ADMINS = ['you@somewhere.com']
+ADMINS = [('Nina Nameless', 'you@somewhere.com')]
 
 
 #----------------#
@@ -88,3 +88,13 @@ CELERYBEAT_SCHEDULE = {
 
 # which tasks are allowed?
 CELERY_IMPORTS=("app.tasks")
+
+# email notification
+CELERY_SEND_TASK_ERROR_EMAILS = True
+SERVER_EMAIL = ADMINS[0][1]
+EMAIL_HOST = MAIL_SERVER
+EMAIL_PORT = MAIL_PORT
+EMAIL_HOST_USER = MAIL_USERNAME
+EMAIL_HOST_PASSWORD = MAIL_PASSWORD
+EMAIL_USE_SSL = MAIL_USE_SSL
+EMAIL_USE_TLS = MAIL_USE_TLS

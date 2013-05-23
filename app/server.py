@@ -71,22 +71,22 @@ def show_policies():
     data = api_load('/policy')
     return render_template('policies.html', data=data, helper=helper, ourl='policy/list.html')
 
-@app.route('/regelwerke/<int:id>')
-def show_policy(id):
-    data = api_load('/policy', q={'policy_id': id})
-    return render_template('policy.html', data=data, helper=helper, ourl='policy/show/%d.html' % id)
+@app.route('/regelwerke/<int:policy_id>')
+def show_policy(policy_id):
+    data = api_load('/policy', q={'policy_id': policy_id})
+    return render_template('policy.html', data=data, helper=helper, ourl='policy/show/%d.html' % policy_id)
 
 @app.route('/gliederungen')
 def show_units():
     data = api_load('/unit')
     return render_template('units.html', data=data, helper=helper, ourl='index/index.html?filter_unit=global')
 
-@app.route('/gliederungen/<int:id>')
-def show_unit(id):
+@app.route('/gliederungen/<int:unit_id>')
+def show_unit(unit_id):
     data = dict()
-    data['unit'] = api_load('/unit', q={'unit_id': id})
-    data['privilege'] = api_load('/privilege', q={'unit_id': id}, session=session)
-    return render_template('unit.html', data=data, helper=helper, ourl='unit/show/%d.html' % id)
+    data['unit'] = api_load('/unit', q={'unit_id': unit_id})
+    data['privilege'] = api_load('/privilege', q={'unit_id': unit_id}, session=session)
+    return render_template('unit.html', data=data, helper=helper, ourl='unit/show/%d.html' % unit_id)
 
 @app.route('/ereignisse')
 def show_events():
@@ -102,30 +102,30 @@ def show_issues():
     data = api_load_all('/issue')
     return render_template('issues.html', data=data, helper=helper)
 
-@app.route('/themen/<int:id>')
-def show_issue(id):
+@app.route('/themen/<int:issue_id>')
+def show_issue(issue_id):
     data = dict()
-    data['issue'] = api_load('/issue', q={'issue_id': id})
-    data['initiative'] = api_load('/initiative', q={'issue_id': id})
+    data['issue'] = api_load('/issue', q={'issue_id': issue_id})
+    data['initiative'] = api_load('/initiative', q={'issue_id': issue_id})
     data['policy'] = api_load('/policy', q={'policy_id': data['issue']['result'][0]['policy_id']})
     data['interest'] = dict()
-    data['interest']['latest'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'latest'}, session=session)
-    data['interest']['end_of_admission'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'end_of_admission'}, session=session)
-    data['interest']['half_freeze'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'half_freeze'}, session=session)
-    data['interest']['full_freeze'] = api_load('/interest', q={'issue_id': id, 'snapshot': 'full_freeze'}, session=session)
-    return render_template('issue.html', data=data, helper=helper, ourl='issue/show/%d.html' % id)
+    data['interest']['latest'] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': 'latest'}, session=session)
+    data['interest']['end_of_admission'] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': 'end_of_admission'}, session=session)
+    data['interest']['half_freeze'] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': 'half_freeze'}, session=session)
+    data['interest']['full_freeze'] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': 'full_freeze'}, session=session)
+    return render_template('issue.html', data=data, helper=helper, ourl='issue/show/%d.html' % issue_id)
 
-@app.route('/initiative/<int:id>')
-def show_initiative(id):
+@app.route('/initiative/<int:initiative_id>')
+def show_initiative(initiative_id):
     data = dict()
-    data['initiative'] = api_load('/initiative', q={'initiative_id': id})
+    data['initiative'] = api_load('/initiative', q={'initiative_id': initiative_id})
     data['issue'] = api_load('/issue', q={'issue_id': data['initiative']['result'][0]['issue_id']})
     data['battle'] = api_load('/battle', q={'issue_id': data['initiative']['result'][0]['issue_id']})
-    data['draft'] = api_load('/draft', q={'initiative_id': id, 'render_content': 'html'})
-    data['suggestion'] = api_load('/suggestion', q={'initiative_id': id, 'rendered_content': 'html'})
-    data['initiator'] = api_load('/initiator', q={'initiative_id': id}, session=session)
+    data['draft'] = api_load('/draft', q={'initiative_id': initiative_id, 'render_content': 'html'})
+    data['suggestion'] = api_load('/suggestion', q={'initiative_id': initiative_id, 'rendered_content': 'html'})
+    data['initiator'] = api_load('/initiator', q={'initiative_id': initiative_id}, session=session)
 
-    return render_template('initiative.html', data=data, helper=helper, ourl='initiative/show/%d.html' % id)
+    return render_template('initiative.html', data=data, helper=helper, ourl='initiative/show/%d.html' % initiative_id)
 
 @app.route('/mitglieder')
 def show_members():
@@ -138,33 +138,33 @@ def show_areas():
     data = api_load('/area')
     return render_template('areas.html', data=data, helper=helper)
 
-@app.route('/themenbereiche/<int:id>')
-def show_area(id):
+@app.route('/themenbereiche/<int:area_id>')
+def show_area(area_id):
     data = dict()
-    data['area'] = api_load('/area', q={'area_id': id})
-    data['allowed_policy'] = api_load('/allowed_policy', q={'area_id': id})
-    return render_template('area.html', data=data, helper=helper, ourl='area/show/%d.html' % id)
+    data['area'] = api_load('/area', q={'area_id': area_id})
+    data['allowed_policy'] = api_load('/allowed_policy', q={'area_id': area_id})
+    return render_template('area.html', data=data, helper=helper, ourl='area/show/%d.html' % area_id)
 
-@app.route('/mitglieder/<int:id>')
-def show_member(id):
+@app.route('/mitglieder/<int:member_id>')
+def show_member(member_id):
     if 'current_access_level' not in session or session['current_access_level'] != 'member':
         abort(403)
 
     data = dict()
-    data['privilege'] = api_load('/privilege', q={'member_id': id}, session=session)
-    data['membership'] = api_load('/membership', q={'member_id': id}, session=session)
-    data['initiator'] = api_load('/initiator', q={'member_id': id}, session=session)
-    data['delegation_in'] = api_load('/delegation', q={'member_id': id, 'direction': 'in'}, session=session)
-    data['delegation_out'] = api_load('/delegation', q={'member_id': id, 'direction': 'out'}, session=session)
-    data['delegating_voter'] = api_load('/delegating_voter', q={'member_id': id}, session=session)
-    data['voter'] = api_load('/voter', q={'member_id': id, 'formatting_engine': 'html'}, session=session)
-    data['vote'] = api_load('/vote', q={'member_id': id}, session=session)
+    data['privilege'] = api_load('/privilege', q={'member_id': member_id}, session=session)
+    data['membership'] = api_load('/membership', q={'member_id': member_id}, session=session)
+    data['initiator'] = api_load('/initiator', q={'member_id': member_id}, session=session)
+    data['delegation_in'] = api_load('/delegation', q={'member_id': member_id, 'direction': 'in'}, session=session)
+    data['delegation_out'] = api_load('/delegation', q={'member_id': member_id, 'direction': 'out'}, session=session)
+    data['delegating_voter'] = api_load('/delegating_voter', q={'member_id': member_id}, session=session)
+    data['voter'] = api_load('/voter', q={'member_id': member_id, 'formatting_engine': 'html'}, session=session)
+    data['vote'] = api_load('/vote', q={'member_id': member_id}, session=session)
     data['event'] = api_load('/event')
-    data['interest'] = api_load('/interest', q={'member_id': id, 'snapshot': 'latest'}, session=session)
-    data['member'] = api_load('/member', q={'member_id': id, 'render_statement': 'html'}, session=session)
-    data['member_image'] = api_load('/member_image', q={'member_id': id}, session=session)
-    data['member_history'] = api_load('/member_history', q={'member_id': id}, session=session)
-    return render_template('member.html', data=data, helper=helper, ourl='member/show/%d.html' % id)
+    data['interest'] = api_load('/interest', q={'member_id': member_id, 'snapshot': 'latest'}, session=session)
+    data['member'] = api_load('/member', q={'member_id': member_id, 'render_statement': 'html'}, session=session)
+    data['member_image'] = api_load('/member_image', q={'member_id': member_id}, session=session)
+    data['member_history'] = api_load('/member_history', q={'member_id': member_id}, session=session)
+    return render_template('member.html', data=data, helper=helper, ourl='member/show/%d.html' % member_id)
 
 @app.route('/einstellungen', methods=['GET', 'POST'])
 def show_settings():

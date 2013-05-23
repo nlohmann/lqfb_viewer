@@ -1,87 +1,87 @@
 {% extends "_base.html" %}
 
-{% block title %}LQFB › Themen › Thema {{data.issue.result[0].id}}{% endblock %}
+{% block title %}LQFB › Themen › Thema {{data.issue.result.0.id}}{% endblock %}
 
 {% block navigation %}
 {{ super() }}
   <ul class="breadcrumb">
     <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
     <li><a href="/themen">Themen</a> <span class="divider">/</span></li>
-    <li class="active">Thema {{data.issue.result[0].id}}</li>
+    <li class="active">Thema {{data.issue.result.0.id}}</li>
   </ul>
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
       <h1>
-        {% if data.issue.result[0].state == "voting" %}
-        <a href="{{config.LQFB_URL}}/vote/list.html?issue_id={{data.issue.result[0].id}}" target="lqfb_window" class="btn btn-warning btn-large pull-right" type="button" style="margin-top: 1.5em;">abstimmen</a>
+        {% if data.issue.result.0.state == "voting" %}
+        <a href="{{config.LQFB_URL}}/vote/list.html?issue_id={{data.issue.result.0.id}}" target="lqfb_window" class="btn btn-warning btn-large pull-right" type="button" style="margin-top: 1.5em;">abstimmen</a>
         {% endif %}
-        <i class="{{ helper.enums.issue[data.issue.result[0].state].icon }}{% if helper.enums.issue[data.issue.result[0].state].color %} {{ helper.enums.issue[data.issue.result[0].state].color }}{% endif %} icon-2x pull-left"></i>
-        <small>{{ fob_get('policy', data.issue.result[0].policy_id).name }}</small><br><i class="icon-list-alt"></i> Thema {{data.issue.result[0].id}}
+        <i class="{{ helper.enums.issue[data.issue.result.0.state].icon }}{% if helper.enums.issue[data.issue.result.0.state].color %} {{ helper.enums.issue[data.issue.result.0.state].color }}{% endif %} icon-2x pull-left"></i>
+        <small>{{ fob_get('policy', data.issue.result.0.policy_id).name }}</small><br><i class="icon-list-alt"></i> Thema {{data.issue.result.0.id}}
       </h1>
     </div>
 
     <div class="progress" style="height: 2.2em; line-height: 1.1em;">
 
-      {% if data.issue.result[0].state == "canceled_revoked_before_accepted" or data.issue.result[0].state == "canceled_issue_not_accepted" %}
+      {% if data.issue.result.0.state == "canceled_revoked_before_accepted" or data.issue.result.0.state == "canceled_issue_not_accepted" %}
       <div class="bar bar-info" style="width: 25%;">
         <strong>neu</strong><br>
-        {{ data.issue.result[0].created|nicedate("%x", timeago=False) }} - {{ data.issue.result[0].closed|nicedate("%x", timeago=False) }}
+        {{ data.issue.result.0.created|nicedate("%x", timeago=False) }} - {{ data.issue.result.0.closed|nicedate("%x", timeago=False) }}
       </div>
-      {% elif data.issue.result[0].created %}
+      {% elif data.issue.result.0.created %}
       <div class="bar bar-primary" style="width: 25%;">
         <strong>neu</strong><br>
-        {% if data.issue.result[0].accepted %}
-        {{ data.issue.result[0].created|nicedate("%x", timeago=False) }} - {{ data.issue.result[0].accepted|nicedate("%x", timeago=False) }}
+        {% if data.issue.result.0.accepted %}
+        {{ data.issue.result.0.created|nicedate("%x", timeago=False) }} - {{ data.issue.result.0.accepted|nicedate("%x", timeago=False) }}
         {% else %}
-        seit {{ data.issue.result[0].created|nicedate("%x", timeago=False) }}
+        seit {{ data.issue.result.0.created|nicedate("%x", timeago=False) }}
         {% endif %}
       </div>
       {% endif %}
 
-      {% if data.issue.result[0].state == "canceled_after_revocation_during_discussion" %}
+      {% if data.issue.result.0.state == "canceled_after_revocation_during_discussion" %}
       <div class="bar bar-info" style="width: 25%;">
         <strong>Diskussion</strong><br>
-        {{ data.issue.result[0].accepted|nicedate("%x", timeago=False) }} - {{ data.issue.result[0].closed|nicedate("%x", timeago=False) }}
+        {{ data.issue.result.0.accepted|nicedate("%x", timeago=False) }} - {{ data.issue.result.0.closed|nicedate("%x", timeago=False) }}
       </div>
-      {% elif data.issue.result[0].accepted %}
+      {% elif data.issue.result.0.accepted %}
       <div class="bar bar-primary" style="width: 25%;">
         <strong>Diskussion</strong><br>
-        {% if data.issue.result[0].half_frozen %}
-        {{ data.issue.result[0].accepted|nicedate("%x", timeago=False) }} - {{ data.issue.result[0].half_frozen|nicedate("%x", timeago=False) }}
+        {% if data.issue.result.0.half_frozen %}
+        {{ data.issue.result.0.accepted|nicedate("%x", timeago=False) }} - {{ data.issue.result.0.half_frozen|nicedate("%x", timeago=False) }}
         {% else %}
-        seit {{ data.issue.result[0].accepted|nicedate("%x", timeago=False) }}
+        seit {{ data.issue.result.0.accepted|nicedate("%x", timeago=False) }}
         {% endif %}
       </div>
       {% endif %}
 
-      {% if data.issue.result[0].half_frozen %}
+      {% if data.issue.result.0.half_frozen %}
       <div class="bar bar-info" style="width: 25%;">
         <strong>eingefroren</strong><br>
-        {% if data.issue.result[0].fully_frozen %}
-        {{ data.issue.result[0].half_frozen|nicedate("%x", timeago=False) }} - {{ data.issue.result[0].fully_frozen|nicedate("%x", timeago=False) }}
+        {% if data.issue.result.0.fully_frozen %}
+        {{ data.issue.result.0.half_frozen|nicedate("%x", timeago=False) }} - {{ data.issue.result.0.fully_frozen|nicedate("%x", timeago=False) }}
         {% else %}
-        seit {{ data.issue.result[0].half_frozen|nicedate("%x", timeago=False) }}
+        seit {{ data.issue.result.0.half_frozen|nicedate("%x", timeago=False) }}
         {% endif %}
       </div>
       {% endif %}
 
-      {% if data.issue.result[0].state == "canceled_no_initiative_admitted" %}
+      {% if data.issue.result.0.state == "canceled_no_initiative_admitted" %}
       <!-- keine Initiative zugelassen -->
-      {% elif data.issue.result[0].fully_frozen %}
-      {% if data.issue.result[0].state == "finished_with_winner" %}
+      {% elif data.issue.result.0.fully_frozen %}
+      {% if data.issue.result.0.state == "finished_with_winner" %}
       <div class="bar bar-success" style="width: 25%;">
-      {% elif data.issue.result[0].state == "finished_without_winner" %}
+      {% elif data.issue.result.0.state == "finished_without_winner" %}
       <div class="bar bar-danger" style="width: 25%;">
       {% else %}
       <div class="bar bar-warning" style="width: 22%;">
       {% endif %}
         <strong>Abstimmung</strong><br>
-        {% if data.issue.result[0].closed %}
-        {{ data.issue.result[0].fully_frozen|nicedate("%x", timeago=False) }} - {{ data.issue.result[0].closed|nicedate("%x", timeago=False) }}
+        {% if data.issue.result.0.closed %}
+        {{ data.issue.result.0.fully_frozen|nicedate("%x", timeago=False) }} - {{ data.issue.result.0.closed|nicedate("%x", timeago=False) }}
         {% else %}
-        seit {{ data.issue.result[0].fully_frozen|nicedate("%x", timeago=False) }}
+        seit {{ data.issue.result.0.fully_frozen|nicedate("%x", timeago=False) }}
         {% endif %}
       </div>
       {% endif %}
@@ -90,22 +90,22 @@
 
     <h2>Quoren</h2>
     <ul>
-      <li>Grundgesamtheit im Bereich {{ data.issue.result[0].area_id|area(True)|safe }}: {{ data.issue.result[0].population }}</li>
+      <li>Grundgesamtheit im Bereich {{ data.issue.result.0.area_id|area(True)|safe }}: {{ data.issue.result.0.population }}</li>
 
-      <li>Themen-Quorum im Regelwerk {{ data.issue.result[0].policy_id|policy(True)|safe }}: {{  ((data.policy.result[0].issue_quorum_num / data.policy.result[0].issue_quorum_den)*data.issue.result[0].population)|round(0,'ceil')|int }} ({{ ((data.policy.result[0].issue_quorum_num / data.policy.result[0].issue_quorum_den)*100)|round(1) }}% der Grundgesamtheit)</li>
+      <li>Themen-Quorum im Regelwerk {{ data.issue.result.0.policy_id|policy(True)|safe }}: {{  ((data.policy.result.0.issue_quorum_num / data.policy.result.0.issue_quorum_den)*data.issue.result.0.population)|round(0,'ceil')|int }} ({{ ((data.policy.result.0.issue_quorum_num / data.policy.result.0.issue_quorum_den)*100)|round(1) }}% der Grundgesamtheit)</li>
       
-      <li>Initiativen-Quroum im Regelwerk {{ data.issue.result[0].policy_id|policy(True)|safe }}: {{  ((data.policy.result[0].initiative_quorum_num / data.policy.result[0].initiative_quorum_den)*data.issue.result[0].population)|round(0,'ceil')|int }} ({{ ((data.policy.result[0].initiative_quorum_num / data.policy.result[0].initiative_quorum_den)*100)|round(1) }}% der Grundgesamtheit)</li>
+      <li>Initiativen-Quroum im Regelwerk {{ data.issue.result.0.policy_id|policy(True)|safe }}: {{  ((data.policy.result.0.initiative_quorum_num / data.policy.result.0.initiative_quorum_den)*data.issue.result.0.population)|round(0,'ceil')|int }} ({{ ((data.policy.result.0.initiative_quorum_num / data.policy.result.0.initiative_quorum_den)*100)|round(1) }}% der Grundgesamtheit)</li>
       
-      {% if data.issue.result[0].voter_count %}
+      {% if data.issue.result.0.voter_count %}
       <li>
-        Abstimmungsteilnehmer: {{ data.issue.result[0].voter_count }} ({{ ((data.issue.result[0].voter_count / data.issue.result[0].population)*100) | round(1) }}% der Grundgesamtheit)
+        Abstimmungsteilnehmer: {{ data.issue.result.0.voter_count }} ({{ ((data.issue.result.0.voter_count / data.issue.result.0.population)*100) | round(1) }}% der Grundgesamtheit)
       </li>
       {% endif %}
     </ul>
 
     <h2>Initiativen</h2>
 
-    {% if data.issue.result[0].status_quo_schulze_rank %}
+    {% if data.issue.result.0.status_quo_schulze_rank %}
 
     <h3>Abgestimmt</h3>
     <ol>
@@ -159,7 +159,7 @@
       {% else %}
       {% if p.revoked %}
       <span class="label">zurückgezogen</span>
-      {% elif data.issue.result[0].state == "voting" %}
+      {% elif data.issue.result.0.state == "voting" %}
       <span class="label">Quroum nicht erreicht</span>
       {% endif %}
       {% endif %}
@@ -171,48 +171,48 @@
 
     <h2>Historie</h2>
     <ul>
-      {% if data.issue.result[0].created %}
-      <li>neu: {{ data.issue.result[0].created|nicedate(timeago=False) }}</li>
-      {% if not data.issue.result[0].accepted %}
+      {% if data.issue.result.0.created %}
+      <li>neu: {{ data.issue.result.0.created|nicedate(timeago=False) }}</li>
+      {% if not data.issue.result.0.accepted %}
       <li>
-        <strong>Spätestes Ende der Phase neu: {{ data.issue.result[0].created|future_date(fob_get('policy', data.issue.result[0].policy_id).admission_time)|nicedate(timeago=False) }}
-          ({{data.issue.result[0].created|future_date(fob_get('policy', data.issue.result[0].policy_id).admission_time)|mynicedate}})</strong>
+        <strong>Spätestes Ende der Phase neu: {{ data.issue.result.0.created|future_date(fob_get('policy', data.issue.result.0.policy_id).admission_time)|nicedate(timeago=False) }}
+          ({{data.issue.result.0.created|future_date(fob_get('policy', data.issue.result.0.policy_id).admission_time)|mynicedate}})</strong>
       </li>
       {% endif %}
       {% endif %}
 
-      {% if data.issue.result[0].accepted %}
-      <li>in Diskussion: {{ data.issue.result[0].accepted|nicedate(timeago=False) }}</li>
-      {% if not data.issue.result[0].half_frozen %}
+      {% if data.issue.result.0.accepted %}
+      <li>in Diskussion: {{ data.issue.result.0.accepted|nicedate(timeago=False) }}</li>
+      {% if not data.issue.result.0.half_frozen %}
       <li>
-        <strong>Ende der Diskussion: {{ data.issue.result[0].accepted|future_date(fob_get('policy', data.issue.result[0].policy_id).discussion_time)|nicedate(timeago=False) }}
-          ({{data.issue.result[0].accepted|future_date(fob_get('policy', data.issue.result[0].policy_id).discussion_time)|mynicedate}})</strong>
+        <strong>Ende der Diskussion: {{ data.issue.result.0.accepted|future_date(fob_get('policy', data.issue.result.0.policy_id).discussion_time)|nicedate(timeago=False) }}
+          ({{data.issue.result.0.accepted|future_date(fob_get('policy', data.issue.result.0.policy_id).discussion_time)|mynicedate}})</strong>
       </li>
       {% endif %}
       {% endif %}
 
-      {% if data.issue.result[0].half_frozen %}
-      <li>eingefroren: {{ data.issue.result[0].half_frozen|nicedate(timeago=False) }}</li>
-      {% if not data.issue.result[0].fully_frozen %}
+      {% if data.issue.result.0.half_frozen %}
+      <li>eingefroren: {{ data.issue.result.0.half_frozen|nicedate(timeago=False) }}</li>
+      {% if not data.issue.result.0.fully_frozen %}
       <li>
-        <strong>Ende der Phase: {{ data.issue.result[0].half_frozen|future_date(fob_get('policy', data.issue.result[0].policy_id).verification_time)|nicedate(timeago=False) }}
-        ({{ data.issue.result[0].half_frozen|future_date(fob_get('policy', data.issue.result[0].policy_id).verification_time)|mynicedate }})</strong>
+        <strong>Ende der Phase: {{ data.issue.result.0.half_frozen|future_date(fob_get('policy', data.issue.result.0.policy_id).verification_time)|nicedate(timeago=False) }}
+        ({{ data.issue.result.0.half_frozen|future_date(fob_get('policy', data.issue.result.0.policy_id).verification_time)|mynicedate }})</strong>
       </li>
       {% endif %}
       {% endif %}
 
-      {% if data.issue.result[0].fully_frozen %}
-      <li>Beginn der Abstimmung: {{ data.issue.result[0].fully_frozen|nicedate(timeago=False) }}</li>
-      {% if not data.issue.result[0].closed %}
+      {% if data.issue.result.0.fully_frozen %}
+      <li>Beginn der Abstimmung: {{ data.issue.result.0.fully_frozen|nicedate(timeago=False) }}</li>
+      {% if not data.issue.result.0.closed %}
       <li>
-        <strong>Ende der Abstimmung: {{ data.issue.result[0].fully_frozen|future_date(fob_get('policy', data.issue.result[0].policy_id).voting_time)|nicedate(timeago=False) }}
-          ({{ data.issue.result[0].fully_frozen|future_date(fob_get('policy', data.issue.result[0].policy_id).voting_time)|mynicedate }})</strong>
+        <strong>Ende der Abstimmung: {{ data.issue.result.0.fully_frozen|future_date(fob_get('policy', data.issue.result.0.policy_id).voting_time)|nicedate(timeago=False) }}
+          ({{ data.issue.result.0.fully_frozen|future_date(fob_get('policy', data.issue.result.0.policy_id).voting_time)|mynicedate }})</strong>
       </li>
       {% endif %}
       {% endif %}
 
-      {% if data.issue.result[0].closed %}
-      <li>geschlossen: {{ data.issue.result[0].closed|nicedate(timeago=False) }}</li>
+      {% if data.issue.result.0.closed %}
+      <li>geschlossen: {{ data.issue.result.0.closed|nicedate(timeago=False) }}</li>
       {% endif %}
     </ul>
 

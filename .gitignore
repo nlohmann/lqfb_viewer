@@ -5,6 +5,7 @@ app/static/tablesorter
 app/static/jquery
 app/static/jQuery.PrettyTextDiff
 app/static/Chart.js
+app/static/d3
 
 # installed binaries
 components

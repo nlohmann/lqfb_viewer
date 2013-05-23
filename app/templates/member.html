@@ -1,23 +1,23 @@
 {% extends "_base.html" %}
 
-{% block title %}LQFB › Mitglieder › {% if data.member.result[0].name %}{{ data.member.result[0].name }}{% else %}Mitglied {{ data.member.result[0].id }}{% endif %}{% endblock %}
+{% block title %}LQFB › Mitglieder › {% if data.member.result.0.name %}{{ data.member.result.0.name }}{% else %}Mitglied {{ data.member.result.0.id }}{% endif %}{% endblock %}
 
 {% block navigation %}
 {{ super() }}
   <ul class="breadcrumb">
     <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
     <li><a href="/mitglieder">Mitglieder</a> <span class="divider">/</span></li>
-    {% if data.member.result[0].name %}
-    <li class="active">{{ data.member.result[0].name }}</li>
+    {% if data.member.result.0.name %}
+    <li class="active">{{ data.member.result.0.name }}</li>
     {% else %}
-    <li class="active">Mitglied {{ data.member.result[0].id }}</li>
+    <li class="active">Mitglied {{ data.member.result.0.id }}</li>
     {% endif %}
   </ul>
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
-      <h1><small>Mitglied Nr. {{ data.member.result.0.id }}</small><br>{{ data.member.result.0.id|avatar|safe }} {{ data.member.result[0].name }}</h1>
+      <h1><small>Mitglied Nr. {{ data.member.result.0.id }}</small><br>{{ data.member.result.0.id|avatar|safe }} {{ data.member.result.0.name }}</h1>
     </div>
 
     {% for pic in data.member_image.result if pic.image_type == "photo" %}
@@ -219,7 +219,7 @@
     
     <h3>Sonstiges</h3>
     <ul>
-    {% for p in data.event.result if p.member_id == data.member.result[0].id %}
+    {% for p in data.event.result if p.member_id == data.member.result.0.id %}
     <li><i class="{{ helper.enums.event[p.event].icon }}"></i> {{ helper.enums.event[p.event].name }}
       {% if p.initiative_id %}
       zu {{ p.initiative_id|initiative(True)|safe }} in

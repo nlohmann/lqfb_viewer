@@ -14,7 +14,7 @@ class APIData(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     endpoint = db.Column(db.Text, primary_key = True)
     payload = db.Column(db.Text)
-    
+
     def __repr__(self):
         return '<APIData %r %s>' % (self.id, self.endpoint)
 
@@ -25,3 +25,11 @@ class Timestamp(db.Model):
 
     def __repr__(self):
         return '<Timestamp %s %r>' % (self.endpoint, self.id)
+
+
+class KeyValue(db.Model):
+    key = db.Column(db.Text, primary_key = True)
+    value = db.Column(db.Text)
+    
+    def __repr__(self):
+        return '<KeyValue %s %s>' % (self.key, self.value)

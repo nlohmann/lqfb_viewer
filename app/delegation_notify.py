@@ -1,60 +1,66 @@
 # -*- coding: utf-8 -*-
 from app import helper, cache, app, models, db
 from utils import api_load, api_load_all
+from emails import send_email
+from flask import render_template, session
 import json
 import urllib
 import urllib2
 
+def delegation_notify(notifications, session):
+    ctx = app.test_request_context()
+    ctx.push()
+    send_email('[LQFB] Delegationen', app.config['ADMINS'][0], ['niels.lohmann@piraten-mv.de'],
+        render_template('delegations_email.txt', notifications=notifications),
+        render_template('delegations_email.html', notifications=notifications))
+
 def process_delegation_difference():
-    def new_delegation(dele):
-        result = "NEUE DELEGATION: Mitglied %d delegiert nun auf Mitglied %d" % (dele['truster_id'], dele['trustee_id'])
-        return result
+    def getSession():
+        # get the members
+        u = models.Member.query.all()
+        if u == []:
+            return
 
-    def deleted_delegation(dele):
-        result = "GELÖSCHTE DELEGATION: Mitglied %d delegiert nicht mehr auf Mitglied %d" % (dele['truster_id'], dele['trustee_id'])
-        return result
+        # get a session key
+        url = app.config['LQFB_API'] + '/session'
+        data = {'key': u[0].api_key}
+        rq = json.load(urllib2.urlopen(url, urllib.urlencode(data)))
 
-    def changed_delgation(old, new):
-        if old['truster_id'] != new['truster_id']:
-            return "error"
+        # use the session key
+        session = dict()
+        session['session_key'] = rq['session_key']
+        return session
 
-        if new['trustee_id'] == None:
-            return deleted_delegation(old)
-
-        result = "GEÄNDERTE DELEGATION: Mitglied %d delegiert nun auf Mitglied %d (statt zuvor auf Mitglied %d)" % (old['truster_id'], new['trustee_id'], old['trustee_id'])
-        return result
-    
-    added_delegations, removed_delegations = diff_delegations()
-
-    if added_delegations == [] and removed_delegations == []:
+    session = getSession()
+    if session == None:
         return
-    
+
+    added_delegations, removed_delegations = get_delegation_diff(session)
+
+    if added_delegations == {} and removed_delegations == {}:
+        return
+
+    notifications = dict()
+    notifications['new'] = list()
+    notifications['removed'] = list()
+    notifications['changed'] = list()
+
     for key, value in added_delegations.iteritems():
         if key in removed_delegations:
-            print changed_delgation(removed_delegations[key], added_delegations[key])
+            if added_delegations[key]['trustee_id'] == None:
+                notifications['removed'].append(removed_delegations[key])
+            else:
+                notifications['changed'].append((removed_delegations[key], added_delegations[key]))
         else:
-            print new_delegation(added_delegations[key])
+            notifications['new'].append(added_delegations[key])
 
     for key, value in removed_delegations.iteritems():
         if not key in added_delegations:
-            print removed_delegations(removed_delegations[key])
+            notifications['removed'].append(removed_delegations[key])
 
+    delegation_notify(notifications, session)
 
-def diff_delegations():
-    # get the members
-    u = models.Member.query.all()
-    if u == None:
-        return {}, {}
-
-    # get a session key
-    url = app.config['LQFB_API'] + '/session'
-    data = {'key': u[0].api_key}
-    rq = json.load(urllib2.urlopen(url, urllib.urlencode(data)))
-
-    # use the session key
-    session = dict()
-    session['session_key'] = rq['session_key']
-
+def get_delegation_diff(session):
     # get current delegations
     current_delegation = api_load('/delegation', session=session)
     current_delegation = current_delegation['result']

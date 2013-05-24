@@ -1,0 +1,54 @@
+<p>Hallo,</p>
+
+<p>es gibt folgende Änderungen in den Delegationen:</p>
+
+<ul>
+{% for delegation in notifications.new %}
+<li>
+  Mitglied {{delegation.truster_id}} delegiert nun
+  {% if delegation.unit_id %}
+  in der Gliederung '{{ delegation.unit_id|unit(False,False) }}'
+  {% endif %}
+  {% if delegation.area_id %}
+  im Themebereich '{{ delegation.area_id|area(False,False) }}'
+  {% endif %}
+  {% if delegation.issue_id %}
+  im Thema '{{ delegation.issue_id|issue(False,False) }}'
+  {% endif %}
+  auf Mitglied {{delegation.trustee_id}}.
+</li>
+{% endfor %}
+{% for delegation in notifications.changed %}
+<li>
+  Mitglied {{delegation.0.truster_id}} delegiert nun
+  {% if delegation.unit_id %}
+  in der Gliederung '{{ delegation.unit_id|unit(False,False) }}'
+  {% endif %}
+  {% if delegation.area_id %}
+  im Themebereich '{{ delegation.area_id|area(False,False) }}'
+  {% endif %}
+  {% if delegation.issue_id %}
+  im Thema '{{ delegation.issue_id|issue(False,False) }}'
+  {% endif %}
+  auf Mitglied {{delegation.1.trustee_id}} (vorher: Mitglied {{delegation.0.trustee_id}}).
+</li>
+{% endfor %}
+{% for delegation in notifications.removed %}
+<li>
+  Mitglied {{delegation.truster_id}} delegiert nicht mehr
+  {% if delegation.unit_id %}
+  in der Gliederung '{{ delegation.unit_id|unit(False,False) }}'
+  {% endif %}
+  {% if delegation.area_id %}
+  im Themebereich '{{ delegation.area_id|area(False,False) }}'
+  {% endif %}
+  {% if delegation.issue_id %}
+  im Thema '{{ delegation.issue_id|issue(False,False) }}'
+  {% endif %}
+  auf Mitglied {{delegation.trustee_id}}.
+</li>
+{% endfor %}
+</ul>
+
+<p>Beste Grüße,<br>
+Niels.</p>

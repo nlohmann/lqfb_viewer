@@ -64,9 +64,9 @@ LQFB_API = 'https://api-smvmv.lqpp.de'
 #--------#
 
 # the databases
-BROKER_URL = 'sqla+sqlite:///' + os.path.join(basedir, 'celery_broker.db')
+BROKER_URL = 'sqla+sqlite:///' + os.path.join(basedir, 'app.db')
 CELERY_RESULT_BACKEND = 'database'
-CELERY_RESULT_DBURI = 'sqlite:///' + os.path.join(basedir, 'celery_result.db')
+CELERY_RESULT_DBURI = 'sqlite:///' + os.path.join(basedir, 'app.db')
 
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

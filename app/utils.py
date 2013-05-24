@@ -117,12 +117,8 @@ def db_load(endpoint, q=None):
     return result
 
 
-#################
-# FOB-INTERFACE #
-#################
-
-def fob_store(objects, endpoint):
-    for element in objects:
+def db_store(endpoint, payload):
+    for element in payload:
         u = models.APIData.query.get((element['id'], endpoint))
         if u == None:
             u = models.APIData(id=element['id'], endpoint=endpoint, payload=json.dumps(element))
@@ -133,16 +129,6 @@ def fob_store(objects, endpoint):
     db.session.commit()
 
 
-def fob_get(endpoint, id):
-    u = models.APIData.query.get((id, endpoint))
-
-    if u == None:
-        fob_update()
-        u = models.APIData.query.get((id, endpoint))
-
-    return json.loads(u.payload)
-
-
 ##############
 # DB-UPDATES #
 ##############
@@ -150,23 +136,28 @@ def fob_get(endpoint, id):
 def regular_update():
     # These information are seldomly updated, and new data cannot be detected any other way than by a regular forced update. This function should be called each time the server is started, and periodically every hour.
     
+    elements = 0
+    
     # info (only maximal row limit is interesting)
     data = api_load('/info')
     helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
 
     # unit
     data = api_load('/unit')
-    fob_store(data['result'], 'unit')
+    db_store(endpoint='unit', payload=data['result'])
+    elements += len(data['result'])
 
     # policies
     data = api_load('/policy')
-    fob_store(data['result'], 'policy')
+    db_store(endpoint='policy', payload=data['result'])
+    elements += len(data['result'])
 
     # areas
     data = api_load('/area')
-    fob_store(data['result'], 'area')
+    db_store(endpoint='area', payload=data['result'])
+    elements += len(data['result'])
 
-    print '[] regular DB update complete'
+    return elements
 
 def cascaded_update():
     # info (only maximal row limit is interesting)
@@ -202,7 +193,7 @@ def cascaded_update():
     db.session.commit()
 
     # store new events
-    fob_store(todo_events, 'event')
+    db_store(endpoint='event', payload=todo_events)
 
     # collect issues and initiatives that have changed
     todo_issues = set()
@@ -217,18 +208,18 @@ def cascaded_update():
     # query and store new issues
     if len(todo_issues) > 0:
         data = api_load('/issue', q={'issue_id': ",".join(str(x) for x in todo_issues)})
-        fob_store(data['result'], 'issue')
+        db_store(endpoint='issue', payload=data['result'])
 
     # query and store new initiatives, drafts, and suggestions
     if len(todo_initiatives) > 0:
         data = api_load('/initiative', q={'initiative_id': ",".join(str(x) for x in todo_initiatives)})
-        fob_store(data['result'], 'initiative')
+        db_store(endpoint='initiative', payload=data['result'])
         data = api_load('/draft', q={'initiative_id': ",".join(str(x) for x in todo_initiatives), 'render_content': 'html'})
-        fob_store(data['result'], 'draft')
+        db_store(endpoint='draft', payload=data['result'])
         data = api_load('/suggestion', q={'initiative_id': ",".join(str(x) for x in todo_initiatives), 'rendered_content': 'html'})
-        fob_store(data['result'], 'suggestion')
+        db_store(endpoint='suggestion', payload=data['result'])
 
-    print '[] processed ', len(todo_events), 'new events'
+    return len(todo_events)
 
 
 def fob_update():
@@ -244,16 +235,16 @@ def fob_update():
 
     # issues
     data = api_load_all('/issue')
-    fob_store(data['result'], 'issue')
+    db_store(endpoint='issue', payload=data['result'])
 
     # initiatives
     data = api_load_all('/initiative')
-    fob_store(data['result'], 'initiative')
+    db_store(endpoint='initiative', payload=data['result'])
 
     # suggestions
     data = api_load_all('/suggestion', q={'rendered_content': 'html'})
-    fob_store(data['result'], 'suggestion')
+    db_store(endpoint='suggestion', payload=data['result'])
 
     # events
     data = api_load_all('/event')
-    fob_store(data['result'], 'event')
+    db_store(endpoint='event', payload=data['result'])

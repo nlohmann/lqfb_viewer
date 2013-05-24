@@ -3,7 +3,7 @@ from flask import session
 from markupsafe import Markup
 
 from app import app, helper
-from utils import api_load, fob_get
+from utils import api_load, db_load
 
 from math import ceil
 from datetime import datetime
@@ -107,7 +107,7 @@ def issue_filter(issue_id, link=False, icon=True):
 @app.template_filter('area')
 def area_filter(area_id, link=False, icon=True):
     # get name
-    result = fob_get('area', area_id)['name']
+    result = db_load('/area', q={'area_id': area_id})['result'][0]['name']
 
     # add link
     if link:
@@ -122,7 +122,7 @@ def area_filter(area_id, link=False, icon=True):
 @app.template_filter('suggestion')
 def suggestion_filter(suggestion_id, icon=True):
     # get name
-    result = fob_get('suggestion', suggestion_id)['name']
+    result = db_load('/suggestion', q={'suggestion_id': suggestion_id})['result'][0]['name']
 
     # add icon
     if icon:
@@ -133,7 +133,7 @@ def suggestion_filter(suggestion_id, icon=True):
 @app.template_filter('policy')
 def policy_filter(policy_id, link=False, icon=True):
     # get name
-    result = fob_get('policy', policy_id)['name']
+    result = db_load('/policy', q={'policy_id': policy_id})['result'][0]['name']
 
     # add link
     if link:
@@ -148,7 +148,7 @@ def policy_filter(policy_id, link=False, icon=True):
 @app.template_filter('unit')
 def unit_filter(unit_id, link=False, icon=True):
     # get name
-    result = fob_get('unit', unit_id)['name']
+    result = db_load('/unit', q={'unit_id': unit_id})['result'][0]['name']
 
     # add link
     if link:
@@ -167,7 +167,7 @@ def initiative_filter(initiative_id, link=False, icon=True):
         return "Status Quo"
     
     # get name
-    result = fob_get('initiative', initiative_id)['name']
+    result = db_load('/initiative', q={'initiative_id': initiative_id})['result'][0]['name']
 
     # add link
     if link:
@@ -185,8 +185,8 @@ def quorum_filter(issue_id):
     """
     a filter to return the quorum of a given issue
     """
-    issue = fob_get('issue', issue_id)
-    policy = fob_get('policy', issue['policy_id'])
+    issue = db_load('/issue', q={'issue_id': issue_id})['result'][0]
+    policy = db_load('/policy', q={'policy_id': issue['policy_id']})['result'][0]
 
     return int(ceil((float(policy['initiative_quorum_num']) / float(policy['initiative_quorum_den'])) * issue['population']))
 
@@ -220,7 +220,7 @@ def delegation_filter(weight):
 # This filter creates percentages of the times of the four phases of a policy. These percentages can be used in a bar graph depciting the time phases. The script assumes a policy_id and the name of a phase is given. The result is a number between 0.0 and 100.0, though it is limited for each phase such that it does not exceed a certain factor.
 @app.template_filter('policy_time_bars')
 def policy_time_bars_filter(policy_id, phase):
-    p = fob_get('policy', policy_id)
+    p = db_load('/policy', q={'policy_id': policy_id})['result'][0]
     result = dict()
 
     result['admission_time'] = 0
@@ -290,7 +290,7 @@ def policy_time_bars_filter(policy_id, phase):
 # A filter to return the length of a policy's phase.
 @app.template_filter('policy_time')
 def policy_time_filter(policy_id, phase):
-    p = fob_get('policy', policy_id)
+    p = db_load('/policy', q={'policy_id': policy_id})['result'][0]
 
     if 'minutes' in p[phase]:
         return "%d Minuten" % p[phase]['minutes'] 
@@ -322,7 +322,7 @@ def future_date_filter(_base, _offset):
 # A filter to calculate the end of a given phase of a policy.
 @app.template_filter('end_of_phase')
 def end_of_phase_filter(policy_id, phase):
-    p = fob_get('policy', policy_id)
+    p = db_load('/policy', q={'policy_id': policy_id})['result'][0]
     thisdate=datetime.now(tz=pytz.timezone('Europe/Berlin'))
 
     end_of = dict()

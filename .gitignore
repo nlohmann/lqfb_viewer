@@ -16,8 +16,6 @@ virtualenv.py
 # data base
 app.db
 db_repository
-celery_broker.db
-celery_result.db
 celerybeat-schedule
 
 # temporary files

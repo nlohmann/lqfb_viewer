@@ -51,7 +51,7 @@ veryclean: clean
 app.db:
 	./db_create.py
 
-dbclean:
+db_clean:
 	rm -fr db_repository app.db
 
 serve:
@@ -61,7 +61,7 @@ celery:
 	venv/bin/celery worker -A app.tasks -B --loglevel=info
 
 celery_clean:
-	rm -fr celerybeat-schedule celery_broker.db celery_result.db
+	rm -fr celerybeat-schedule
 
 check:
 	./test.py

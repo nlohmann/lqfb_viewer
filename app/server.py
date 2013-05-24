@@ -9,9 +9,8 @@ import urllib2
 from flask import render_template, request, Response, session, flash, abort
 from app import app, helper, models, db
 from emails import send_email
-from utils import api_load, api_load_all, fob_update, fob_get, db_load
+from utils import api_load, api_load_all, fob_update, db_load
 from ical import create_ical
-import filter
 
 # Wochenschau
 from datetime import datetime, date, timedelta
@@ -22,34 +21,31 @@ import iso8601
 # INITIALIZER #
 ###############
 
-def fix_path():
-    """
-    create a path prefix
-    """
-    if os.path.dirname(__file__) == "":
-        return ""
-    else:
-        return os.path.dirname(__file__) + "/"
-
 @app.before_first_request
 def prepare():
     """
     preload certain information for convenience
     """
 
+    def fix_path():
+        """
+        create a path prefix
+        """
+        if os.path.dirname(__file__) == "":
+            return ""
+        else:
+            return os.path.dirname(__file__) + "/"
+
     # load enums
     enums_file = fix_path() + 'enums.json'
     print('+ loading enums from ' + enums_file + '...')
     helper['enums'] = json.load(open(enums_file))
 
-    # number of http requests
-    helper['requests'] = 0
-
     # initialize the FOB
     fob_update()
 
-    # register the fob_get functions for Jinja templates
-    app.jinja_env.globals.update(fob_get=fob_get)
+    # register the db_load function for Jinja templates
+    app.jinja_env.globals.update(db_load=db_load)
 
     print "[] up and running..."
 

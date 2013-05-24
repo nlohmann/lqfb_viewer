@@ -109,7 +109,7 @@ $(function(){
         {% for p in data.result %}
         <tr>
           <td><a href="/themen/{{p.id}}">{{p.id}}</a></td>
-          <td>{{ fob_get('area', p.area_id).unit_id|unit(True)|safe }}
+          <td>{{ db_load('/area', q={'area_id': p.area_id}).result.0.unit_id|unit(True)|safe }}
           <td>{{ p.area_id|area(True)|safe }}</td>
           <td>{{ p.policy_id|policy(True)|safe }}</td>
           <td>

@@ -210,7 +210,7 @@ ol#timeline li i { color: #888; }
 
 <ol id="timeline">
   {% for p in data.event.result | sort(reverse=True,attribute='occurrence') %}
-  <li class="{{p.state}} {{p.event}}{% if fob_get('issue', p.issue_id).closed %} closed_issue{% else %} open_issue{% endif %}">
+  <li class="{{p.state}} {{p.event}}{% if db_load('/issue', q={'issue_id': p.issue_id}).result.0.closed %} closed_issue{% else %} open_issue{% endif %}">
     <div class="time">
       {{ p.occurrence|mynicedate|safe }}
     </div>

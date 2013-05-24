@@ -50,7 +50,10 @@ def process_delegation_difference():
             if added_delegations[key]['trustee_id'] == None:
                 notifications['removed'].append(removed_delegations[key])
             else:
-                notifications['changed'].append((removed_delegations[key], added_delegations[key]))
+                if removed_delegations[key]['trustee_id'] == None:
+                    notifications['new'].append(added_delegations[key])
+                else:
+                    notifications['changed'].append((removed_delegations[key], added_delegations[key]))
         else:
             notifications['new'].append(added_delegations[key])
 

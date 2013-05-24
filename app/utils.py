@@ -157,6 +157,11 @@ def regular_update():
     db_store(endpoint='area', payload=data['result'])
     elements += len(data['result'])
 
+    # suggestions
+    data = api_load_all('/suggestion', q={'rendered_content': 'html'})
+    db_store(endpoint='suggestion', payload=data['result'])
+    elements += len(data['result'])
+
     return elements
 
 def cascaded_update():

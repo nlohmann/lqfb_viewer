@@ -84,6 +84,11 @@ CELERYBEAT_SCHEDULE = {
         'schedule': timedelta(minutes=5),
         'args': ()
     },
+    'delegations_notifications': {
+        'task': 'app.tasks.c_delegation_notification',
+        'schedule': timedelta(minutes=5),
+        'args': ()
+    }
 }
 
 # which tasks are allowed?

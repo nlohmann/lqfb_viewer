@@ -258,9 +258,9 @@ ol#timeline li i { color: #888; }
       {% elif p.state == "finished_without_winner" %}
       Die Abstimmung von {{p.issue_id|issue(True)|safe}} wurde <strong>ohne einen Gewinner</strong> beendet.
       {% elif p.state == "canceled_revoked_before_accepted" %}
-      {{p.issue_id|issue(True)|safe}} wurde in der Neu-Phase <strong>abgebrochen</strong>.
+      {{p.issue_id|issue(True)|safe}} wurde in der Neu-Phase <strong>abgebrochen</strong>, da alle Initiativen zurückgezogen wurden.
       {% else %}
-      Der Zustand von {{p.issue_id|issue(True)|safe}} hat sich zu <strong>{{ p.state }}</strong> geändert.
+      {{p.issue_id|issue(True)|safe}} wurde in der Diskussionsphase <strong>abgebrochen</strong>, da alle Initiativen zurückgezogen wurden.
       {% endif %}
         
       {% else %}

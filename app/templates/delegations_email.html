@@ -13,7 +13,7 @@
   im Themebereich '{{ delegation.area_id|area(False,False) }}'
   {% endif %}
   {% if delegation.issue_id %}
-  im Thema '{{ delegation.issue_id|issue(False,False) }}'
+  im Thema '{{ delegation.issue_id|issue(False,False)|safe }}'
   {% endif %}
   auf Mitglied {{delegation.trustee_id}}.
 </li>
@@ -28,7 +28,7 @@
   im Themebereich '{{ delegation.area_id|area(False,False) }}'
   {% endif %}
   {% if delegation.issue_id %}
-  im Thema '{{ delegation.issue_id|issue(False,False) }}'
+  im Thema '{{ delegation.issue_id|issue(False,False)|safe }}'
   {% endif %}
   auf Mitglied {{delegation.1.trustee_id}} (vorher: Mitglied {{delegation.0.trustee_id}}).
 </li>
@@ -43,7 +43,7 @@
   im Themebereich '{{ delegation.area_id|area(False,False) }}'
   {% endif %}
   {% if delegation.issue_id %}
-  im Thema '{{ delegation.issue_id|issue(False,False) }}'
+  im Thema '{{ delegation.issue_id|issue(False,False)|safe }}'
   {% endif %}
   auf Mitglied {{delegation.trustee_id}}.
 </li>

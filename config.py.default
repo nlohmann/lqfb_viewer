@@ -81,12 +81,12 @@ CELERYBEAT_SCHEDULE = {
     },
     'frequent_db_update': {
         'task': 'app.tasks.c_cascaded_update',
-        'schedule': timedelta(minutes=5),
+        'schedule': timedelta(minutes=1),
         'args': ()
     },
     'delegations_notifications': {
         'task': 'app.tasks.c_delegation_notification',
-        'schedule': timedelta(minutes=5),
+        'schedule': timedelta(minutes=1),
         'args': ()
     }
 }

@@ -76,7 +76,7 @@ CELERY_ENABLE_UTC = True
 CELERYBEAT_SCHEDULE = {
     'regular_db_update': {
         'task': 'app.tasks.c_regular_update',
-        'schedule': timedelta(minutes=30),
+        'schedule': timedelta(minutes=5),
         'args': ()
     },
     'frequent_db_update': {

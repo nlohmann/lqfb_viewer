@@ -119,12 +119,14 @@ def db_load(endpoint, q=None):
 
 def db_store(endpoint, payload):
     for element in payload:
-        u = models.APIData.query.get((element['id'], endpoint))
+        id = element['id']
+        payload = json.dumps(element)
+        u = models.APIData.query.get((id, endpoint))
         if u == None:
-            u = models.APIData(id=element['id'], endpoint=endpoint, payload=json.dumps(element))
+            u = models.APIData(id=id, endpoint=endpoint, payload=payload)
             db.session.add(u)
         else:
-            u.endpoint=endpoint
+            u.payload=payload
 
     db.session.commit()
 
@@ -160,6 +162,16 @@ def regular_update():
     # suggestions
     data = api_load_all('/suggestion', q={'rendered_content': 'html'})
     db_store(endpoint='suggestion', payload=data['result'])
+    elements += len(data['result'])
+
+    # open issues
+    data = api_load_all('/issue', q={'issue_closed': 0})
+    db_store(endpoint='issue', payload=data['result'])
+    elements += len(data['result'])
+
+    # open initiatives
+    data = api_load_all('/initiative', q={'issue_closed': 0})
+    db_store(endpoint='initiative', payload=data['result'])
     elements += len(data['result'])
 
     return elements

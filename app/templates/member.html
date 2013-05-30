@@ -286,7 +286,7 @@
 
     <h3>Keine Teilnahme trotz Interesse</h3>
     <ul>
-      {% for p in data.interest.result if db_load('/issue', q={'issue_id': p.issue_id}).result.0.closed %}
+      {% for p in data.interest.result if db_load('/issue', q={'issue_id': p.issue_id}).result.0.status_quo_schulze_rank %}
       {% for p2 in data.vote.result if p.issue_id == p2.issue_id %}
       {% else %}
       {% for p3 in data.delegating_voter.result if p.issue_id == p3.issue_id %}

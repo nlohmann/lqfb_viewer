@@ -22,71 +22,100 @@
       </h1>
     </div>
 
-    <div class="progress" style="height: 2.2em; line-height: 1.1em;">
-
-      {% if data.issue.result.0.state == "canceled_revoked_before_accepted" or data.issue.result.0.state == "canceled_issue_not_accepted" %}
-      <div class="bar bar-info" style="width: 25%;">
-        <strong>neu</strong><br>
-        {{ data.issue.result.0.created|nicedate("%x", timeago=False) }} - {{ data.issue.result.0.closed|nicedate("%x", timeago=False) }}
-      </div>
-      {% elif data.issue.result.0.created %}
-      <div class="bar bar-primary" style="width: 25%;">
-        <strong>neu</strong><br>
-        {% if data.issue.result.0.accepted %}
-        {{ data.issue.result.0.created|nicedate("%x", timeago=False) }} - {{ data.issue.result.0.accepted|nicedate("%x", timeago=False) }}
+    <div style="width: calc(100% - 4em); width: -moz-calc(100% - 4em); width: -webkit-calc(100% - 4em);">
+    <div class="progress" style="background: none; border: none; box-shadow: none; -moz-box-shadow: none; height: 1.5em; line-height: 1.1em;">
+      <div class="bar bar-info" style="text-shadow: none; font-size: 1em; box-shadow: none; -moz-box-shadow: none;  background: none; color: #000; width: {{data.issue.result.0.policy_id|policy_time_bars('admission_time')}}%;">
+        {% if data.issue.result.0.state == 'admission' %}
+        <strong>neu</strong>
         {% else %}
-        seit {{ data.issue.result.0.created|nicedate("%x", timeago=False) }}
+        neu
         {% endif %}
       </div>
-      {% endif %}
-
-      {% if data.issue.result.0.state == "canceled_after_revocation_during_discussion" %}
-      <div class="bar bar-info" style="width: 25%;">
-        <strong>Diskussion</strong><br>
-        {{ data.issue.result.0.accepted|nicedate("%x", timeago=False) }} - {{ data.issue.result.0.closed|nicedate("%x", timeago=False) }}
-      </div>
-      {% elif data.issue.result.0.accepted %}
-      <div class="bar bar-primary" style="width: 25%;">
-        <strong>Diskussion</strong><br>
-        {% if data.issue.result.0.half_frozen %}
-        {{ data.issue.result.0.accepted|nicedate("%x", timeago=False) }} - {{ data.issue.result.0.half_frozen|nicedate("%x", timeago=False) }}
+      <div class="bar bar-info" style="text-shadow: none; font-size: 1em; box-shadow: none; -moz-box-shadow: none;  background: none; color: #000; width: {{data.issue.result.0.policy_id|policy_time_bars('discussion_time')}}%;">
+        {% if data.issue.result.0.state == 'discussion' %}
+        <strong>Diskussion</strong>
         {% else %}
-        seit {{ data.issue.result.0.accepted|nicedate("%x", timeago=False) }}
+        Diskussion
         {% endif %}
       </div>
-      {% endif %}
-
-      {% if data.issue.result.0.half_frozen %}
-      <div class="bar bar-info" style="width: 25%;">
-        <strong>eingefroren</strong><br>
-        {% if data.issue.result.0.fully_frozen %}
-        {{ data.issue.result.0.half_frozen|nicedate("%x", timeago=False) }} - {{ data.issue.result.0.fully_frozen|nicedate("%x", timeago=False) }}
+      <div class="bar bar-info" style="text-shadow: none; font-size: 1em; box-shadow: none; -moz-box-shadow: none;  background: none; color: #000; width: {{data.issue.result.0.policy_id|policy_time_bars('verification_time')}}%;">
+        {% if data.issue.result.0.state == 'verification' %}
+        <strong>eingefroren</strong>
         {% else %}
-        seit {{ data.issue.result.0.half_frozen|nicedate("%x", timeago=False) }}
+        eingefroren
         {% endif %}
       </div>
-      {% endif %}
-
-      {% if data.issue.result.0.state == "canceled_no_initiative_admitted" %}
-      <!-- keine Initiative zugelassen -->
-      {% elif data.issue.result.0.fully_frozen %}
-      {% if data.issue.result.0.state == "finished_with_winner" %}
-      <div class="bar bar-success" style="width: 25%;">
-      {% elif data.issue.result.0.state == "finished_without_winner" %}
-      <div class="bar bar-danger" style="width: 25%;">
-      {% else %}
-      <div class="bar bar-warning" style="width: 22%;">
-      {% endif %}
-        <strong>Abstimmung</strong><br>
-        {% if data.issue.result.0.closed %}
-        {{ data.issue.result.0.fully_frozen|nicedate("%x", timeago=False) }} - {{ data.issue.result.0.closed|nicedate("%x", timeago=False) }}
+      <div class="bar bar-info" style="text-shadow: none; font-size: 1em; box-shadow: none; -moz-box-shadow: none;  background: none; color: #000; width: {{data.issue.result.0.policy_id|policy_time_bars('voting_time')}}%;">
+        {% if data.issue.result.0.state == 'voting' %}
+        <strong>Abstimmung</strong>
         {% else %}
-        seit {{ data.issue.result.0.fully_frozen|nicedate("%x", timeago=False) }}
+        Abstimmung
         {% endif %}
       </div>
-      {% endif %}
     </div>
 
+    <div class="progress" style="height: 2em; margin-top: -1.5em;">
+
+      <!-- neu -->
+      {% if data.issue.result.0.created and not data.issue.result.0.accepted %}
+      <div class="bar bar-primary" style="width: {{data.issue.result.0.id|issue_progress * data.issue.result.0.policy_id|policy_time_bars('admission_time') /100 }}%;"></div>
+      {% else %}
+      <div class="bar bar-primary" style="width: {{data.issue.result.0.policy_id|policy_time_bars('admission_time') }}%;"></div>
+      {% endif %}
+
+      <div class="bar bar-border-right"></div>
+
+      <!-- Diskussion -->
+      {% if data.issue.result.0.accepted %}
+      {% if not data.issue.result.0.half_frozen %}
+      <div class="bar bar-primary" style="width: {{data.issue.result.0.id|issue_progress * data.issue.result.0.policy_id|policy_time_bars('discussion_time') /100 }}%;"></div>
+      <div class="bar bar-transparent" style="width: {{(100 - data.issue.result.0.id|issue_progress) * data.issue.result.0.policy_id|policy_time_bars('discussion_time') /100 }}%;"></div>
+      {% else %}
+      <div class="bar bar-primary" style="width: {{data.issue.result.0.policy_id|policy_time_bars('discussion_time') }}%;"></div>
+      {% endif %}
+      {% endif %}
+
+      <div class="bar bar-border-right"></div>
+
+      <!-- eingefroren -->
+      {% if data.issue.result.0.half_frozen %}
+      {% if not data.issue.result.0.fully_frozen %}
+      <div class="bar bar-info" style="width: {{data.issue.result.0.id|issue_progress * data.issue.result.0.policy_id|policy_time_bars('verification_time') /100.0 }}%;"></div>
+      <div class="bar bar-transparent" style="width: {{(100.0 - data.issue.result.0.id|issue_progress) * data.issue.result.0.policy_id|policy_time_bars('verification_time') /100.0 }}%;"></div>
+      {% else %}
+      <div class="bar bar-info" style="width: {{data.issue.result.0.policy_id|policy_time_bars('verification_time') }}%;"></div>
+      {% endif %}
+      {% else %}
+      <div class="bar bar-transparent" style="width: {{data.issue.result.0.policy_id|policy_time_bars('verification_time') }}%;"></div>
+      {% endif %}
+
+      <div class="bar bar-border-right"></div>
+
+      <!-- Abstimmung -->
+      {% if data.issue.result.0.fully_frozen %}
+      {% if not data.issue.result.0.closed %}
+      <div class="bar bar-warning" style="width: {{data.issue.result.0.id|issue_progress * data.issue.result.0.policy_id|policy_time_bars('voting_time') /100.0 }}%;"></div>
+      {% else %}
+      <div class="bar bar-warning" style="width: {{data.issue.result.0.policy_id|policy_time_bars('voting_time') -0.5 }}%;"></div>
+      {% endif %}
+      {% else %}
+      {% endif %}
+    </div>
+    
+    <span>&nbsp;</span>
+    <span style="top: -1em; margin-left: -3em; position: relative; left: {{data.issue.result.0.policy_id|policy_time_bars('admission_time')}}%;">
+      {{data.issue.result.0.id|end_of_phase_issue('accepted')|nicedate("%x", timeago=False)}}
+    </span>
+    <span style="top: -1em; margin-left: -5.4em; position: relative; left: {{data.issue.result.0.policy_id|policy_time_bars('admission_time')+data.issue.result.0.policy_id|policy_time_bars('discussion_time')}}%;">
+      {{data.issue.result.0.id|end_of_phase_issue('half_frozen')|nicedate("%x", timeago=False)}}
+    </span>
+    <span style="top: -1em; margin-left: -5em; position: relative; left: {{data.issue.result.0.policy_id|policy_time_bars('admission_time')+data.issue.result.0.policy_id|policy_time_bars('discussion_time')+data.issue.result.0.policy_id|policy_time_bars('verification_time')}}%;">
+      {{data.issue.result.0.id|end_of_phase_issue('fully_frozen')|nicedate("%x", timeago=False)}}
+    </span>
+    <span style="top: -1em; margin-left: -6em; position: relative; left: {{data.issue.result.0.policy_id|policy_time_bars('admission_time')+data.issue.result.0.policy_id|policy_time_bars('discussion_time')+data.issue.result.0.policy_id|policy_time_bars('verification_time')+data.issue.result.0.policy_id|policy_time_bars('voting_time')}}%;">
+      {{data.issue.result.0.id|end_of_phase_issue('closed')|nicedate("%x", timeago=False)}}
+    </span>
+  </div>
 
     <h2>Quoren</h2>
     <ul>

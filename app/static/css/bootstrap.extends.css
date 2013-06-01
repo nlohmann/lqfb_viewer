@@ -13,6 +13,8 @@
  */
 .bar-border-right{
     border-right: 2px solid black !important;
+    padding-right: -1px;
+    padding-left: -1px;
 }
 
 /*

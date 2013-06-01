@@ -457,11 +457,17 @@ def mynicedate_filter(_date, interval=False, coarse=True):
         elif days < 31:
             result = _pretty_format(days, 7, 'Wochen', past)
         elif days < 61:
-            result = past and 'letzter Monat' or 'kommender Monat'
+            if then.month != now.month:
+                result = past and 'letzter Monat' or 'kommender Monat'
+            else:
+                result = _pretty_format(days, 7, 'Wochen', past)
         elif days < 365:
             result = _pretty_format(days, 30, 'Monaten', past)
         elif days < 730:
-            result = past and 'letztes Jahr' or 'kommendes Jahr'
+            if then.year != now.year:
+                result = past and 'letztes Jahr' or 'kommendes Jahr'
+            else:
+                result = _pretty_format(days, 30, 'Monaten', past)
         else:
             result = _pretty_format(days, 365, 'Jahren', past)
         return result

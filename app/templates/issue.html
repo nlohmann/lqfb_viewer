@@ -22,7 +22,7 @@
       </h1>
     </div>
 
-    <div style="width: calc(100% - 4em); width: -moz-calc(100% - 4em); width: -webkit-calc(100% - 4em);">
+    <div style="width: calc(100% - 3em); width: -moz-calc(100% - 3em); width: -webkit-calc(100% - 3em);">
     <div class="progress" style="background: none; border: none; box-shadow: none; -moz-box-shadow: none; height: 1.5em; line-height: 1.1em;">
       <div class="bar bar-info" style="text-shadow: none; font-size: 1em; box-shadow: none; -moz-box-shadow: none;  background: none; color: #000; width: {{data.issue.result.0.policy_id|policy_time_bars('admission_time')}}%;">
         {% if data.issue.result.0.state == 'admission' %}
@@ -116,6 +116,10 @@
       {{data.issue.result.0.id|end_of_phase_issue('closed')|nicedate("%x", timeago=False)}}
     </span>
   </div>
+
+  {% if data.issue.result.0.closed %}
+  <i style="position: relative; margin-top: -1.9em;" class="{{ helper.enums.issue[data.issue.result.0.state].icon }}{% if helper.enums.issue[data.issue.result.0.state].color %} {{ helper.enums.issue[data.issue.result.0.state].color }}{% endif %} icon-3x pull-right"></i>
+  {% endif %}
 
     <h2>Quoren</h2>
     <ul>

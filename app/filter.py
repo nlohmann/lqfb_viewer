@@ -359,7 +359,21 @@ def mynicedate_filter(_date, interval=False, coarse=True):
             result = _pretty_format(seconds, 3600, 'Stunden', past)
         return result
 
-    def get_large_increments(days, past):
+    def get_large_increments(now, then):
+        if then > now:
+            past = False
+            diff = then - now
+        else:
+            past = True
+            diff = now - then
+
+        days = diff.days
+
+        # fix: timedelta is too coarse: if it is 22:00, and some event is "in 5 hours" (meaning it's 3:00 on the next day), then timedelta would report "in 0 days", which is wrong. So we calculate the hours of now and then and add a day if their sum is >= 24.
+        if not past:
+            if now.hour + diff.seconds/3600 >= 24:
+                days = days + 1
+
         if days == 0:
             result = 'heute'
         elif days == 1:
@@ -416,29 +430,29 @@ def mynicedate_filter(_date, interval=False, coarse=True):
             result = str((seconds + 3600 / 2) / 3600) + ' Stunden'
         return result
 
-    time = iso8601.parse_date(_date).astimezone(pytz.timezone('Europe/Berlin'))
-    now = datetime.now(time.tzinfo)
+    then = iso8601.parse_date(_date).astimezone(pytz.timezone('Europe/Berlin'))
+    now = datetime.now(then.tzinfo)
 
-    if time > now:
+    if then > now:
         past = False
-        diff = time - now
+        diff = then - now
     else:
         past = True
-        diff = now - time
-
-    days = diff.days
+        diff = now - then
 
     humandatestring = ""
 
-    if days is 0 and not coarse:
+    if diff.days is 0 and not coarse:
         if interval:
             humandatestring = get_small_interval(diff.seconds)
         else:
             humandatestring = get_small_increments(diff.seconds, past)
     else:
         if interval:
-            humandatestring = get_large_interval(days)
+            humandatestring = get_large_interval(diff.days)
         else:
-            humandatestring = get_large_increments(days, past)
+            humandatestring = get_large_increments(now, then)
 
-    return Markup('<span data-toggle="tooltip" title="%s">%s</span>' % (time.strftime('%A, %x, %H:%M Uhr') ,humandatestring))
+    print humandatestring, diff
+
+    return Markup('<span data-toggle="tooltip" title="%s">%s</span>' % (then.strftime('%A, %x, %H:%M Uhr'), humandatestring))

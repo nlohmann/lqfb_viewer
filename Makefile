@@ -50,6 +50,7 @@ veryclean: clean
 
 app.db:
 	./db_create.py
+	echo "from app import utils \\nutils.fob_update()" | venv/bin/python
 
 db_clean:
 	rm -fr db_repository app.db

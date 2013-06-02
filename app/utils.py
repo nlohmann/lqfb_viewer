@@ -53,6 +53,9 @@ def api_load_all(endpoint, q=None, session=None, forceLoad=False):
     if q is None:
         q = {}
 
+    data = api_load('/info')
+    helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
+
     q['offset'] = 0
     q['limit'] = helper['result_row_limit_max']
     result = dict()
@@ -65,7 +68,8 @@ def api_load_all(endpoint, q=None, session=None, forceLoad=False):
         if len(result) == 0:
             result = obj
         else:
-            result['result'] = result['result'] + obj['result']
+            if 'result' in obj:
+                result['result'] = result['result'] + obj['result']
 
         if not 'result' in obj or len(obj['result']) < q['limit']:
             return result
@@ -233,8 +237,11 @@ def cascaded_update():
         db_store(endpoint='initiative', payload=data['result'])
         data = api_load('/draft', q={'initiative_id': ",".join(str(x) for x in todo_initiatives), 'render_content': 'html'})
         db_store(endpoint='draft', payload=data['result'])
-        data = api_load('/suggestion', q={'initiative_id': ",".join(str(x) for x in todo_initiatives), 'rendered_content': 'html'})
-        db_store(endpoint='suggestion', payload=data['result'])
+        try:
+            data = api_load('/suggestion', q={'initiative_id': ",".join(str(x) for x in todo_initiatives), 'rendered_content': 'html'})
+            db_store(endpoint='suggestion', payload=data['result'])
+        except:
+            pass
 
     return len(todo_events)
 
@@ -253,6 +260,10 @@ def fob_update():
     # issues
     data = api_load_all('/issue')
     db_store(endpoint='issue', payload=data['result'])
+
+    # issues
+    data = api_load_all('/draft', q={'render_content': 'html'})
+    db_store(endpoint='draft', payload=data['result'])
 
     # initiatives
     data = api_load_all('/initiative')

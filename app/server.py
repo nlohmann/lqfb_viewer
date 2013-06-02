@@ -43,7 +43,7 @@ def prepare():
     helper['enums'] = json.load(open(enums_file))
 
     # initialize the FOB
-    fob_update()
+    #fob_update()
 
     # register the db_load function for Jinja templates
     app.jinja_env.globals.update(db_load=db_load)

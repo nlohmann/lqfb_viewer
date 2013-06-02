@@ -122,6 +122,12 @@ def issue_aggregated(issue_id, session=None):
     # add all initiatives of the issue
     result['initiatives'] = db_load('/initiative', q={'issue_id': issue_id})['result']
 
+    # add the area
+    result['area'] = db_load('/area', q={'area_id': result['area_id']})['result'][0]
+
+    # add the unit
+    result['unit'] = db_load('/unit', q={'unit_id': result['area']['unit_id']})['result'][0]
+
     # add the policy
     result['policy'] = db_load('/policy', q={'policy_id': result['policy_id']})['result'][0]
     result['policy']['issue_quorum_percentage'] = round(100.0 * float(result['policy']['issue_quorum_num']) / float(result['policy']['issue_quorum_den']), 2)
@@ -150,20 +156,14 @@ def issue_aggregated(issue_id, session=None):
     # add battle
     if result['status_quo_schulze_rank'] != None:
         result['battle'] = api_load('/battle', q={'issue_id': issue_id})['result']
-        battle_initiatives = set()
         result['battle_table'] = dict()
         for b in result['battle']:
             winner = b['winning_initiative_id'] if b['winning_initiative_id'] != None else 0
             loser = b['losing_initiative_id'] if b['losing_initiative_id'] != None else 0
 
-            battle_initiatives.add(winner)
-
             if not winner in result['battle_table']:
                 result['battle_table'][winner] = dict()
 
             result['battle_table'][winner][loser] = b['count']
-        result['battle_initiatives'] = list(battle_initiatives)
 
-
-    print json.dumps(result, sort_keys=True, indent=4)
     return result

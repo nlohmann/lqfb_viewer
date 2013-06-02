@@ -265,3 +265,13 @@ def show_statistiken():
     data['issue'] = api_load_all('/issue', q={'unit_id': 1})
     data['unit'] = db_load('/unit')
     return render_template('stats.html', data=data, helper=helper)
+
+
+#######
+# API #
+#######
+
+@app.route('/api/issue/<int:issue_id>')
+def api_issue(issue_id):
+    res = json.dumps(issue_aggregated(issue_id=issue_id, session=session), sort_keys=True, indent=4)
+    return Response(res, mimetype='application/json')

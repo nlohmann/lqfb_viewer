@@ -11,6 +11,7 @@ from app import app, helper, models, db
 from emails import send_email
 from utils import api_load, api_load_all, fob_update, db_load
 from ical import create_ical
+from aggregators import issue_aggregated
 
 # Wochenschau
 from datetime import datetime, date, timedelta
@@ -102,17 +103,7 @@ def show_issues():
 
 @app.route('/themen/<int:issue_id>')
 def show_issue(issue_id):
-    data = dict()
-    data['issue'] = db_load('/issue', q={'issue_id': issue_id})
-    data['initiative'] = db_load('/initiative', q={'issue_id': issue_id})
-    data['policy'] = db_load('/policy', q={'policy_id': data['issue']['result'][0]['policy_id']})
-
-    data['interest'] = dict()
-    data['interest']['latest'] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': 'latest'}, session=session)
-    data['interest']['end_of_admission'] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': 'end_of_admission'}, session=session)
-    data['interest']['half_freeze'] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': 'half_freeze'}, session=session)
-    data['interest']['full_freeze'] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': 'full_freeze'}, session=session)
-
+    data = issue_aggregated(issue_id=issue_id, session=session)
     return render_template('issue.html', data=data, helper=helper, ourl='issue/show/%d.html' % issue_id)
 
 @app.route('/initiative/<int:initiative_id>')

@@ -105,7 +105,7 @@ def issue_filter(issue_id, link=False, icon=True):
     return result
 
 @app.template_filter('area')
-def area_filter(area_id, link=False, icon=True):
+def area_filter(area_id, link=True, icon=True):
     # get name
     result = db_load('/area', q={'area_id': area_id})['result'][0]['name']
 
@@ -131,7 +131,7 @@ def suggestion_filter(suggestion_id, icon=True):
     return result
 
 @app.template_filter('policy')
-def policy_filter(policy_id, link=False, icon=True):
+def policy_filter(policy_id, link=True, icon=True):
     # get name
     result = db_load('/policy', q={'policy_id': policy_id})['result'][0]['name']
 

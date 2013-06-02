@@ -73,24 +73,6 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Berlin'
 CELERY_ENABLE_UTC = True
 
-CELERYBEAT_SCHEDULE = {
-    'regular_db_update': {
-        'task': 'app.tasks.c_regular_update',
-        'schedule': timedelta(minutes=5),
-        'args': ()
-    },
-    'frequent_db_update': {
-        'task': 'app.tasks.c_cascaded_update',
-        'schedule': timedelta(minutes=1),
-        'args': ()
-    },
-    'delegations_notifications': {
-        'task': 'app.tasks.c_delegation_notification',
-        'schedule': timedelta(minutes=1),
-        'args': ()
-    }
-}
-
 # which tasks are allowed?
 CELERY_IMPORTS=("app.tasks")
 

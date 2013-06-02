@@ -121,6 +121,20 @@ def issue_aggregated(issue_id, session=None):
 
     # add all initiatives of the issue
     result['initiatives'] = db_load('/initiative', q={'issue_id': issue_id})['result']
+    for i in result['initiatives']:
+        if i['negative_votes'] != None:
+            i['absention_votes'] = result['voter_count'] - i['positive_votes'] - i['negative_votes']
+            # distribution of positive_votes/negative_votes
+            votes = i['positive_votes'] + i['negative_votes']
+            positive_votes_percentage = round(100.0 * float(i['positive_votes']) / float(votes), 2)
+            negative_votes_pecentage = round(100.0 - positive_votes_percentage, 2)
+            i['vote_distribution2'] = [positive_votes_percentage, negative_votes_pecentage]
+            # distribution of all votes
+            votes = result['voter_count']
+            positive_votes_percentage = round(100.0 * float(i['positive_votes']) / float(votes), 2)
+            negative_votes_pecentage = round(100.0 * float(i['negative_votes']) / float(votes), 2)
+            absention_votes_pecentage = round(100.0 - positive_votes_percentage - negative_votes_pecentage, 2)
+            i['vote_distribution3'] = [positive_votes_percentage, absention_votes_pecentage, negative_votes_pecentage]
 
     # add the area
     result['area'] = db_load('/area', q={'area_id': result['area_id']})['result'][0]

@@ -108,69 +108,79 @@
 <i style="position: relative; margin-top: -1.9em;" class="{{helper.enums.issue[data.state].icon}}{% if helper.enums.issue[data.state].color %} {{helper.enums.issue[data.state].color}}{% endif %} icon-3x pull-right"></i>
 {% endif %}
 
-<h2>Quoren</h2>
-<ul>
-  <li>Grundgesamtheit im Bereich {{data.area_id|area|safe}}: {{data.population}}</li>
-  <li>Themen-Quorum im Regelwerk {{data.policy_id|policy|safe}}: {{data.issue_quorum}} ({{data.policy.issue_quorum_percentage}}% der Grundgesamtheit)</li>
-  <li>Initiativen-Quroum im Regelwerk {{data.policy_id|policy|safe}}: {{data.initiative_quorum}} ({{data.policy.initiative_quorum_percentage}}% der Grundgesamtheit)</li>
-  {% if data.voter_count %}
-  <li>Abstimmungsteilnehmer: {{data.voter_count}} ({{data.voter_percentage}}% der Grundgesamtheit)</li>
-  {% endif %}
-</ul>
-
 <h2>Initiativen</h2>
 
 {% if data.status_quo_schulze_rank %}
 
-<h3>Abgestimmt</h3>
-<ol>
+<h3>Abstimmungsergebnis</h3>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Rang</th>
+      <th>Titel</th>
+      <th>Hinweis</th>
+      <th>Zustimmung</th>
+    </tr>
+  </thead>
+  <tbody>
   {% for p in data.initiatives | sort(reverse=False,attribute='rank') %}
   {% if p.admitted %}
-  <li><strong>{{p.id|initiative(True)|safe}}</strong>
-    {% if p.winner %}
-    <span class="label label-success">Gewinner</span>
-    {% endif %}
+  <tr{% if p.winner %} class="success"{% endif %}{% if not p.better_than_status_quo %} class="error"{% endif %}>
+    <td>
+      {% if p.better_than_status_quo %}
+      {{p.rank}}
+      {% endif %}
+    </td>
+    <td><strong>{{p.id|initiative(True)|safe}}</strong></td>
+    <td>
+      {% if p.winner %}
+      <span class="label label-success">Gewinner</span>
+      {% endif %}
 
-    {% if not p.eligible %}
-    <span class="label label-important">Mehrheit nicht erreicht</span>
-    {% endif %}
+      {% if not p.eligible %}
+      <span class="label label-important">Mehrheit nicht erreicht</span>
+      {% endif %}
         
-    {% if not p.better_than_status_quo %}
-    <span class="label label-important">nicht besser als Status Quo</span>
-    {% endif %}
-  </li>
+      {% if not p.better_than_status_quo %}
+      <span class="label label-important">nicht besser als Status Quo</span>
+      {% endif %}
+    </td>
+    <td>
+      <div class="progress" style="width: 100px; height: 1em; margin-bottom: -1em; margin-top: 0.2em;" data-toggle="tooltip" rel="tooltip" title="{{p.positive_votes}} Zustimmungen ({{p.vote_distribution2.0}}%), {{p.absention_votes}} Enthaltungen, {{p.negative_votes}} Ablehnungen ({{p.vote_distribution2.1}}%)">
+        <div class="bar bar-success" style="width: {{p.vote_distribution3.0}}%;"></div>
+        <div class="bar bar-transparent" style="width: {{p.vote_distribution3.1}}%;"></div>
+        <div class="bar bar-danger" style="width: {{p.vote_distribution3.2}}%;"></div>
+      </div>
+    </td>
+  </tr>
   {% endif %}
   {% endfor %}
-</ol>
-
-<h3>Nicht abgestimmt</h3>
-<ul>
   {% for p in data.initiatives | sort(reverse=True,attribute='supporter_count') %}
   {% if not p.admitted %}
-  <li>
-    <strong>{{p.id|initiative(True)|safe}}</strong>
-    {% if p.revoked %}
-    <span class="label">zurückgezogen</span>
-    {% else %}
-    <span class="label">Quroum nicht erreicht</span>
-    {% endif %}
-  </li>
+  <tr style="background-color: #f9f9f9;">
+    <td></td>
+    <td><strong>{{p.id|initiative(True)|safe}}</strong></td>
+    <td>
+      {% if p.revoked %}
+      <span class="label">zurückgezogen</span>
+      {% else %}
+      <span class="label">Quroum nicht erreicht</span>
+      {% endif %}
+    </td>
+    <td></td>
+  </tr>
   {% endif %}
   {% endfor %}
-</ul>
+</tbody>
+</table>
 
 <h3>Abstimmtabelle</h3>
 
-<style>
-.battletable th {
-   background-color: #f9f9f9;
-}
-</style>
-
-<table class="table table-bordered battletable">
+<table class="table">
   <thead>
   <tr>
-    <th></th>
+    <th>Initiative</th>
     {% for p in data.initiatives if p.admitted %}
     <th>i{{p.id}}</th>
     {% endfor %}
@@ -210,25 +220,57 @@
         $("[rel='tooltip']").tooltip();
     });
 </script>
+
 {% else %}
 
-{% for p in data.initiatives | sort(reverse=True,attribute='supporter_count') %}
-<li>
-  <strong>{{p.id|initiative(True)|safe}}</strong>
-  {% if p.admitted %}
-  <span class="label label-warning">in Abstimmung</span>
-  {% else %}
-  {% if p.revoked %}
-  <span class="label">zurückgezogen</span>
-  {% elif data.state == "voting" %}
-  <span class="label">Quroum nicht erreicht</span>
-  {% endif %}
-  {% endif %}
-</li>
-{% endfor %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Titel</th>
+      <th>Hinweis</th>
+      {% if data.voting_time_percentage == 0 %}
+      <th>Unterstützer</th>
+      {% endif %}
+    </tr>
+  </thead>
+  {% for p in data.initiatives | sort(reverse=True,attribute='harmonic_weight') %}
+  <tr{% if p.revoked %} style="background-color: #f9f9f9;"{% endif %}>
+    <td>
+      <strong>{{p.id|initiative(True)|safe}}</strong>
+    </td>
+    <td>
+      {% if p.admitted %}
+      <span class="label label-warning">in Abstimmung</span>
+      {% else %}
+      {% if p.revoked %}
+      <span class="label">zurückgezogen</span>
+      {% elif data.state == "voting" %}
+      <span class="label">Quroum nicht erreicht</span>
+      {% endif %}
+      {% endif %}
+    </td>
+    {% if data.voting_time_percentage == 0 %}
+    <td>
+      {{p.supporter_count}}
+    </td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+  <tbody>
+  </tbody>
+</table>
 
 {% endif %}
 
+<h2>Quoren</h2>
+<ul>
+  <li>Grundgesamtheit im Bereich {{data.area_id|area|safe}}: {{data.population}}</li>
+  <li>Themen-Quorum im Regelwerk {{data.policy_id|policy|safe}}: {{data.issue_quorum}} ({{data.policy.issue_quorum_percentage}}% der Grundgesamtheit)</li>
+  <li>Initiativen-Quroum im Regelwerk {{data.policy_id|policy|safe}}: {{data.initiative_quorum}} ({{data.policy.initiative_quorum_percentage}}% der Grundgesamtheit)</li>
+  {% if data.voter_count %}
+  <li>Abstimmungsteilnehmer: {{data.voter_count}} ({{data.voter_percentage}}% der Grundgesamtheit)</li>
+  {% endif %}
+</ul>
 
 <h2>Historie</h2>
 <ul>

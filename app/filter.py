@@ -290,43 +290,6 @@ def policy_time_bars_filter(policy_id, phase):
     return (final[phase] / float(total_time)) * 100.0
 
 
-@app.template_filter('issue_progress')
-def issue_progress_filter(issue_id):
-    issue = db_load('/issue', q={'issue_id': issue_id})['result'][0]
-    policy = db_load('/policy', q={'policy_id': issue['policy_id']})['result'][0]
-    
-    def delta_phase(policy, phase):
-        delta = timedelta(0)
-        if 'minutes' in policy[phase]:
-            delta += timedelta(minutes=policy[phase]['minutes'])
-        if 'hours' in policy[phase]:
-            delta += timedelta(hours=policy[phase]['hours'])
-        if 'days' in policy[phase]:
-            delta += timedelta(days=policy[phase]['days'])
-        if 'years' in policy[phase]:
-            delta += timedelta(days=policy[phase]['years'] * 365)
-        return delta
-
-    # calculate seconds since creation
-    if issue['state'] == 'admission' or issue['state'] == 'canceled_revoked_before_accepted':
-        begin = iso8601.parse_date(issue['created']).astimezone(pytz.timezone('Europe/Berlin'))
-        duration = delta_phase(policy, 'admission_time')
-    if issue['state'] == 'discussion' or issue['state'] == 'canceled_after_revocation_during_discussion':
-        begin = iso8601.parse_date(issue['accepted']).astimezone(pytz.timezone('Europe/Berlin'))
-        duration = delta_phase(policy, 'discussion_time')
-    if issue['state'] == 'verification':
-        begin = iso8601.parse_date(issue['half_frozen']).astimezone(pytz.timezone('Europe/Berlin'))
-        duration = delta_phase(policy, 'verification_time')
-    if issue['state'] == 'voting' or issue['state'] == 'finished_with_winner' or issue['state'] == 'finished_without_winner':
-        begin = iso8601.parse_date(issue['fully_frozen']).astimezone(pytz.timezone('Europe/Berlin'))
-        duration = delta_phase(policy, 'voting_time')
-    
-
-    now = datetime.now(tz=pytz.timezone('Europe/Berlin'))
-    seconds_since_begin = (now-begin).total_seconds()
-
-    return (seconds_since_begin / duration.total_seconds())*100
-
 # A filter to return the length of a policy's phase.
 @app.template_filter('policy_time')
 def policy_time_filter(policy_id, phase):
@@ -357,39 +320,6 @@ def future_date_filter(_base, _offset):
         result += relativedelta(years = +_offset['years'])
 
     return result.isoformat()
-
-
-# A filter to calculate the end of a given phase of an issue.
-@app.template_filter('end_of_phase_issue')
-def end_of_phase_issue_filter(issue_id, phase):
-    issue = db_load('/issue', q={'issue_id': issue_id})['result'][0]
-    p = db_load('/policy', q={'policy_id': issue['policy_id']})['result'][0]
-
-    thisdate=datetime.now(tz=pytz.timezone('Europe/Berlin'))
-
-    end_of = dict()
-
-    if issue['accepted'] != None:
-        end_of['accepted'] = issue['accepted']
-    else:
-        end_of['accepted']    = future_date_filter(issue['created'], p['admission_time'])
-
-    if issue['half_frozen'] != None:
-        end_of['half_frozen'] = issue['half_frozen']
-    else:
-        end_of['half_frozen']   = future_date_filter(end_of['accepted'], p['discussion_time'])
-
-    if issue['fully_frozen'] != None:
-        end_of['fully_frozen'] = issue['fully_frozen']
-    else:
-        end_of['fully_frozen']   = future_date_filter(end_of['half_frozen'], p['verification_time'])
-
-    if issue['closed'] != None:
-        end_of['closed'] = issue['closed']
-    else:
-        end_of['closed']   = future_date_filter(end_of['fully_frozen'], p['voting_time'])
-
-    return end_of[phase]
 
 
 # A filter to calculate the end of a given phase of a policy.

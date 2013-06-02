@@ -228,7 +228,7 @@
     <tr>
       <th>Titel</th>
       <th>Hinweis</th>
-      {% if data.voting_time_percentage == 0 %}
+      {% if data.voting_progress == 0 %}
       <th>Unterstützer</th>
       {% endif %}
     </tr>
@@ -249,7 +249,7 @@
       {% endif %}
       {% endif %}
     </td>
-    {% if data.voting_time_percentage == 0 %}
+    {% if data.voting_progress == 0 %}
     <td>
       {{p.supporter_count}}
     </td>

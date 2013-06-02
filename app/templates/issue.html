@@ -274,63 +274,76 @@
 </ul>
 
 {% if session.current_access_level == 'member' %}
+
 <h2>Interessenten</h2>
 
-{% if data.interest.latest %}
-<h3>Aktuell</h3>
-<ul class="unstyled">
-  {% for p in data.interest.latest|sort(attribute='weight', reverse=True) %}
-  <li>
-    {{p.member_id|member(True)|safe}}
-    {% if p.weight > 1 %}
-    {{(p.weight-1)|delegation|safe}}
-    {% endif %}
-  </li>
-  {% endfor %}
+<ul class="nav nav-tabs" id="interest">
+  {% if data.interest.latest %}
+  <li><a href="#interest_latest">Aktuell ({{data.interest.latest|length}})</a></li>
+  {% endif %}
+  {% if data.interest.end_of_admission %}
+  <li><a href="#interest_end_of_admission">am Ende der Neuphase ({{data.interest.end_of_admission|length}})</a></li>
+  {% endif %}
+  {% if data.interest.half_freeze %}
+  <li><a href="#interest_half_freeze">am Ende der Diskussion ({{data.interest.half_freeze|length}})</a></li>
+  {% endif %}
+  {% if data.interest.full_freeze %}
+  <li><a href="#interest_full_freeze">zu Beginn der Abstimmung ({{data.interest.full_freeze|length}})</a></li>
+  {% endif %}
 </ul>
-{% endif %}
 
-{% if data.interest.end_of_admission %}
-<h3>am Ende der Neuphase</h3>
-<ul class="unstyled">
-  {% for p in data.interest.end_of_admission|sort(attribute='weight', reverse=True) %}
-  <li>
-    {{p.member_id|member(True)|safe}}
-    {% if p.weight > 1 %}
-    {{(p.weight-1)|delegation|safe}}
-    {% endif %}
-  </li>
-  {% endfor %}
-</ul>
-{% endif %}
+<div class="tab-content">
+  {% if data.interest.latest %}
+  <div class="tab-pane" id="interest_latest">
+    <ul class="unstyled">
+      {% for p in data.interest.latest|sort(attribute='weight', reverse=True) %}
+      <li>{{p.member_id|member(True)|safe}} {{(p.weight-1)|delegation|safe}}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
 
-{% if data.interest.half_freeze %}
-<h3>am Ende der Diskussion</h3>
-<ul class="unstyled">
-  {% for p in data.interest.half_freeze|sort(attribute='weight', reverse=True) %}
-  <li>
-    {{p.member_id|member(True)|safe}}
-    {% if p.weight > 1 %}
-    {{(p.weight-1)|delegation|safe}}
-    {% endif %}
-  </li>
-  {% endfor %}
-</ul>
-{% endif %}
+  {% if data.interest.end_of_admission %}
+  <div class="tab-pane" id="interest_end_of_admission">
+    <ul class="unstyled">
+      {% for p in data.interest.end_of_admission|sort(attribute='weight', reverse=True) %}
+      <li>{{p.member_id|member(True)|safe}} {{(p.weight-1)|delegation|safe}}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
 
-{% if data.interest.full_freeze %}
-<h3>zu Beginn der Abstimmung</h3>
-<ul class="unstyled">
-  {% for p in data.interest.full_freeze|sort(attribute='weight', reverse=True) %}
-  <li>
-    {{p.member_id|member(True)|safe}}
-    {% if p.weight > 1 %}
-    {{(p.weight-1)|delegation|safe}}
-    {% endif %}
-  </li>
-  {% endfor %}
-</ul>
-{% endif %}
+  {% if data.interest.half_freeze %}
+  <div class="tab-pane" id="interest_half_freeze">
+    <ul class="unstyled">
+      {% for p in data.interest.half_freeze|sort(attribute='weight', reverse=True) %}
+      <li>{{p.member_id|member(True)|safe}} {{(p.weight-1)|delegation|safe}}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if data.interest.full_freeze %}
+  <div class="tab-pane" id="interest_full_freeze">
+    <ul class="unstyled">
+      {% for p in data.interest.full_freeze|sort(attribute='weight', reverse=True) %}
+      <li>{{p.member_id|member(True)|safe}} {{(p.weight-1)|delegation|safe}}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  $(function () {
+    $('#interest a:first').tab('show');
+  })
+
+  $('#interest a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  })
+</script>
 
 {% endif %}
 

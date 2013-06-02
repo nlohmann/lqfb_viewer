@@ -214,7 +214,10 @@ def vote_filter(grade):
 # A filter to return a unified graphical representation of delegations. It simply adds a large + in front of a given integer.
 @app.template_filter('delegation')
 def delegation_filter(weight):
-    return '<span class="label label-info"><i class="icon-plus"></i> %d</span>' % weight
+    if weight > 0:
+        return '<span class="label label-info"><i class="icon-plus"></i> %d</span>' % weight
+    else:
+        return ''
 
 
 # This filter creates percentages of the times of the four phases of a policy. These percentages can be used in a bar graph depciting the time phases. The script assumes a policy_id and the name of a phase is given. The result is a number between 0.0 and 100.0, though it is limited for each phase such that it does not exceed a certain factor.

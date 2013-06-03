@@ -1,6 +1,6 @@
 {% extends "_base.html" %}
 
-{% block title %}LQFB › Initiativen › {{data.initiative.result.0.name}}{% endblock %}
+{% block title %}LQFB › Initiativen › {{data.name}}{% endblock %}
 
 {% block head %}
 {{ super() }}
@@ -12,23 +12,23 @@
 {{ super() }}
 <ul class="breadcrumb">
   <li><a href="/"><i class="icon-home"></i></a> <span class="divider">/</span></li>
-  <li><a href="/themen/{{data.initiative.result.0.issue_id}}">Thema {{data.initiative.result.0.issue_id}}</a> <span class="divider">/</span></li>
-  <li class="active">{{data.initiative.result.0.name}}</li>
+  <li><a href="/themen/{{data.issue_id}}">Thema {{data.issue_id}}</a> <span class="divider">/</span></li>
+  <li class="active">{{data.name}}</li>
 </ul>
 {% endblock %}
 
 {% block content %}
 <div class="page-header">
   <h1>
-    <small>Initiative {{data.initiative.result.0.id}}</small>
-    <br><i class="icon-file-alt"></i> {{data.initiative.result.0.name}}
+    <small>Initiative {{data.id}}</small>
+    <br><i class="icon-file-alt"></i> {{data.name}}
   </h1>
 </div>
 
 {% if session.current_access_level == 'member' %}
 <h2>Initiatoren</h2>
 <ul class="inline">
-{% for p in data.initiator.result %}
+{% for p in data.initiator %}
 <li>{{ p.member_id|member(True)|safe }}</li>
 {% endfor %}
 </ul>
@@ -37,19 +37,19 @@
 {% endif %}
 
 {# collecting data for the supporter bar #}
-{% if data.initiative.result.0.supporter_count > data.initiative.result.0.issue_id|quorum %}
-{% set balken1 = data.initiative.result.0.issue_id|quorum %}
-{% set balken2 = data.initiative.result.0.supporter_count - data.initiative.result.0.issue_id|quorum %}
+{% if data.supporter_count > data.issue_id|quorum %}
+{% set balken1 = data.issue_id|quorum %}
+{% set balken2 = data.supporter_count - data.issue_id|quorum %}
 {% else %}
-{% set balken1 = data.initiative.result.0.supporter_count %}
+{% set balken1 = data.supporter_count %}
 {% set balken2 = 0 %}
 {% endif %}
 
 {# the supporter bar #}
 <div class="progress">
   {# color first bar depending on quorum #}
-  {% if balken1 < data.initiative.result.0.issue_id|quorum %}
-  {% if data.issue.result.0.closed %}
+  {% if balken1 < data.issue_id|quorum %}
+  {% if data.issue.closed %}
   {% set additional_style = " bar-danger" %}
   {% else %}
   {% set additional_style = " bar-warning" %}
@@ -57,40 +57,40 @@
   {% else %}
   {% set additional_style = "" %}
   {% endif %}
-  <div class="bar{{ additional_style }}" style="width: {{ ((balken1 / data.issue.result.0.population) * 100)|round(0)|int }}%">{{balken1}}</div>
+  <div class="bar{{ additional_style }}" style="width: {{ ((balken1 / data.issue.population) * 100)|round(0)|int }}%">{{balken1}}</div>
   {% if balken2 == 0 %}
-  <div class="bar bar-transparent" style="width: {{ (((data.initiative.result.0.issue_id|quorum - balken1) / data.issue.result.0.population) * 100)|round(0)|int }}%%"></div>
+  <div class="bar bar-transparent" style="width: {{ (((data.issue_id|quorum - balken1) / data.issue.population) * 100)|round(0)|int }}%%"></div>
   <div class="bar bar-border-right"></div>
   {% else %}
   <div class="bar bar-border-right"></div>
-  <div class="bar bar-success" style="width: {{ ((balken2 / data.issue.result.0.population) * 100)|round(0)|int }}%">{{balken2}}</div>
+  <div class="bar bar-success" style="width: {{ ((balken2 / data.issue.population) * 100)|round(0)|int }}%">{{balken2}}</div>
   {% endif %}
 </div>
 
-{% if data.initiative.result.0.schulze_rank %}
+{% if data.schulze_rank %}
 <h2>Abstimmung</h2>
 <ul>
   <li>
-    Abstimmungs-Rang: {{ data.initiative.result.0.rank }}
+    Abstimmungs-Rang: {{ data.rank }}
   </li>
   <li>
-    Schulze-Rang: {{ data.initiative.result.0.schulze_rank }} (Schulze-Rang des Status Quo: {{ data.issue.result.0.status_quo_schulze_rank }})
+    Schulze-Rang: {{ data.schulze_rank }} (Schulze-Rang des Status Quo: {{ data.issue.status_quo_schulze_rank }})
   </li>
   <li>
-    Zustimmungen: {{ data.initiative.result.0.positive_votes }}
+    Zustimmungen: {{ data.positive_votes }}
   </li>
   <li>
-    Ablehnungen: {{ data.initiative.result.0.negative_votes }}
+    Ablehnungen: {{ data.negative_votes }}
   </li>
 </ul>
 
 <h3>Vergleiche</h3>
       
 <ul>
-  {% for p in data.battle.result if p.winning_initiative_id == data.initiative.result.0.id %}
+  {% for p in data.battle if p.winning_initiative_id == data.id %}
   <li>schlägt {{ p.losing_initiative_id|initiative(True)|safe }} ({{p.count}})</li>
   {% endfor %}
-  {% for p in data.battle.result if p.losing_initiative_id == data.initiative.result.0.id %}
+  {% for p in data.battle if p.losing_initiative_id == data.id %}
   <li>geschlagen von {{ p.winning_initiative_id|initiative(True)|safe }} ({{p.count}})</li>
   {% endfor %}
 </ul>
@@ -99,19 +99,19 @@
 <h2>Informationen</h2>
 <ul>
   <li>
-    {{ data.initiative.result.0.supporter_count }} Unterstützer
+    {{ data.supporter_count }} Unterstützer
   </li>
   <li>
-    {{ data.initiative.result.0.issue_id|quorum }} Initiativquorum
+    {{ data.issue_id|quorum }} Initiativquorum
   </li>
   <li>
-    {{ data.issue.result.0.population }} Grundgesamtheit
+    {{ data.issue.population }} Grundgesamtheit
   </li>
   <li>Diskussion mit den Antragstellern: 
-    {% if data.initiative.result.0.discussion_url|is_url %}
-    <a href="{{ data.initiative.result.0.discussion_url }}">{{ data.initiative.result.0.discussion_url }}</a>
+    {% if data.discussion_url|is_url %}
+    <a href="{{ data.discussion_url }}">{{ data.discussion_url }}</a>
     {% else %}
-    {{ data.initiative.result.0.discussion_url }}
+    {{ data.discussion_url }}
     {% endif %}
   </li>
 </ul>
@@ -119,9 +119,9 @@
 <h2>Text</h2>
 
 <ul class="nav nav-tabs" id="drafts">
-  {% set i = data.draft.result|length %}
-  {% for draft in data.draft.result|sort(attribute='id', reverse=True) %}
-  <li><a href="#draft{{i}}">Entwurf {{i}}{% if i == data.draft.result|length %} (aktuell){% endif %}</a></li>
+  {% set i = data.draft|length %}
+  {% for draft in data.draft|sort(attribute='id', reverse=True) %}
+  <li><a href="#draft{{i}}">Entwurf {{i}}{% if i == data.draft|length %} (aktuell){% endif %}</a></li>
   {% set i = i-1 %}
   {% endfor %}
 </ul>
@@ -142,8 +142,8 @@ del {
 </style>
  
 <div class="tab-content">
-  {% set i = data.draft.result|length %}
-  {% for draft in data.draft.result|sort(attribute='id', reverse=True) %}
+  {% set i = data.draft|length %}
+  {% for draft in data.draft|sort(attribute='id', reverse=True) %}
   <div class="tab-pane" id="draft{{i}}">
     <div class="well draft" id="content-draft{{i}}">
     {{draft.content|safe}}
@@ -158,8 +158,8 @@ del {
 </div>
 
 <script>
-{% set i = data.draft.result|length %}
-{% for draft in data.draft.result|sort(attribute='id', reverse=True) %}
+{% set i = data.draft|length %}
+{% for draft in data.draft|sort(attribute='id', reverse=True) %}
 {% if i > 1 %}
 $("#diff{{i}}-{{i-1}}").click(function () {
     $(".tab-content").prettyTextDiff({
@@ -185,19 +185,19 @@ $("#diff{{i}}-{{i-1}}").click(function () {
 </script>
 
 
-{% if data.suggestion.result|length > 0 %}
+{% if data.suggestion|length > 0 %}
 <h2>Anregungen</h2>
 
 <ul class="nav nav-tabs" id="suggestions">
   {% set i = 1 %}
-  {% for suggestion in data.suggestion.result|sort(attribute='proportional_order') %}
+  {% for suggestion in data.suggestion|sort(attribute='proportional_order') %}
   <li><a href="#suggestion{{suggestion.id}}">Anregung {{i}}</a></li>
   {% set i = i+1 %}
   {% endfor %}
 </ul>
 
 <div class="tab-content">
-  {% for suggestion in data.suggestion.result|sort(attribute='proportional_order') %}
+  {% for suggestion in data.suggestion|sort(attribute='proportional_order') %}
   <div class="tab-pane" id="suggestion{{suggestion.id}}">
     <p class="lead">{{suggestion.name}}</p>
     {% if suggestion.content %}
@@ -211,11 +211,11 @@ $("#diff{{i}}-{{i-1}}").click(function () {
     {% set balken2 = suggestion.plus1_unfulfilled_count + suggestion.plus1_fulfilled_count %}
     {% set balken4 = suggestion.minus1_unfulfilled_count + suggestion.minus1_fulfilled_count %}
     {% set balken5 = suggestion.minus2_unfulfilled_count + suggestion.minus2_fulfilled_count %}
-    {% set balken3 = data.initiative.result.0.supporter_count - balken1 - balken2 - balken4 - balken5 %}
-    {% set balken1_l = ((balken1 / data.initiative.result.0.supporter_count) * 100)|round(0)|int %}
-    {% set balken2_l = ((balken2 / data.initiative.result.0.supporter_count) * 100)|round(0)|int %}
-    {% set balken4_l = ((balken4 / data.initiative.result.0.supporter_count) * 100)|round(0)|int %}
-    {% set balken5_l = ((balken5 / data.initiative.result.0.supporter_count) * 100)|round(0)|int %}
+    {% set balken3 = data.supporter_count - balken1 - balken2 - balken4 - balken5 %}
+    {% set balken1_l = ((balken1 / data.supporter_count) * 100)|round(0)|int %}
+    {% set balken2_l = ((balken2 / data.supporter_count) * 100)|round(0)|int %}
+    {% set balken4_l = ((balken4 / data.supporter_count) * 100)|round(0)|int %}
+    {% set balken5_l = ((balken5 / data.supporter_count) * 100)|round(0)|int %}
     {% set balken3_l = 100 - balken1_l - balken2_l - balken4_l - balken5_l %}
 
     <div class="progress">
@@ -243,7 +243,7 @@ $("#diff{{i}}-{{i-1}}").click(function () {
     <ul>
       <li>Meinung "muss": {{suggestion.plus2_unfulfilled_count + suggestion.plus2_fulfilled_count}} ({{suggestion.plus2_fulfilled_count}} sehen Anregung umgesetzt)</li>
       <li>Meinung "soll": {{suggestion.plus1_unfulfilled_count + suggestion.plus1_fulfilled_count}} ({{suggestion.plus1_fulfilled_count}} sehen Anregung umgesetzt)</li>
-      <li>keine Meinung: {{ data.initiative.result.0.supporter_count - suggestion.plus2_unfulfilled_count - suggestion.plus2_fulfilled_count - suggestion.plus1_unfulfilled_count - suggestion.plus1_fulfilled_count - suggestion.minus1_unfulfilled_count - suggestion.minus1_fulfilled_count - suggestion.minus2_unfulfilled_count - suggestion.minus2_fulfilled_count}}
+      <li>keine Meinung: {{ data.supporter_count - suggestion.plus2_unfulfilled_count - suggestion.plus2_fulfilled_count - suggestion.plus1_unfulfilled_count - suggestion.plus1_fulfilled_count - suggestion.minus1_unfulfilled_count - suggestion.minus1_fulfilled_count - suggestion.minus2_unfulfilled_count - suggestion.minus2_fulfilled_count}}
       <li>Meinung "soll nicht": {{suggestion.minus1_unfulfilled_count + suggestion.minus1_fulfilled_count}} ({{suggestion.minus1_fulfilled_count}} sehen Anregung umgesetzt)</li>
       <li>Meinung "darf nicht": {{suggestion.minus2_unfulfilled_count + suggestion.minus2_fulfilled_count}} ({{suggestion.minus2_fulfilled_count}} sehen Anregung umgesetzt)</li>
     </ul>

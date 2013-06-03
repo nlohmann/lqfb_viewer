@@ -11,7 +11,7 @@ from app import app, helper, models, db
 from emails import send_email
 from utils import api_load, api_load_all, db_load
 from ical import create_ical
-from aggregators import issue_aggregated
+from aggregators import initiative_aggregated, issue_aggregated
 
 # Wochenschau
 from datetime import datetime, date, timedelta
@@ -105,15 +105,7 @@ def show_issue(issue_id):
 
 @app.route('/initiative/<int:initiative_id>')
 def show_initiative(initiative_id):
-    data = dict()
-    data['initiative'] = db_load('/initiative', q={'initiative_id': initiative_id})
-    data['issue'] = db_load('/issue', q={'issue_id': data['initiative']['result'][0]['issue_id']})
-    data['draft'] = db_load('/draft', q={'initiative_id': initiative_id})
-    data['suggestion'] = db_load('/suggestion', q={'initiative_id': initiative_id})
-    data['battle'] = api_load('/battle', q={'issue_id': data['initiative']['result'][0]['issue_id']})
-
-    data['initiator'] = api_load('/initiator', q={'initiative_id': initiative_id}, session=session)
-
+    data = initiative_aggregated(initiative_id=initiative_id, session=session)
     return render_template('initiative.html', data=data, helper=helper, ourl='initiative/show/%d.html' % initiative_id)
 
 @app.route('/themenbereiche')
@@ -267,6 +259,11 @@ def show_statistiken():
 #######
 # API #
 #######
+
+@app.route('/api/initiative/<int:initiative_id>')
+def api_initiative(initiative_id):
+    res = json.dumps(initiative_aggregated(initiative_id=initiative_id, session=session), sort_keys=True, indent=4)
+    return Response(res, mimetype='application/json')
 
 @app.route('/api/issue/<int:issue_id>')
 def api_issue(issue_id):

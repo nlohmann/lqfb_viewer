@@ -127,8 +127,8 @@ def issue_aggregated(issue_id, session=None):
 
     # add the policy
     result['policy'] = db_load('/policy', q={'policy_id': result['policy_id']})['result'][0]
-    result['policy']['issue_quorum_percentage'] = round(100.0 * float(result['policy']['issue_quorum_num']) / float(result['policy']['issue_quorum_den']), 2)
-    result['policy']['initiative_quorum_percentage'] = round(100.0 * float(result['policy']['initiative_quorum_num']) / float(result['policy']['initiative_quorum_den']), 2)
+    result['policy']['issue_quorum_percentage'] = round(100.0 * float(result['policy']['issue_quorum_num']) / float(result['policy']['issue_quorum_den']), 2) if result['policy']['issue_quorum_num'] != 0 else 0
+    result['policy']['initiative_quorum_percentage'] = round(100.0 * float(result['policy']['initiative_quorum_num']) / float(result['policy']['initiative_quorum_den']), 2) if result['policy']['initiative_quorum_num'] != 0 else 0
 
     # add absolute numbers for the quorums
     result['issue_quorum'] = int(ceil((float(result['policy']['issue_quorum_num']) / float(result['policy']['issue_quorum_den'])) * result['population']))
@@ -143,12 +143,20 @@ def issue_aggregated(issue_id, session=None):
     for i in result['initiatives']:
         # store information on the supporters and the used quorum
         if result['state'] in ['admission', 'canceled_revoked_before_accepted', 'canceled_issue_not_accepted']:
-            i['supporter_percentage'] = round(100.0 * float(i['supporter_count']) / float(result['issue_quorum']), 2)
-            i['supporter_missing'] = result['issue_quorum'] - i['supporter_count'] if i['supporter_percentage'] < 100 else 0
+            if result['issue_quorum'] > 0:
+                i['supporter_percentage'] = round(100.0 * float(i['supporter_count']) / float(result['issue_quorum']), 2)
+                i['supporter_missing'] = result['issue_quorum'] - i['supporter_count'] if i['supporter_percentage'] < 100 else 0
+            else:
+                i['supporter_percentage'] = 100
+                i['supporter_missing'] = 0
             i['quorum_type'] = 'issue'
         else:
-            i['supporter_percentage'] = round(100.0 * float(i['supporter_count']) / float(result['initiative_quorum']), 2)
-            i['supporter_missing'] = result['initiative_quorum'] - i['supporter_count'] if i['supporter_percentage'] < 100 else 0
+            if result['initiative_quorum'] > 0:
+                i['supporter_percentage'] = round(100.0 * float(i['supporter_count']) / float(result['initiative_quorum']), 2)
+                i['supporter_missing'] = result['initiative_quorum'] - i['supporter_count'] if i['supporter_percentage'] < 100 else 0
+            else:
+                i['supporter_percentage'] = 100
+                i['supporter_missing'] = 0
             i['quorum_type'] = 'initiative'
 
         if i['negative_votes'] != None:
@@ -170,10 +178,34 @@ def issue_aggregated(issue_id, session=None):
             i['vote_distribution3'] = [positive_votes_percentage, absention_votes_pecentage, negative_votes_pecentage]
 
     # add interested members (needs a session)
-    result['interest'] = dict()
+    result['interest_snapshots'] = dict()
+    result['interest_members'] = dict()
+    result['interest_weights'] = dict()
+    result['interest_delegates'] = dict()
     try:
         for snapshot in ['latest', 'end_of_admission', 'half_freeze', 'full_freeze']:
-            result['interest'][snapshot] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': snapshot}, session=session)['result']
+            result['interest_weights'][snapshot] = 0
+            result['interest_snapshots'][snapshot] = api_load('/interest', q={'issue_id': issue_id, 'snapshot': snapshot}, session=session)['result']
+            for p in result['interest_snapshots'][snapshot]:
+                result['interest_weights'][snapshot] += p['weight']
+            result['interest_members'][snapshot] = len(result['interest_snapshots'][snapshot])
+            result['interest_delegates'][snapshot] = result['interest_weights'][snapshot] - result['interest_members'][snapshot]
+    except:
+        pass
+
+    # add population of the issue
+    result['population_snapshots'] = dict()
+    result['population_members'] = dict()
+    result['population_weights'] = dict()
+    result['population_delegates'] = dict()
+    try:
+        for snapshot in ['latest', 'end_of_admission', 'half_freeze', 'full_freeze']:
+            result['population_weights'][snapshot] = 0
+            result['population_snapshots'][snapshot] = api_load('/population', q={'issue_id': issue_id, 'snapshot': snapshot}, session=session)['result']
+            for p in result['population_snapshots'][snapshot]:
+                result['population_weights'][snapshot] += p['weight']
+            result['population_members'][snapshot] = len(result['population_snapshots'][snapshot])
+            result['population_delegates'][snapshot] = result['population_weights'][snapshot] - result['population_members'][snapshot]
     except:
         pass
 

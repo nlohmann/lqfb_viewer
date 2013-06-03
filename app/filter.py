@@ -213,9 +213,12 @@ def vote_filter(grade):
 
 # A filter to return a unified graphical representation of delegations. It simply adds a large + in front of a given integer.
 @app.template_filter('delegation')
-def delegation_filter(weight):
+def delegation_filter(weight, icon=True):
     if weight > 0:
-        return '<span class="label label-info"><i class="icon-plus"></i> %d</span>' % weight
+        if icon:
+            return '<span class="label label-info"><i class="icon-plus"></i> %d</span>' % weight
+        else:
+            return '+%d' % weight
     else:
         return ''
 

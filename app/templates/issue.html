@@ -351,55 +351,55 @@
 <h2>Interessenten</h2>
 
 <ul class="nav nav-tabs" id="interest">
-  {% if data.interest.latest %}
-  <li><a href="#interest_latest">Aktuell ({{data.interest.latest|length}})</a></li>
+  {% if data.interest_snapshots.latest %}
+  <li><a href="#interest_latest">Aktuell ({{data.interest_members.latest}}{{data.interest_delegates.latest|delegation(False)}})</a></li>
   {% endif %}
-  {% if data.interest.end_of_admission %}
-  <li><a href="#interest_end_of_admission">am Ende der Neuphase ({{data.interest.end_of_admission|length}})</a></li>
+  {% if data.interest_snapshots.end_of_admission %}
+  <li><a href="#interest_end_of_admission">Ende der Neuphase ({{data.interest_members.end_of_admission}}{{data.interest_delegates.end_of_admission|delegation(False)}})</a></li>
   {% endif %}
-  {% if data.interest.half_freeze %}
-  <li><a href="#interest_half_freeze">am Ende der Diskussion ({{data.interest.half_freeze|length}})</a></li>
+  {% if data.interest_snapshots.half_freeze %}
+  <li><a href="#interest_half_freeze">Ende der Diskussion ({{data.interest_members.half_freeze}}{{data.interest_delegates.half_freeze|delegation(False)}})</a></li>
   {% endif %}
-  {% if data.interest.full_freeze %}
-  <li><a href="#interest_full_freeze">zu Beginn der Abstimmung ({{data.interest.full_freeze|length}})</a></li>
+  {% if data.interest_snapshots.full_freeze %}
+  <li><a href="#interest_full_freeze">Beginn der Abstimmung ({{data.interest_members.full_freeze}}{{data.interest_delegates.full_freeze|delegation(False)}})</a></li>
   {% endif %}
 </ul>
 
 <div class="tab-content">
-  {% if data.interest.latest %}
+  {% if data.interest_snapshots.latest %}
   <div class="tab-pane" id="interest_latest">
-    <ul class="unstyled">
-      {% for p in data.interest.latest|sort(attribute='weight', reverse=True) %}
+    <ul class="inline">
+      {% for p in data.interest_snapshots.latest|sort(attribute='weight', reverse=True) %}
       <li>{{p.member_id|member(True)|safe}} {{(p.weight-1)|delegation|safe}}</li>
       {% endfor %}
     </ul>
   </div>
   {% endif %}
 
-  {% if data.interest.end_of_admission %}
+  {% if data.interest_snapshots.end_of_admission %}
   <div class="tab-pane" id="interest_end_of_admission">
-    <ul class="unstyled">
-      {% for p in data.interest.end_of_admission|sort(attribute='weight', reverse=True) %}
+    <ul class="inline">
+      {% for p in data.interest_snapshots.end_of_admission|sort(attribute='weight', reverse=True) %}
       <li>{{p.member_id|member(True)|safe}} {{(p.weight-1)|delegation|safe}}</li>
       {% endfor %}
     </ul>
   </div>
   {% endif %}
 
-  {% if data.interest.half_freeze %}
+  {% if data.interest_snapshots.half_freeze %}
   <div class="tab-pane" id="interest_half_freeze">
-    <ul class="unstyled">
-      {% for p in data.interest.half_freeze|sort(attribute='weight', reverse=True) %}
+    <ul class="inline">
+      {% for p in data.interest_snapshots.half_freeze|sort(attribute='weight', reverse=True) %}
       <li>{{p.member_id|member(True)|safe}} {{(p.weight-1)|delegation|safe}}</li>
       {% endfor %}
     </ul>
   </div>
   {% endif %}
 
-  {% if data.interest.full_freeze %}
+  {% if data.interest_snapshots.full_freeze %}
   <div class="tab-pane" id="interest_full_freeze">
-    <ul class="unstyled">
-      {% for p in data.interest.full_freeze|sort(attribute='weight', reverse=True) %}
+    <ul class="inline">
+      {% for p in data.interest_snapshots.full_freeze|sort(attribute='weight', reverse=True) %}
       <li>{{p.member_id|member(True)|safe}} {{(p.weight-1)|delegation|safe}}</li>
       {% endfor %}
     </ul>
@@ -413,6 +413,76 @@
   })
 
   $('#interest a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  })
+</script>
+
+<h2>Teilnehmer</h2>
+
+<ul class="nav nav-tabs" id="population">
+  {% if data.interest_snapshots.latest %}
+  <li><a href="#population_latest">Aktuell ({{data.population_members.latest}}{{data.population_delegates.latest|delegation(False)}})</a></li>
+  {% endif %}
+  {% if data.interest_snapshots.end_of_admission %}
+  <li><a href="#population_end_of_admission">Ende der Neuphase ({{data.population_members.end_of_admission}}{{data.population_delegates.end_of_admission|delegation(False)}})</a></li>
+  {% endif %}
+  {% if data.interest_snapshots.half_freeze %}
+  <li><a href="#population_half_freeze">Ende der Diskussion ({{data.population_members.half_freeze}}{{data.population_delegates.half_freeze|delegation(False)}})</a></li>
+  {% endif %}
+  {% if data.interest_snapshots.full_freeze %}
+  <li><a href="#population_full_freeze">Beginn der Abstimmung ({{data.population_members.full_freeze}}{{data.population_delegates.full_freeze|delegation(False)}})</a></li>
+  {% endif %}
+</ul>
+
+<div class="tab-content">
+  {% if data.interest_snapshots.latest %}
+  <div class="tab-pane" id="population_latest">
+    <ul class="inline">
+      {% for p in data.population_snapshots.latest|sort(attribute='weight', reverse=True) %}
+      <li>{{p.member_id|member(True)|safe}} {{(p.weight-1)|delegation|safe}}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if data.interest_snapshots.end_of_admission %}
+  <div class="tab-pane" id="population_end_of_admission">
+    <ul class="inline">
+      {% for p in data.population_snapshots.end_of_admission|sort(attribute='weight', reverse=True) %}
+      <li>{{p.member_id|member(True)|safe}} {{(p.weight-1)|delegation|safe}}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if data.interest_snapshots.half_freeze %}
+  <div class="tab-pane" id="population_half_freeze">
+    <ul class="inline">
+      {% for p in data.population_snapshots.half_freeze|sort(attribute='weight', reverse=True) %}
+      <li>{{p.member_id|member(True)|safe}} {{(p.weight-1)|delegation|safe}}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if data.interest_snapshots.full_freeze %}
+  <div class="tab-pane" id="population_full_freeze">
+    <ul class="inline">
+      {% for p in data.population_snapshots.full_freeze|sort(attribute='weight', reverse=True) %}
+      <li>{{p.member_id|member(True)|safe}} {{(p.weight-1)|delegation|safe}}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  $(function () {
+    $('#population a:first').tab('show');
+  })
+
+  $('#population a').click(function (e) {
     e.preventDefault();
     $(this).tab('show');
   })

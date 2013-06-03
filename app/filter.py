@@ -296,13 +296,13 @@ def policy_time_filter(policy_id, phase):
     p = db_load('/policy', q={'policy_id': policy_id})['result'][0]
 
     if 'minutes' in p[phase]:
-        return "%d Minuten" % p[phase]['minutes'] 
+        return "%d Minuten" % p[phase]['minutes'] if p[phase]['minutes'] != 1 else "%d Minute" % p[phase]['minutes']
     if 'hours' in p[phase]:
-        return "%d Stunden" % p[phase]['hours'] 
+        return "%d Stunden" % p[phase]['hours'] if p[phase]['hours'] != 1 else "%d Stunde" % p[phase]['hours']
     if 'days' in p[phase]:
-        return "%d Tage" % p[phase]['days'] 
+        return "%d Tage" % p[phase]['days'] if p[phase]['days'] != 1 else "%d Tag" % p[phase]['days']
     if 'years' in p[phase]:
-        return "%d Jahre" % p[phase]['years'] 
+        return "%d Jahre" % p[phase]['years'] if p[phase]['years'] != 1 else "%d Jahr" % p[phase]['years']
 
 
 # A filter to calculate a date in the future given am offset as JSON timestamp as specified in http://dev.liquidfeedback.org/trac/lf/wiki/API and a base date given in ISO8601. The result is an ISO8601 representation of the base date with the offset added.

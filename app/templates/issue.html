@@ -36,7 +36,6 @@
   </h1>
 </div>
 
-<div style="width: calc(100% - 3em); width: -moz-calc(100% - 3em); width: -webkit-calc(100% - 3em);">
   <div class="progress issue_progress_legend">
     <div class="bar bar-info" style="width: {{data.policy.admission_time_percentage}}%;">
       {% if data.state == 'admission' %}
@@ -90,7 +89,10 @@
   </div>
 
   <span>&nbsp;</span>
-  <span style="top: -1em; margin-left: -3em; position: relative; left: {{data.policy.admission_time_percentage}}%;">
+  <span style="top: -1em; margin-left: 0em; position: relative; left: -0.5em;">
+    {{data.created|nicedate("%x", timeago=False)}}
+  </span>
+  <span style="top: -1em; margin-left: -8.5em; position: relative; left: {{data.policy.admission_time_percentage}}%;">
     {{data.accepted_deadline|nicedate("%x", timeago=False)}}
   </span>
   <span style="top: -1em; margin-left: -5.4em; position: relative; left: {{data.policy.admission_time_percentage + data.policy.discussion_time_percentage}}%;">
@@ -99,14 +101,9 @@
   <span style="top: -1em; margin-left: -5em; position: relative; left: {{data.policy.admission_time_percentage + data.policy.discussion_time_percentage + data.policy.verification_time_percentage}}%;">
     {{data.fully_frozen_deadline|nicedate("%x", timeago=False)}}
   </span>
-  <span style="top: -1em; margin-left: -6em; position: relative; left: {{data.policy.admission_time_percentage + data.policy.discussion_time_percentage + data.policy.verification_time_percentage + data.policy.voting_time_percentage}}%;">
+  <span style="top: -1em; margin-left: -8.5em; position: relative; left: {{data.policy.admission_time_percentage + data.policy.discussion_time_percentage + data.policy.verification_time_percentage + data.policy.voting_time_percentage}}%;">
     {{data.closed_deadline|nicedate("%x", timeago=False)}}
   </span>
-</div>
-
-{% if data.closed %}
-<i style="position: relative; margin-top: -1.9em;" class="{{helper.enums.issue[data.state].icon}}{% if helper.enums.issue[data.state].color %} {{helper.enums.issue[data.state].color}}{% endif %} icon-3x pull-right"></i>
-{% endif %}
 
 <h2>Initiativen</h2>
 
@@ -114,26 +111,28 @@
 
 <h3>Abstimmungsergebnis</h3>
 
-<table class="table">
+<table class="table table-condensed">
   <thead>
     <tr>
-      <th>Rang</th>
-      <th>Titel</th>
-      <th>Hinweis</th>
-      <th>Zustimmung</th>
+      <th></th>
+      <th style="width: 100%"></th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
   {% for p in data.initiatives | sort(reverse=False,attribute='rank') %}
   {% if p.admitted %}
-  <tr{% if p.winner %} class="success"{% endif %}{% if not p.better_than_status_quo %} class="error"{% endif %}>
-    <td>
-      {% if p.better_than_status_quo %}
-      {{p.rank}}
+  <tr{% if p.winner %} class="success"{% endif %}{% if not p.eligible %} class="error"{% endif %}>
+    <td style="text-align: center;">
+      {% if p.winner %}
+      <span class="badge badge-success">1</span>
+      {% else %}
+      <strong>{{p.rank}}</strong>
       {% endif %}
     </td>
-    <td><strong>{{p.id|initiative(True)|safe}}</strong></td>
     <td>
+      <strong>{{p.id|initiative(True)|safe}}</strong>
+
       {% if p.winner %}
       <span class="label label-success">Gewinner</span>
       {% endif %}
@@ -158,13 +157,14 @@
   {% endfor %}
   {% for p in data.initiatives | sort(reverse=True,attribute='supporter_count') %}
   {% if not p.admitted %}
-  <tr style="background-color: #f9f9f9;">
+  <tr style="background-color: #eee;">
     <td></td>
-    <td><strong>{{p.id|initiative(True)|safe}}</strong></td>
     <td>
       {% if p.revoked %}
+      <del>{{p.id|initiative(True)|safe}}</del>
       <span class="label">zurückgezogen</span>
       {% else %}
+      {{p.id|initiative(True)|safe}}
       <span class="label">Quroum nicht erreicht</span>
       {% endif %}
     </td>
@@ -177,21 +177,27 @@
 
 <h3>Abstimmtabelle</h3>
 
-<table class="table">
+<table class="table table-condensed">
   <thead>
   <tr>
-    <th>Initiative</th>
-    {% for p in data.initiatives if p.admitted %}
-    <th>i{{p.id}}</th>
+    <th></th>
+    <th></th>
+    {% for p in data.initiatives | sort(reverse=False,attribute='rank') %}
+    {% if p.admitted %}
+    <th>{{p.rank}}</th>
+    {% endif %}
     {% endfor %}
     <th>SQ</th>
   </tr>
   </thead>
   <tbody>
-  {% for p1 in data.initiatives if p1.admitted %}
+  {% for p1 in data.initiatives | sort(reverse=False,attribute='rank') %}
+  {% if p1.admitted %}
   <tr>
     <th>{{p1.id|initiative(True)|safe}}</th>
-    {% for p2 in data.initiatives if p2.admitted %}
+    <th style="text-align: right;">{{p1.rank}}</th>
+    {% for p2 in data.initiatives | sort(reverse=False,attribute='rank') %}
+    {% if p2.admitted %}
       {% if p1.id == p2.id %}
       <td>-</td>
       {% else %}
@@ -199,17 +205,22 @@
         <span {% if p1.winner %}style="font-weight: bold;"{% endif %} data-toggle="tooltip" rel="tooltip" title="{{data.battle_table[p1.id][p2.id]}} Mitglieder bevorzugen Initiative '{{p1.name}}' gegenüber '{{p2.name}}'.">{{data.battle_table[p1.id][p2.id]}}</span>
       </td>
       {% endif %}
+      {% endif %}
       {% endfor %}
       <td{% if data.battle_table[p1.id][0] > data.battle_table[0][p1.id] %} style="background: #dff0d8;"{% endif %}{% if data.battle_table[p1.id][0] < data.battle_table[0][p1.id] %} style="background: #f2dede;"{% endif %}>
         <span {% if p1.winner %}style="font-weight: bold;"{% endif %} data-toggle="tooltip" rel="tooltip" title="{{data.battle_table[p1.id][0]}} Mitglieder bevorzugen Initiative '{{p1.name}}' gegenüber dem Status Quo.">{{data.battle_table[p1.id][0]}}</span>
       </td>
   </tr>
+  {% endif %}
   {% endfor %}
   <th>Status Quo</th>
-  {% for p in data.initiatives if p.admitted %}
+  <th style="text-align: right;">SQ</th>
+  {% for p in data.initiatives | sort(reverse=False,attribute='rank') %}
+  {% if p.admitted %}
   <td{% if data.battle_table[0][p.id] > data.battle_table[p.id][0] %} style="background: #dff0d8;"{% endif %}{% if data.battle_table[0][p.id] < data.battle_table[p.id][0] %} style="background: #f2dede;"{% endif %}>
     <span data-toggle="tooltip" rel="tooltip" title="{{data.battle_table[0][p.id]}} Mitglieder bevorzugen den Status Quo gegenüber Initiative '{{p.name}}'.">{{data.battle_table[0][p.id]}}</span>
   </td>
+  {% endif %}
   {% endfor %}
   <td>-</td>
   </tbody>
@@ -223,35 +234,55 @@
 
 {% else %}
 
-<table class="table">
+<table class="table table-condensed">
   <thead>
     <tr>
-      <th>Titel</th>
-      <th>Hinweis</th>
+      <th style="width: 100%"></th>
       {% if data.voting_progress == 0 %}
-      <th>Unterstützer</th>
+      <th></th>
       {% endif %}
     </tr>
   </thead>
-  {% for p in data.initiatives | sort(reverse=True,attribute='harmonic_weight') %}
+  {% for p in data.initiatives | sort(reverse=True,attribute='supporter_count') %}
   <tr{% if p.revoked %} style="background-color: #f9f9f9;"{% endif %}>
     <td>
       <strong>{{p.id|initiative(True)|safe}}</strong>
-    </td>
-    <td>
       {% if p.admitted %}
       <span class="label label-warning">in Abstimmung</span>
-      {% else %}
+      {% endif %}
+
       {% if p.revoked %}
       <span class="label">zurückgezogen</span>
-      {% elif data.state == "voting" %}
-      <span class="label">Quroum nicht erreicht</span>
       {% endif %}
+
+      {% if not p.revoked and data.state == 'discussion' and p.supporter_count < data.initiative_quorum %}
+      <span class="label label-warning">Quroum noch nicht erreicht</span>
+      {% endif %}
+
+      {% if not p.revoked and data.state == 'admission' and p.supporter_count < data.issue_quorum %}
+      <span class="label label-warning">Quroum noch nicht erreicht</span>
+      {% endif %}
+      
+      {% if data.state == 'canceled_issue_not_accepted' or data.state == 'canceled_no_initiative_admitted' %}
+      <span class="label label-important">Quroum nicht erreicht</span>
       {% endif %}
     </td>
     {% if data.voting_progress == 0 %}
     <td>
-      {{p.supporter_count}}
+      {% if not p.revoked %}
+      <div class="progress" style="width: 100px; height: 1em; line-height: 1em; margin-bottom: -1em; margin-top: 0.2em;">
+        {% if p.supporter_percentage >= 100 %}
+        <div class="bar bar-success" style="width: 100%;">erreicht</div>
+        {% else %}
+        {% if data.state == 'canceled_issue_not_accepted' or data.state == 'canceled_no_initiative_admitted' %}
+        <div class="bar bar-danger" style="width: {{p.supporter_percentage}}%;">{{p.supporter_count}}</div>
+        {% else %}
+        <div class="bar bar-warning" style="width: {{p.supporter_percentage}}%;">{{p.supporter_count}}</div>
+        {% endif %}
+        <div class="bar bar-transparent" style="width: {{100.0 - p.supporter_percentage}}%;">{{p.supporter_missing}}</div>
+        {% endif %}
+      </div>
+      {% endif %}
     </td>
     {% endif %}
   </tr>

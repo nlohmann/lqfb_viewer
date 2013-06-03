@@ -53,8 +53,9 @@ def api_load_all(endpoint, q=None, session=None, forceLoad=False):
     if q is None:
         q = {}
 
-    data = api_load('/info')
-    helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
+    if not 'result_row_limit_max' in helper:
+        data = api_load('/info')
+        helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
 
     q['offset'] = 0
     q['limit'] = helper['result_row_limit_max']
@@ -145,8 +146,9 @@ def regular_update():
     elements = 0
     
     # info (only maximal row limit is interesting)
-    data = api_load('/info')
-    helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
+    if not 'result_row_limit_max' in helper:
+        data = api_load('/info')
+        helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
 
     # unit
     data = api_load('/unit')
@@ -182,8 +184,9 @@ def regular_update():
 
 def cascaded_update():
     # info (only maximal row limit is interesting)
-    data = api_load('/info')
-    helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
+    if not 'result_row_limit_max' in helper:
+        data = api_load('/info')
+        helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
 
     # get all events
     events = api_load_all('/event')
@@ -246,7 +249,7 @@ def cascaded_update():
     return len(todo_events)
 
 
-def fob_update():
+def db_init():
     # info (only maximal row limit is interesting)
     data = api_load('/info')
     helper['result_row_limit_max'] = data['settings']['result_row_limit']['max']
@@ -254,25 +257,17 @@ def fob_update():
     # update unit, area, and policy
     regular_update()
 
-    # update the rest
-    cascaded_update()
-
-    # issues
-    data = api_load_all('/issue')
-    db_store(endpoint='issue', payload=data['result'])
-
-    # issues
+    # draft
     data = api_load_all('/draft', q={'render_content': 'html'})
     db_store(endpoint='draft', payload=data['result'])
 
-    # initiatives
-    data = api_load_all('/initiative')
+    # closed issues
+    data = api_load_all('/issue', q={'issue_closed': 1})
+    db_store(endpoint='issue', payload=data['result'])
+
+    # closed initiatives
+    data = api_load_all('/initiative', q={'issue_closed': 1})
     db_store(endpoint='initiative', payload=data['result'])
 
-    # suggestions
-    data = api_load_all('/suggestion', q={'rendered_content': 'html'})
-    db_store(endpoint='suggestion', payload=data['result'])
-
-    # events
-    data = api_load_all('/event')
-    db_store(endpoint='event', payload=data['result'])
+    # update the rest
+    cascaded_update()

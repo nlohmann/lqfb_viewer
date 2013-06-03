@@ -119,23 +119,6 @@ def issue_aggregated(issue_id, session=None):
     # calculate voter percentage
     result['voter_percentage'] = round(100.0 * float(result['voter_count']) / float(result['population']), 2) if result['voter_count'] != None else None
 
-    # add all initiatives of the issue
-    result['initiatives'] = db_load('/initiative', q={'issue_id': issue_id})['result']
-    for i in result['initiatives']:
-        if i['negative_votes'] != None:
-            i['absention_votes'] = result['voter_count'] - i['positive_votes'] - i['negative_votes']
-            # distribution of positive_votes/negative_votes
-            votes = i['positive_votes'] + i['negative_votes']
-            positive_votes_percentage = round(100.0 * float(i['positive_votes']) / float(votes), 2)
-            negative_votes_pecentage = round(100.0 - positive_votes_percentage, 2)
-            i['vote_distribution2'] = [positive_votes_percentage, negative_votes_pecentage]
-            # distribution of all votes
-            votes = result['voter_count']
-            positive_votes_percentage = round(100.0 * float(i['positive_votes']) / float(votes), 2)
-            negative_votes_pecentage = round(100.0 * float(i['negative_votes']) / float(votes), 2)
-            absention_votes_pecentage = round(100.0 - positive_votes_percentage - negative_votes_pecentage, 2)
-            i['vote_distribution3'] = [positive_votes_percentage, absention_votes_pecentage, negative_votes_pecentage]
-
     # add the area
     result['area'] = db_load('/area', q={'area_id': result['area_id']})['result'][0]
 
@@ -155,6 +138,37 @@ def issue_aggregated(issue_id, session=None):
     bars = policy_bars(result['policy'])
     result['policy'] = dict(result['policy'].items() + bars.items())
 
+    # add all initiatives of the issue
+    result['initiatives'] = db_load('/initiative', q={'issue_id': issue_id})['result']
+    for i in result['initiatives']:
+        # store information on the supporters and the used quorum
+        if result['state'] in ['admission', 'canceled_revoked_before_accepted', 'canceled_issue_not_accepted']:
+            i['supporter_percentage'] = round(100.0 * float(i['supporter_count']) / float(result['issue_quorum']), 2)
+            i['supporter_missing'] = result['issue_quorum'] - i['supporter_count'] if i['supporter_percentage'] < 100 else 0
+            i['quorum_type'] = 'issue'
+        else:
+            i['supporter_percentage'] = round(100.0 * float(i['supporter_count']) / float(result['initiative_quorum']), 2)
+            i['supporter_missing'] = result['initiative_quorum'] - i['supporter_count'] if i['supporter_percentage'] < 100 else 0
+            i['quorum_type'] = 'initiative'
+
+        if i['negative_votes'] != None:
+            i['absention_votes'] = result['voter_count'] - i['positive_votes'] - i['negative_votes']
+            # distribution of positive_votes/negative_votes
+            votes = i['positive_votes'] + i['negative_votes']
+            if votes != 0:
+                positive_votes_percentage = round(100.0 * float(i['positive_votes']) / float(votes), 2)
+                negative_votes_pecentage = round(100.0 - positive_votes_percentage, 2)
+                i['vote_distribution2'] = [positive_votes_percentage, negative_votes_pecentage]
+            else:
+                i['vote_distribution2'] = [0.0, 0.0]
+
+            # distribution of all votes
+            votes = result['voter_count']
+            positive_votes_percentage = round(100.0 * float(i['positive_votes']) / float(votes), 2)
+            negative_votes_pecentage = round(100.0 * float(i['negative_votes']) / float(votes), 2)
+            absention_votes_pecentage = round(100.0 - positive_votes_percentage - negative_votes_pecentage, 2)
+            i['vote_distribution3'] = [positive_votes_percentage, absention_votes_pecentage, negative_votes_pecentage]
+
     # add interested members (needs a session)
     result['interest'] = dict()
     try:
@@ -169,7 +183,7 @@ def issue_aggregated(issue_id, session=None):
 
     # add battle
     if result['status_quo_schulze_rank'] != None:
-        result['battle'] = api_load('/battle', q={'issue_id': issue_id})['result']
+        result['battle'] = api_load_all('/battle', q={'issue_id': issue_id})['result']
         result['battle_table'] = dict()
         for b in result['battle']:
             winner = b['winning_initiative_id'] if b['winning_initiative_id'] != None else 0

@@ -9,7 +9,7 @@ import urllib2
 from flask import render_template, request, Response, session, flash, abort
 from app import app, helper, models, db
 from emails import send_email
-from utils import api_load, api_load_all, fob_update, db_load
+from utils import api_load, api_load_all, db_load
 from ical import create_ical
 from aggregators import issue_aggregated
 
@@ -41,9 +41,6 @@ def prepare():
     enums_file = fix_path() + 'enums.json'
     print('+ loading enums from ' + enums_file + '...')
     helper['enums'] = json.load(open(enums_file))
-
-    # initialize the FOB
-    #fob_update()
 
     # register the db_load function for Jinja templates
     app.jinja_env.globals.update(db_load=db_load)

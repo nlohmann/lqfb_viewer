@@ -199,6 +199,9 @@ $("#diff{{i}}-{{i-1}}").click(function () {
 <div class="tab-content">
   {% for suggestion in data.suggestion|sort(attribute='proportional_order') %}
   <div class="tab-pane" id="suggestion{{suggestion.id}}">
+    {% if suggestion.author_id %}
+    {{ suggestion.author_id|member|safe }}
+    {% endif %}
     <p class="lead">{{suggestion.name}}</p>
     {% if suggestion.content %}
     <div class="well">

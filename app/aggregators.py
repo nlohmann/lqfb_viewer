@@ -313,7 +313,7 @@ def initiative_aggregated(initiative_id, session=None):
     result['draft'] = db_load('/draft', q={'initiative_id': initiative_id})['result']
 
     # add suggestions
-    result['suggestion'] = db_load('/suggestion', q={'initiative_id': initiative_id})['result']
+    result['suggestion'] = api_load('/suggestion', q={'initiative_id': initiative_id}, session=session)['result']
 
     # add initiator
     if 'session_key' in session:

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import session
+from flask import session, url_for
 from markupsafe import Markup
 
 from app import app, helper
@@ -88,6 +88,46 @@ def member_filter(member_id, link=False, icon=True):
         result = '<i class="icon-user"></i>&nbsp;' + result
 
     return result
+
+@app.template_filter('member2')
+def member2_filter(member_id):
+    # get name
+    if not 'current_access_level' in session or session['current_access_level'] != 'member':
+        return "Mitglied&nbsp;" + str(member_id)
+    
+    result = '<div class="member_box">'
+
+    result += '<a href="%s">' % url_for("show_member", member_id=member_id,)
+
+    data = api_load('/member_image', q={'member_id': member_id, 'type': 'avatar'}, session=session)
+
+    if data['result'] != []:
+        result += '<img class="pull-left img-rounded" src="data:' + data['result'][0]['content_type'] + ';base64,' + data['result'][0]['data'] + '"/>'
+    else:
+        result += '<img class="pull-left img-rounded" src="/static/images/placeholder.jpg" />'
+
+    data = api_load('/member', q={'member_id': member_id}, session=session)['result'][0]
+    
+    result += '<span">'
+    if data['realname'] != None and data['realname'] != '':
+        result += data['realname']
+    else:
+        result += data['name']
+
+    result += '</a>'
+    
+    result += '<br>'
+    
+    if data['email'] != None:
+        result += ' <a href="mailto:%s"><i class="icon-envelope"></i></a>' % data['email']
+    
+    if data['website'] != None:
+        result += ' <a href="http://%s"><i class="icon-home"></i></a>' % data['website']
+    
+    result += "</span></div>"
+    
+    return result
+    
 
 @app.template_filter('issue')
 def issue_filter(issue_id, link=False, icon=True):

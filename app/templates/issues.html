@@ -113,7 +113,10 @@ $(function(){
           <td>{{ p.area_id|area(True)|safe }}</td>
           <td>{{ p.policy_id|policy(True)|safe }}</td>
           <td>
-            <i class="{{ helper.enums.issue[p.state].icon }}{% if helper.enums.issue[p.state].color %} {{ helper.enums.issue[p.state].color }}{% endif %}"></i> {{ helper.enums.issue[p.state].name }}
+            <span class="icon-stack pull-left">
+              <i class="icon-circle icon-stack-base"></i>
+              <i class="icon-light {{ helper.enums.issue[p.state].icon }}{% if helper.enums.issue[p.state].color %} {{ helper.enums.issue[p.state].color }}{% endif %}"></i>
+            </span> {{ helper.enums.issue[p.state].name }}
           </td>
         </tr>
         {% endfor %}

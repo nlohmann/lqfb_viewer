@@ -227,7 +227,7 @@ ol#timeline li i { color: #888; }
         {% if p2.supporter_count >= p.issue_id|quorum %}
         <li>{{p2.id|initiative(True)|safe}}</li>
         {% else %}
-        <li style="text-decoration: line-through;">{{p2.id|initiative(True)|safe}}</li>
+        <li><del>{{p2.id|initiative(True)|safe}}</del></li>
         {% endif %}
         {% endfor %}
       </ul>
@@ -238,7 +238,7 @@ ol#timeline li i { color: #888; }
         {% if p2.admitted == True %}
         <li>{{p2.id|initiative(True)|safe}}</li>
         {% elif p2.supporter_count >= p.issue_id|quorum %}
-        <li style="text-decoration: line-through;">{{p2.id|initiative(True)|safe}}</li>
+        <li><del>{{p2.id|initiative(True)|safe}}</del></li>
         {% endif %}
         {% endfor %}
       </ul>

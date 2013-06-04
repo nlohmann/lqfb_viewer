@@ -31,7 +31,7 @@
     {% if data.state == "voting" %}
     <a href="{{config.LQFB_URL}}/vote/list.html?issue_id={{data.id}}" target="lqfb_window" class="btn btn-warning btn-large pull-right" type="button" style="margin-top: 1.5em;">abstimmen</a>
     {% endif %}
-    <i class="{{helper.enums.issue[data.state].icon}}{% if helper.enums.issue[data.state].color %} {{helper.enums.issue[data.state].color}}{% endif %} icon-2x pull-left"></i>
+<!--    <i class="{{helper.enums.issue[data.state].icon}}{% if helper.enums.issue[data.state].color %} {{helper.enums.issue[data.state].color}}{% endif %} icon-2x pull-left"></i> -->
     <small>{{data.policy.name}}</small><br><i class="icon-list-alt"></i> Thema {{data.id}}
   </h1>
 </div>
@@ -175,6 +175,8 @@
 </tbody>
 </table>
 
+{% if data.battle_table != {} and data.battle_table.0 %}
+
 <h3>Abstimmtabelle</h3>
 
 <table class="table table-condensed">
@@ -231,6 +233,8 @@
         $("[rel='tooltip']").tooltip();
     });
 </script>
+
+{% endif %}
 
 {% else %}
 

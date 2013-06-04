@@ -20,17 +20,63 @@
     {% block navigation %}
     <div class="navbar navbar-inverse">
       <div class="navbar-inner">
-        <a class="brand" href="/">LQFB</a>
+        <a class="brand" href="/">LiquidFeedback</a>
         <ul class="nav">
-          <li><a href="/themen"><i class="icon-list-alt"></i> Themen</a></li>
-          <li><a href="/gliederungen"><i class="icon-sitemap"></i> Gliederungen</a></li>
-          <li><a href="/regelwerke"><i class="icon-book"></i> Regelwerke</a></li>
-          <li><a href="/themenbereiche"><i class="icon-columns"></i> Themenbereiche</a></li>
-          <li><a href="/ereignisse"><i class="icon-info-sign"></i> Ereignisse</a></li>
-          {% if session.current_access_level != 'anonymous' %}
-          <li><a href="/mitglieder"><i class="icon-user"></i> Mitglieder</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Inhalte
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+              <li><a tabindex="-1" href="/themen"><i class="icon-list-alt"></i> Themen</a></li>
+              <li><a tabindex="-1" href="#"><i class="icon-file-alt"></i> Initiativen</a></li>
+              <li><a tabindex="-1" href="/themenbereiche"><i class="icon-columns"></i> Themenbereiche</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Organisation
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+              <li><a tabindex="-1" href="/gliederungen"><i class="icon-sitemap"></i> Gliederungen</a></li>
+              <li><a tabindex="-1" href="/regelwerke"><i class="icon-book"></i> Regelwerke</a></li>
+              {% if session.current_access_level != 'anonymous' %}
+              <li><a tabindex="-1" href="/regelwerke"><i class="icon-user"></i> Mitglieder</a></li>
+              {% endif %}
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Aktuelles
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+              <li><a tabindex="-1" href="/ereignisse"><i class="icon-info-sign"></i> Ereignisse</a></li>
+              <li><a tabindex="-1" href="{{ url_for('show_ical' , _external = True) }}"><i class="icon-calendar"></i> Abstimmkalender</a></li>
+              <li><a tabindex="-1" href="/statistiken"><i class="icon-bar-chart"></i> Statistiken</a></li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="nav pull-right">
+          {% if session.current_member_id %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <style>
+              ul.nav img.avatarpic { height: 2em; margin-top: -0.75em; margin-bottom: -0.75em; }
+              </style>
+              {{ session.current_member_id|avatar|safe }}
+              {{ session.current_member_id|member(False,False)|safe }}
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+              <li><a tabindex="-1" href="/mitglieder/{{session.current_member_id}}"><i class="icon-user"></i> Profilseite</a></li>
+              <li><a tabindex="-1" href="/einstellungen"><i class="icon-cog"></i> Einstellungen</a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li><a tabindex="-1" href="/einstellungen"><i class="icon-cog"></i> Einstellungen</a></li>
           {% endif %}
-          <li><a href="/einstellungen"><i class="icon-cog"></i> Einstellungen</a></li>
         </ul>
       </div>
     </div>
@@ -65,11 +111,6 @@
       <p class="muted" style="padding-top:10px;">
         {% if session.current_access_level %}
         <i class="{{ helper.enums.access[session.current_access_level].icon}}"></i> <a href="/einstellungen">{{ helper.enums.access[session.current_access_level].name }}</a>
-        {% if session.current_member_id %}
-        {{ session.current_member_id|member(True)|safe }}
-        {% endif %}
-        {% else %}
-        <i class="{{ helper.enums.access['anonymous'].icon}}"></i> {{ helper.enums.access['anonymous'].name }}
         {% endif %}
         {% if ourl %}
         <span class="pull-right"><a href="{{config.LQFB_URL}}/{{ourl}}" target="lqfb_window">LQFB</a></span>

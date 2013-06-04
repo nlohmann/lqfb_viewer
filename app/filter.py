@@ -58,7 +58,7 @@ def avatar_filter(member_id):
     
     data = api_load('/member_image', q={'member_id': member_id, 'type': 'avatar'}, session=session)
     if data['result'] != []:
-        return '<img class="img-rounded" src="data:' + data['result'][0]['content_type'] + ';base64,' + data['result'][0]['data'] + '"/>'
+        return '<img class="img-rounded avatarpic" src="data:' + data['result'][0]['content_type'] + ';base64,' + data['result'][0]['data'] + '"/>'
     else:
         return '<i class="icon-user"></i>'
 
@@ -127,7 +127,7 @@ def member2_filter(member_id):
     result += "</span></div>"
     
     return result
-    
+
 
 @app.template_filter('issue')
 def issue_filter(issue_id, link=False, icon=True):
